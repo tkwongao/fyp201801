@@ -1,0 +1,122 @@
+.auto-complete-typebox {
+	position:relative;
+}
+
+.auto-complete-typebox span.mapMarker {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-size: 1.2em;
+}
+
+.auto-complete-typebox span.searchClear {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+
+.auto-complete-typebox span.searchClear:hover {
+	cursor:pointer;
+}
+
+.auto-complete-typebox input {
+	padding-left: 25px;
+}
+
+.auto-complete-typebox input::-webkit-input-placeholder {
+   font-style: italic;
+}
+
+.auto-complete-typebox input::-moz-placeholder {
+   font-style: italic;  
+}
+
+.auto-complete-typebox input::-moz-placeholder {
+   font-style: italic;  
+}
+
+.auto-complete-typebox input::-ms-input-placeholder {  
+   font-style: italic; 
+}
+
+.auto-complete-result {
+	border:1px solid #e0e0e0;
+	border-top:0;
+	background:white;
+	display:none;
+	position:absolute;
+	z-index:1;
+	margin-top:-15px;
+	width:100%;
+	max-height:500px;
+	overflow-y:auto;
+}
+
+.auto-complete-result ul{
+	list-style:none;
+	margin:0;
+	padding:0;
+}
+
+.auto-complete-result ul li {
+	width:100%;
+	line-height:40px;
+}
+
+.auto-complete-result ul li a span {
+	padding:0 11.5px 0 11.5px;
+}
+
+.auto-complete-result ul li:not(:first-child) {
+	box-shadow: 0 -1px 1px 0 #f3f2f5;
+}
+
+.auto-complete-result ul:not(:first-child) li {
+	box-shadow: 0 -1px 1px 0 #f3f2f5;
+}
+
+.auto-complete-result ul li:hover {
+	/* background:#3b5998; */
+	cursor:pointer;
+}
+
+.auto-complete-result ul li a {
+	display:block;
+	width:100%;
+	height:100%;
+	line-height:40px;
+	color: #524c61;
+	padding:5px 0 5px 0;	
+}
+
+.auto-complete-result ul li a:hover {
+	background: #e6e4eb;
+	font-weight: bold;
+}
+
+.auto-complete-result ul li.chosen > a {
+	background: #e6e4eb;
+	font-weight: bold;
+}
+
+.auto-complete-result ul li ul {
+	display:none;
+}
+
+.auto-complete-result ul li a span {
+	cursor: row-resize;	
+}
+
+.auto-complete-result ul li span.menu-arrow-expand:before {
+	font-family:Material Design Iconic Font;
+	content: '\f1b4';
+	font-size:1.5em;
+}
+
+.auto-complete-result ul li span.menu-arrow-collapse:before {
+	font-family:Material Design Iconic Font;
+	content: '\f1b6';
+	font-size:1.5em;
+}

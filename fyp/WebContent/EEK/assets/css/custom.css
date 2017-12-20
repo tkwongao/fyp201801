@@ -1,0 +1,174 @@
+a.logo:after {
+  content: ""; 
+  position: absolute; 
+  top: 0; 
+  right: 0; 
+  bottom: 0; 
+  left: 0;
+}
+
+.nv-x .tick line {
+	display: none;
+}
+
+ul.in_top, ul.in_top li, ul.in_bottom, ul.in_bottom li{
+	width: 100%;
+}
+
+div.side-menu ul.in_bottom
+{
+	position:absolute !important;
+	bottom:0;
+}
+
+div#wrapper.enlarged div.side-menu ul.in_bottom
+{
+	bottom:64px;
+}
+
+.m-l-80 {
+	margin-left: 80px;
+}
+
+.m-r-80 {
+	margin-right: 80px;
+}
+
+.no-margin {
+	margin: 0 auto !important;
+}
+
+.no-padding {
+   padding: 0 !important;
+}
+
+.site-btn {
+	height: 35px; 
+	margin-top: -7.5px;
+}
+
+table.heatTable thead th, table.heatTable tbody td {
+	padding: 5px;
+	margin: 0;
+}
+
+table.heatTable tfoot td.x-label {
+	text-align: center;
+}
+
+table.heatTable tbody td.y-label {
+	text-align: left;
+}
+
+table.retentionTable thead th, table.retentionTable tbody td {
+	padding: 5px;
+	margin: 0;
+}
+
+table.retentionTable tr:not(:last-child) {
+	border-bottom: 1px solid grey;
+}
+
+table.retentionTable tfoot td.x-label {
+	text-align: center;
+}
+
+table.retentionTable tbody td.y-label {
+	text-align: left;
+}
+
+table.heatTable div.paintBox, table.retentionTable div.paintBox {
+	width: 100%;
+}
+
+div.hoverBox {
+	position: absolute;
+	z-index: 9999;
+	display: none;
+	border: 1px solid grey;
+	background: white;
+	text-align: left;
+	padding: 10px;
+	pointer-events: none;
+}
+
+div.floor-plan-markers {
+	position:relative;
+}
+
+div.floor-plan-markers svg g#gShopBoundingBox:hover {
+	cursor:pointer;
+}
+
+div.floor-plan-buttons {
+	right: 0;
+	bottom: 0;
+	margin: 20px;
+	position: absolute;
+}
+
+div.floor-plan-buttons button {
+	margin: 10px 0 0px 0 !important;
+	border-radius: 0px !important;
+}
+
+#mac-address-list {
+	max-height: 386px;
+	overflow-y: auto;
+}
+
+.full-width {
+	width: 100%;
+}
+
+.mac-address {
+	width: 90%;
+	font-size:15pt;
+}
+
+.ellipis {
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    display: block;
+    white-space: nowrap;
+}
+
+.m-20 {
+	margin: 20px;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: inherit;
+    transition: all .5s;
+}
+
+.btn-primary.btn-outline {
+    color: #428bca;
+}
+
+.btn-success.btn-outline {
+    color: #5cb85c;
+}
+
+.btn-info.btn-outline {
+    color: #5bc0de;
+}
+
+.btn-warning.btn-outline {
+    color: #f0ad4e;
+}
+
+.btn-danger.btn-outline {
+    color: #d9534f;
+}
+
+.btn-primary.btn-outline:hover,
+.btn-success.btn-outline:hover,
+.btn-info.btn-outline:hover,
+.btn-warning.btn-outline:hover,
+.btn-danger.btn-outline:hover {
+    color: #fff;
+}
