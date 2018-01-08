@@ -3,6 +3,8 @@ package fyp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -51,6 +53,30 @@ public class database {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		method();
 		return count; 
+	}
+	public void method() {
+		ArrayList<Date> list = new ArrayList<Date>();
+		try {
+			ResultSet rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > 1508767000000 ORDER BY startts LIMIT 400;").executeQuery();
+			long start = System.nanoTime();
+			while (rs.next()) {
+				list.add(new Date(rs.getLong("startts")));
+				System.out.println(rs.getRow());
+			}
+			double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
+			System.out.println(elapsedTimeInSec);
+			rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > 1508700000000 ORDER BY startts").executeQuery();
+			start = System.nanoTime();
+			while (rs.next()) {
+				list.add(new Date(rs.getLong("startts")));
+				System.out.println(rs.getRow());
+			}
+			double elapsedTimeInSec2 = (System.nanoTime() - start) * 1.0e-9;
+			System.out.println(elapsedTimeInSec2 / elapsedTimeInSec);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
