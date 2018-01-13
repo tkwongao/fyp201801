@@ -3,6 +3,10 @@ package fyp;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -51,6 +55,32 @@ public class database {
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
+		method();
 		return count; 
+	}
+	public void method() {
+		Calendar c = Calendar.getInstance(TimeZone.getTimeZone("GMT+8:00"));
+		c.clear();
+		c.set(2017, Calendar.OCTOBER, 23, 22, 0, 0);
+		long time1 = c.getTimeInMillis();
+		c.set(2017, Calendar.OCTOBER, 23, 0, 0, 0);
+		long time2 = c.getTimeInMillis();
+		ArrayList<Date> list = new ArrayList<Date>();
+		try {
+			ResultSet rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > " + time1 + " ORDER BY startts LIMIT 400;").executeQuery();
+			long start = System.nanoTime();
+			while (rs.next())
+				list.add(new Date(rs.getLong("startts")));
+			double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
+			System.out.println(elapsedTimeInSec);
+			rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > " + time2 + " ORDER BY startts").executeQuery();
+			start = System.nanoTime();
+			while (rs.next())
+				list.add(new Date(rs.getLong("startts")));
+			double elapsedTimeInSec2 = (System.nanoTime() - start) * 1.0e-9;
+			System.out.println(elapsedTimeInSec2);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 }
