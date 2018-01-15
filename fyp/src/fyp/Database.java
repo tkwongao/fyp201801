@@ -10,7 +10,7 @@ import java.util.TimeZone;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-public class database {
+public class Database {
 	private final String url = "jdbc:postgresql://143.89.50.151:7023/fypps";
 	private final String user = "fyp";
 	private final String password = "123456";
@@ -43,8 +43,7 @@ public class database {
 	{
 		int count =0;
 		String sql = "SELECT count(DISTINCT(did)) from store_results";
-		database db = new database();
-		Connection connected = db.connect();
+		Connection connected = this.connect();
 		try
 		{
 			PreparedStatement ps = connected.prepareStatement(sql);
@@ -67,13 +66,13 @@ public class database {
 		long time2 = c.getTimeInMillis();
 		ArrayList<Date> list = new ArrayList<Date>();
 		try {
-			ResultSet rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > " + time1 + " ORDER BY startts LIMIT 400;").executeQuery();
+			ResultSet rs = this.connect().prepareStatement("SELECT startts FROM store_results where startts > " + time1 + " ORDER BY startts LIMIT 400;").executeQuery();
 			long start = System.nanoTime();
 			while (rs.next())
 				list.add(new Date(rs.getLong("startts")));
 			double elapsedTimeInSec = (System.nanoTime() - start) * 1.0e-9;
 			System.out.println(elapsedTimeInSec);
-			rs = new database().connect().prepareStatement("SELECT startts FROM store_results where startts > " + time2 + " ORDER BY startts").executeQuery();
+			rs = this.connect().prepareStatement("SELECT startts FROM store_results where startts > " + time2 + " ORDER BY startts").executeQuery();
 			start = System.nanoTime();
 			while (rs.next())
 				list.add(new Date(rs.getLong("startts")));

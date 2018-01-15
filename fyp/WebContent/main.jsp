@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<%@ page import="fyp.database"%>
+<%@ page import="fyp.Database"%>
 <html>
     <head>
         <meta charset="utf-8">
@@ -420,7 +420,7 @@
 									<div class="widget-simple-chart text-right card-box">
 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div>
 										<% 
-											database db= new database();
+											Database db = new Database();
 											int id = db.count();
 										%>
 										<h3 class="text-success counter"><%=id%></h3>
