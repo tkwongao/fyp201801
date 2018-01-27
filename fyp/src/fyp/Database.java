@@ -183,5 +183,87 @@ public class Database {
 		System.out.println(e.getMessage());
 	}
     	return count;
-    }
+    	}
+	
+	public int averageEnterToLeaveTimeInMall(){
+		int totalSecond = 0;
+		try
+    		{
+			ResultSet rs = new database().connect().prepareStatement("Select avg(endts-startts) from store_results").executeQuery();
+    			while (rs.next()){
+    				totalSecond = rs.getInt("avg");
+			}
+    			System.out.println(totalSecond+"second");
+    		}
+    		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return totalSecond;
+	}
+	
+	public int stayTimeInEachStore(long MacAddress, int storeId)
+	{
+		int totalSecond = 0;	
+		try
+    	{
+    		ResultSet rs = new database().connect().prepareStatement("Select startts,endts from store_results where did="+MacAddress +"and storeid="+storeId).executeQuery();
+    		while (rs.next()){
+    			Date start = new Date(rs.getLong("startts"));
+    			Date end = new Date(rs.getLong("endts"));
+    			totalSecond += (int)( (end.getTime() - start.getTime()))/1000 ;	
+			}
+    		System.out.println(totalSecond+"second");    		
+    	}
+    	catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return totalSecond;
+		
+	}
+
+	public static int bounceRate(double SD)
+	{
+		database db= new database();
+		double count=0;
+		double squaredDifferences=0;
+		double mean= db.averageEnterToLeaveTimeInMall();
+		double sd=0;
+		int bounceRateResult = 0;
+		
+		try
+    		{
+    			ResultSet rs = new database().connect().prepareStatement("Select startts,endts from store_results").executeQuery();
+    			while (rs.next()){
+    				Date start = new Date(rs.getLong("startts"));
+    				Date end = new Date(rs.getLong("endts"));
+    				squaredDifferences += (((double)( (end.getTime() - start.getTime()))/1000)-mean)*(((double)( (end.getTime() - start.getTime()))/1000)-mean);
+    			 	count+=1;
+    			
+    			}	
+    		}
+    		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		sd=sqrt(squaredDifferences/count); 
+		System.out.println(sd);
+		
+		double belowSD = mean-SD*sd;
+		if (belowSD<=0)
+			belowSD=0;
+		
+		System.out.println(belowSD);
+		try
+    		{
+    			ResultSet rs = new database().connect().prepareStatement("Select count(*) from store_results where ((endts-startts)/1000) < "+belowSD).executeQuery();
+    			while (rs.next()){
+    			bounceRateResult= rs.getInt("count");
+    			}	
+    		}
+    		catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return bounceRateResult;
+	}
+	
+	
 }
