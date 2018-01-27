@@ -154,7 +154,7 @@ public class Database {
 		return time;
 	}
 	
-	public void stayTimeInMall(long macAddress) throws SQLException {
+	public int stayTimeInMall(long macAddress) throws SQLException {
 		int totalSecond = 0;
 		String sql = "SELECT startts, endts FROM store_results WHERE did = ?";
 		PreparedStatement ps = this.connect().prepareStatement(sql);
@@ -165,5 +165,23 @@ public class Database {
 			totalSecond += (int) ((end - start) / 1000);
 		}
 		System.out.println(totalSecond + "seconds");
+		return totalSecond;
 	}
+	
+	public int LoyaltyCheck(long MacAddress)
+    	{	
+    		int count=0;
+    		try
+    		{
+    			ResultSet rs = new database().connect().prepareStatement("Select count(storeid) from store_results where did="+MacAddress).executeQuery();
+    			while (rs.next()){
+				count= rs.getInt("count");
+		}
+    		System.out.println(count);
+    	}
+    	catch (SQLException e) {
+		System.out.println(e.getMessage());
+	}
+    	return count;
+    }
 }
