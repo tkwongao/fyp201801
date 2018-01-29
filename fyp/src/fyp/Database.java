@@ -153,7 +153,7 @@ public class Database {
 		}
 		return time;
 	}
-	
+
 	public int stayTimeInMall(long macAddress) throws SQLException {
 		int totalSecond = 0;
 		String sql = "SELECT startts, endts FROM store_results WHERE did = ?";
@@ -167,103 +167,81 @@ public class Database {
 		System.out.println(totalSecond + "seconds");
 		return totalSecond;
 	}
-	
-	public int LoyaltyCheck(long MacAddress)
-    	{	
-    		int count=0;
-    		try
-    		{
-    			ResultSet rs = new database().connect().prepareStatement("Select count(storeid) from store_results where did="+MacAddress).executeQuery();
-    			while (rs.next()){
-				count= rs.getInt("count");
-		}
-    		System.out.println(count);
-    	}
-    	catch (SQLException e) {
-		System.out.println(e.getMessage());
-	}
-    	return count;
-    	}
-	
-	public int averageEnterToLeaveTimeInMall(){
-		int totalSecond = 0;
-		try
-    		{
-			ResultSet rs = new database().connect().prepareStatement("Select avg(endts-startts) from store_results").executeQuery();
-    			while (rs.next()){
-    				totalSecond = rs.getInt("avg");
-			}
-    			System.out.println(totalSecond+"second");
-    		}
-    		catch (SQLException e) {
+
+	public int LoyaltyCheck(long macAddress)
+	{	
+		int count = 0;
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT count(storeid) FROM store_results WHERE did=" + macAddress).executeQuery();
+			while (rs.next())
+				count = rs.getInt("count");
+			System.out.println(count);
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		return totalSecond;
-	}
-	
-	public int stayTimeInEachStore(long MacAddress, int storeId)
-	{
-		int totalSecond = 0;	
-		try
-    	{
-    		ResultSet rs = new database().connect().prepareStatement("Select startts,endts from store_results where did="+MacAddress +"and storeid="+storeId).executeQuery();
-    		while (rs.next()){
-    			Date start = new Date(rs.getLong("startts"));
-    			Date end = new Date(rs.getLong("endts"));
-    			totalSecond += (int)( (end.getTime() - start.getTime()))/1000 ;	
-			}
-    		System.out.println(totalSecond+"second");    		
-    	}
-    	catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return totalSecond;
-		
+		return count;
 	}
 
-	public static int bounceRate(double SD)
-	{
-		database db= new database();
-		double count=0;
-		double squaredDifferences=0;
-		double mean= db.averageEnterToLeaveTimeInMall();
-		double sd=0;
-		int bounceRateResult = 0;
-		
-		try
-    		{
-    			ResultSet rs = new database().connect().prepareStatement("Select startts,endts from store_results").executeQuery();
-    			while (rs.next()){
-    				Date start = new Date(rs.getLong("startts"));
-    				Date end = new Date(rs.getLong("endts"));
-    				squaredDifferences += (((double)( (end.getTime() - start.getTime()))/1000)-mean)*(((double)( (end.getTime() - start.getTime()))/1000)-mean);
-    			 	count+=1;
-    			
-    			}	
-    		}
-    		catch (SQLException e) {
+	public int averageEnterToLeaveTimeInMall(){
+		int totalSecond = 0;
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT avg(endts-startts) FROM store_results").executeQuery();
+			while (rs.next())
+				totalSecond = rs.getInt("avg");
+			System.out.println(totalSecond + "second");
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
-		sd=sqrt(squaredDifferences/count); 
+		return totalSecond;
+	}
+
+	public int stayTimeInEachStore(long macAddress, int storeId)
+	{
+		int totalSecond = 0;	
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT startts, endts FROM store_results WHERE did = " + macAddress + "AND storeid = " + storeId).executeQuery();
+			while (rs.next()) {
+				long start = rs.getLong("startts"), end = rs.getLong("endts");
+				totalSecond += (end - start) / 1000;	
+			}
+			System.out.println(totalSecond + "second");    		
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return totalSecond;
+	}
+
+	public int bounceRate(double SD)
+	{
+		Database db = this;
+		double count = 0;
+		double squaredDifferences = 0;
+		double mean = db.averageEnterToLeaveTimeInMall();
+		double sd = 0;
+		int bounceRateResult = 0;
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT startts, endts FROM store_results").executeQuery();
+			while (rs.next()) {
+				Long start = rs.getLong("startts"), end = rs.getLong("endts");
+				squaredDifferences += Math.pow((end - start) / 1000.0 - mean, 2);
+				count++;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		sd = Math.sqrt(squaredDifferences / count);
 		System.out.println(sd);
-		
-		double belowSD = mean-SD*sd;
-		if (belowSD<=0)
-			belowSD=0;
-		
+		double belowSD = mean - SD * sd;
+		if (belowSD <= 0)
+			belowSD = 0;
 		System.out.println(belowSD);
-		try
-    		{
-    			ResultSet rs = new database().connect().prepareStatement("Select count(*) from store_results where ((endts-startts)/1000) < "+belowSD).executeQuery();
-    			while (rs.next()){
-    			bounceRateResult= rs.getInt("count");
-    			}	
-    		}
-    		catch (SQLException e) {
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT count(*) FROM store_results WHERE ((endts-startts)/1000) < " + belowSD).executeQuery();
+			while (rs.next())
+				bounceRateResult = rs.getInt("count");
+		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		return bounceRateResult;
 	}
-	
-	
 }
