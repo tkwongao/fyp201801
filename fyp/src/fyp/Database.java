@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -49,27 +50,6 @@ public class Database {
 		return conn;
 	}
 
-	public int count() {
-		int count = 0;
-		String sql = "SELECT count(DISTINCT(did)) from store_results";
-		Connection connected = this.connect();
-		try {
-			PreparedStatement ps = connected.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				count = rs.getInt("count");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-
-		try {
-			System.out.println(peopleCounting(time2Period(2017, 10, 23, 22, null, null), null));
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return count;
-	}
-
 	/**
 	 * Connect the database to count the number of devices detected in the whole mall or a particular store in a certain period of time.
 	 * @param period The earliest and latest times the counted data could come from, as UTC milliseconds from the epoch.
@@ -97,6 +77,87 @@ public class Database {
 		return (int) count;
 	}
 
+	public int stayTimeInMall(long macAddress) throws SQLException {
+		int totalSecond = 0;
+		String sql = "SELECT startts, endts FROM store_results WHERE did = ?";
+		PreparedStatement ps = this.connect().prepareStatement(sql);
+		ps.setLong(1, macAddress);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			long start = rs.getLong("startts"), end = rs.getLong("endts");
+			totalSecond += (int) ((end - start) / 1000);
+		}
+		System.out.println(totalSecond + "seconds");
+		return totalSecond;
+	}
+
+	public int stayTimeInEachStore(long macAddress, int storeId)
+	{
+		int totalSecond = 0;	
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT startts, endts FROM store_results WHERE did = " + macAddress + "AND storeid = " + storeId).executeQuery();
+			while (rs.next()) {
+				long start = rs.getLong("startts"), end = rs.getLong("endts");
+				totalSecond += (end - start) / 1000;	
+			}
+			System.out.println(totalSecond + " seconds");    		
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return totalSecond;
+	}
+
+	public double averageEnterToLeaveTimeInMall() {
+		double totalSecond = 0;
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT avg(endts - startts) FROM store_results").executeQuery();
+			while (rs.next())
+				totalSecond = rs.getLong("avg") / 1000.0;
+			System.out.println(totalSecond + " seconds");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return totalSecond;
+	}
+
+	public int bounceRate(double thresholdSD)
+	{
+		Database db = this;
+		double sd = 0, squaredDifferences = 0;
+		double mean = db.averageEnterToLeaveTimeInMall();
+		int count = 0;
+		ArrayList<Double> dwellTimeList = new ArrayList<Double>();
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT endts - startts AS dwellTimeMs FROM store_results;").executeQuery();
+			while (rs.next()) {
+				double dwellTimeSeconds = rs.getLong("dwellTimeMs") / 1000.0;
+				dwellTimeList.add(dwellTimeSeconds);
+				squaredDifferences += Math.pow(dwellTimeSeconds - mean, 2);
+				count++;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		sd = Math.sqrt(squaredDifferences / count);
+		final double belowSD = Math.max(0, mean - thresholdSD * sd);
+		System.out.println("Standard derivation: " + sd + ", " + thresholdSD + " standard derivations below mean: " + belowSD);
+		return dwellTimeList.stream().filter(e -> e < belowSD).toArray().length; // Same as what did by count(*), count elements < belowSD
+	}
+
+	public int LoyaltyCheck(long macAddress)
+	{	
+		int count = 0;
+		try {
+			ResultSet rs = this.connect().prepareStatement("SELECT count(storeid) FROM store_results WHERE did = " + macAddress).executeQuery();
+			while (rs.next())
+				count = rs.getInt("count");
+			System.out.println(count);
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
+	
 	/**
 	 * Convert a human-readable date to UTC milliseconds from the epoch, optionally as a period of a second, a minute, an hour,
 	 * a day, a month or a year. The human-readable date is in GMT+8:00 (Hong Kong time) time zone.
@@ -152,95 +213,27 @@ public class Database {
 		}
 		return time;
 	}
-
-	public int stayTimeInMall(long macAddress) throws SQLException {
-		int totalSecond = 0;
-		String sql = "SELECT startts, endts FROM store_results WHERE did = ?";
-		PreparedStatement ps = this.connect().prepareStatement(sql);
-		ps.setLong(1, macAddress);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			long start = rs.getLong("startts"), end = rs.getLong("endts");
-			totalSecond += (int) ((end - start) / 1000);
-		}
-		System.out.println(totalSecond + "seconds");
-		return totalSecond;
-	}
-
-	public int LoyaltyCheck(long macAddress)
-	{	
+	
+	// Temporary method
+	public int count() {
 		int count = 0;
+		String sql = "SELECT count(DISTINCT(did)) from store_results";
+		Connection connected = this.connect();
 		try {
-			ResultSet rs = this.connect().prepareStatement("SELECT count(storeid) FROM store_results WHERE did=" + macAddress).executeQuery();
+			PreparedStatement ps = connected.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
 			while (rs.next())
 				count = rs.getInt("count");
-			System.out.println(count);
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 		}
 		return count;
 	}
-
-	public int averageEnterToLeaveTimeInMall(){
-		int totalSecond = 0;
-		try {
-			ResultSet rs = this.connect().prepareStatement("SELECT avg(endts-startts) FROM store_results").executeQuery();
-			while (rs.next())
-				totalSecond = rs.getInt("avg");
-			System.out.println(totalSecond + "second");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return totalSecond;
-	}
-
-	public int stayTimeInEachStore(long macAddress, int storeId)
-	{
-		int totalSecond = 0;	
-		try {
-			ResultSet rs = this.connect().prepareStatement("SELECT startts, endts FROM store_results WHERE did = " + macAddress + "AND storeid = " + storeId).executeQuery();
-			while (rs.next()) {
-				long start = rs.getLong("startts"), end = rs.getLong("endts");
-				totalSecond += (end - start) / 1000;	
-			}
-			System.out.println(totalSecond + "second");    		
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return totalSecond;
-	}
-
-	public int bounceRate(double SD)
-	{
-		Database db = this;
-		double count = 0;
-		double squaredDifferences = 0;
-		double mean = db.averageEnterToLeaveTimeInMall();
-		double sd = 0;
-		int bounceRateResult = 0;
-		try {
-			ResultSet rs = this.connect().prepareStatement("SELECT startts, endts FROM store_results").executeQuery();
-			while (rs.next()) {
-				Long start = rs.getLong("startts"), end = rs.getLong("endts");
-				squaredDifferences += Math.pow((end - start) / 1000.0 - mean, 2);
-				count++;
-			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		sd = Math.sqrt(squaredDifferences / count);
-		System.out.println(sd);
-		double belowSD = mean - SD * sd;
-		if (belowSD <= 0)
-			belowSD = 0;
-		System.out.println(belowSD);
-		try {
-			ResultSet rs = this.connect().prepareStatement("SELECT count(*) FROM store_results WHERE ((endts-startts)/1000) < " + belowSD).executeQuery();
-			while (rs.next())
-				bounceRateResult = rs.getInt("count");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return bounceRateResult;
+	
+	// Temporary method for testing
+	public static void main(String[] args) throws SQLException {
+		Database db = new Database();
+		System.out.println(db.peopleCounting(db.time2Period(2017, 10, 23, 22, null, null), null));
+		System.out.println(db.bounceRate(0.75));
 	}
 }
