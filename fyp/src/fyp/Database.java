@@ -230,6 +230,33 @@ public class Database {
 		return count;
 	}
 	
+	public double freqRatio()
+	{
+		double freqRatio = 0.0;
+		double infreqRatio = 0.0; 
+		String sql1 = "select count(*) as ratio1 from (select count(did) from store_results group by did having count (did) >= 15 ) as freq";
+		Connection connected = this.connect();
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql1);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				freqRatio = rs.getDouble("freq");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		
+		String sql2 = "select count(*) as ratio2 from ( select count(did) from store_results group by did having count(did)<15) as infreq";
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql2);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				infreqRatio = rs.getDouble("infreq");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return freqRatio/infreqRatio;
+	}
+	
 	// Temporary method for testing
 	public static void main(String[] args) throws SQLException {
 		Database db = new Database();
