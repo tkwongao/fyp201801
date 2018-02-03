@@ -286,6 +286,7 @@ public class Database {
 			c.add(Calendar.YEAR, 1);
 		} else
 			throw new NullPointerException();
+		time[1] = c.getTimeInMillis();
 		return time;
 	}
 
