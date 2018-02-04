@@ -1,10 +1,9 @@
-
-<!DOCTYPE html>
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<%@ page import="fyp.database"%>
-<%@ page import = "java.io.*,java.util.*, javax.servlet.*" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    <%@ page import="fyp.database"%>
+    <%@ page import = "java.io.*,java.util.*, javax.servlet.*" %>
 <%@ page import = "javax.servlet.*,java.text.*" %>
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
@@ -15,12 +14,10 @@
         <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
         <title>Minton - Responsive Admin Dashboard Template</title>
-	
+
 		<link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet" type="text/css" />
 
         <link href="plugins/switchery/switchery.min.css" rel="stylesheet" />
-        <link href="plugins/jquery-circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
-		<link href="plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
         <link href="EEK/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
         <link href="EEK/assets/css/core.css" rel="stylesheet" type="text/css">
         <link href="EEK/assets/css/icons.css" rel="stylesheet" type="text/css">
@@ -28,12 +25,12 @@
         <link href="EEK/assets/css/pages.css" rel="stylesheet" type="text/css">
         <link href="EEK/assets/css/menu.css" rel="stylesheet" type="text/css">
         <link href="EEK/assets/css/responsive.css" rel="stylesheet" type="text/css">
+		<link href="plugins/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css" rel="stylesheet">
+		<link href="plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
         <link href="EEK/assets/css/custom.css" rel="stylesheet" type="text/css">
-		
-		
-		
+
         <script src="EEK/assets/js/modernizr.min.js"></script>
-		
+
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!--[if lt IE 9]>
@@ -56,7 +53,7 @@
                 <!-- LOGO -->
                 <div class="topbar-left">
                     <div class="text-center">
-                        <a href="./main.jsp" class="waves-effect waves-primary logo"><object id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml" height="80"></object></a>
+                        <a href="./main.jsp" class="logo"><object id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml" height="80"></object></a>
                     </div>
                 </div>
 
@@ -71,7 +68,8 @@
                                 <span class="clearfix"></span>
                             </div>
 
-                         <!--    <ul class="nav navbar-nav hidden-xs">
+                            <ul class="nav navbar-nav hidden-xs">
+
                                 <li class="dropdown">
                                     <a href="javascript:void(0);" class="dropdown-toggle waves-effect" data-toggle="dropdown"
                                        role="button" aria-haspopup="true" aria-expanded="false">Sites <span
@@ -83,7 +81,7 @@
                                         <li><a href="javascript:void(0);">Projects four</a></li>
                                     </ul>
                                 </li>
-                            </ul> -->
+                            </ul>
 
                             <form role="search" class="navbar-left app-search pull-left hidden-xs">
 			                     <input type="text" placeholder="Search..." class="form-control app-search-input">
@@ -178,30 +176,30 @@
                 <div class="sidebar-inner slimscrollleft">
 
                     <div id="sidebar-menu">
-                        <ul class="in_top">
+                        <ul>
                             <li class="menu-title">Main</li>
 
 							<li>
-                                <a href="./main.jsp">
+                                <a href="./main.jsp" class="waves-effect waves-primary">
 								<i class="md md-home"></i><span>Home</span></a>
                             </li>
 							
-                        <!--     <li class="has_sub">
+                            <li class="has_sub">
                                    <a href="javascript:void(0);" class="waves-effect waves-primary"><i
                                         class="md md-access-time"></i><span>Realtime</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled">
                                     <li><a href="overview.html">Overview</a></li>
                                     <li><a href="map-view.html">Loactions</a></li>
                                 </ul>
-                            </li> -->
+                            </li>
 							
                             <li class="has_sub">
                                    <a href="javascript:void(0);" class="waves-effect waves-primary"><i
                                         class="md md-share"></i><span> Analytics </span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled">
-                                    <li><a href="EEK/compare-location.html">Compare Location</a></li>
-									<li><a href="EEK/compare-date.html">Compare Date</a></li>
-									<li><a href="EEK/traffic.html">Traffic</a></li>
+                                    <li><a href="compare-location.html">Compare Location</a></li>
+									<li><a href="compare-date.html">Compare Date</a></li>
+									<li><a href="traffic.html">Traffic</a></li>
 									<li><a href="dwell-time.jsp">Dwell Time</a></li>
 									<li><a href="loyalty.jsp">Loyalty</a></li>
                                 </ul>
@@ -355,7 +353,7 @@
 		
 						<ul class="in_bottom">
 							<li>
-                                <a href="javascript:void(0);">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary">
 								<i class="md md-settings"></i><span> Setting </span></a>
                             </li>
 						</ul>
@@ -386,14 +384,14 @@
                     </div>
                 </div>
             </div>
-            <!-- Left Sidebar End --> 
+            <!-- Left Sidebar End -->
 
 
 
             <!-- ============================================================== -->
             <!-- Start right Content here -->
             <!-- ============================================================== -->                      
-            <div class="content-page">
+             <div class="content-page">
                 <!-- Start content -->
                 <div class="content">
                     <div class="container">
@@ -403,7 +401,7 @@
                             <div class="col-sm-12">
                                 <div class="page-title-box">
 									<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
-                              <!--       <div class="btn-group pull-right">
+                                    <div class="btn-group pull-right">
                                         <button type="button" class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn" data-toggle="dropdown" aria-expanded="false">K11 <span class="caret"></span></button>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="javascript:void(0);">K11</a></li>
@@ -411,8 +409,8 @@
                                             <li><a href="javascript:void(0);">The Base</a></li>
                                         </ul>
                                     </div>
- -->
- <%
+
+									 <%
          Date date = new Date();
  SimpleDateFormat ft = 
          new SimpleDateFormat ("E dd/MM/yyyy ");
@@ -421,189 +419,195 @@
                                 </div>
                             </div>
                         </div>
+						
+						<!-- <div class="row">
+							<div class="col-sm-6 col-lg-6">
+								<div class="card-box">
+									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
 
-
-						<div class="m-l-80 m-r-80">
-							<div class="row">
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-<!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
-										<% 
-											database db= new database();
-											int id = db.totalCount();
-											
-										%>
-										<h3 class="text-success counter"><%=id%></h3>
-										<p class="text-muted text-nowrap">Visitors Count</p>
+									<div class="widget-chart text-center">
+										<div class="line-chart">
+											<svg style="height:400px;"></svg>
+										</div>
 										
-									</div>
-								</div>
-
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
- -->										
- 										<% 
-											
-											int dailyCount = db.dailyCount();
-											
-										%>
- 										<h3 class="text-primary counter"><%=dailyCount %></h3>
-										<p class="text-muted text-nowrap">Daily Visitors</p>
-									</div>
-								</div>
-
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-										<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
-										<%
-
-										double dwelltime = db.averageEnterToLeaveTimeInMall();
-										
-										%>
-										<h3 class="text-inverse counter"><%=dwelltime%></h3>
-										<p class="text-muted text-nowrap">Average Dwell Time (seconds)</p>
+										<ul class="list-inline m-t-15">
+											<li>
+												<h4 class="text-muted m-t-20">Today</h4>
+												<h3 class="m-b-0">1000</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Yesterday</h4>
+												<h3 class="m-b-0">523</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Average</h4>
+												<h3 class="m-b-0">965</h3>
+											</li>
+										</ul>
 									</div>
 								</div>
 							</div>
-							<!-- end row -->
-
-							<div class="row">
-								<div class="col-sm-6 col-lg-6">
-									<div class="card-box">
-										<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
-
-										<div class="widget-chart text-center">
-											<div class="line-chart">
-												<svg style="height:400px;"></svg>
-											</div>
-											
-											<ul class="list-inline m-t-15">
-												<li>
-													<h4 class="text-muted m-t-20">Today</h4>
-													<h3 class="m-b-0">1000</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Yesterday</h4>
-													<h3 class="m-b-0">523</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Average</h4>
-													<h3 class="m-b-0">965</h3>
-												</li>
-											</ul>
-										</div>
-									</div>
-								</div>
 
 
-								<div class="col-sm-6 col-lg-6">
-									<div class="card-box">
-										<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
-										
-										<div class="widget-chart text-center">
-											<div class="bar-chart">
-												<svg style="height:400px;"></svg>
-											</div>
-											
-											<ul class="list-inline m-t-15">
-												<li>
-													<h4 class="text-muted m-t-20">Today</h4>
-													<h3 class="m-b-0">1000</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Yesterday</h4>
-													<h3 class="m-b-0">523</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Average</h4>
-													<h3 class="m-b-0">965</h3>
-												</li>
-											</ul>
-										</div>
-										
-									</div>
-								</div>
-
-							</div>
-							<!-- end row -->
-							
-							<div class="row">
-								
-								
-								<div class="col-lg-4">
-									<div class="card-box">
-
-										<div class="clearfix">
-											<h4 class="m-t-0 header-title"><b>Shopper Count</b></h4>
-											<% int shoppercount = db.count();%>
-											<span class="m-t-10 dropcap text-primary"><%=shoppercount %></span>
-										</div>
-					
-										<div class="clearfix">
-											<h4 class="m-t-40 header-title"><b>Average Dwell Time</b></h4>
-											<div class="bar-chart-second">
-												<svg style="height:220px;"></svg>
-											</div>
-										</div>
-					
-										<div class="clearfix">
-											<h4 class="m-t-10 header-title"><b>Shop List</b></h4>
-											<table class="table">
-												<thead>
-													<tr>
-														<td>Shop</th>
-														<td align="right">Visitors</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>Nike(Shop 1)</td>
-														<% int shopOneShopperCount = db.eachShopVisitorCount(1000001);%>
-														<td align="right"><%= shopOneShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Apple(Shop 2)</td>
-														<% int shopTwoShopperCount = db.eachShopVisitorCount(1000002);%>
-														<td align="right"><%= shopTwoShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Samsung(Shop 3)</td>
-														<% int shopThreeShopperCount = db.eachShopVisitorCount(1000003);%>
-														<td align="right"><%= shopThreeShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Adidas(Shop 4)</td>
-														<% int shopFourShopperCount = db.eachShopVisitorCount(1000004);%>
-														<td align="right"><%= shopFourShopperCount%></td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
+							<div class="col-sm-6 col-lg-6">
+								<div class="card-box">
+									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
 									
+									<div class="widget-chart text-center">
+										<div class="bar-chart">
+											<svg style="height:400px;"></svg>
+										</div>
+										
+										<ul class="list-inline m-t-15">
+											<li>
+												<h4 class="text-muted m-t-20">Today</h4>
+												<h3 class="m-b-0">1000</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Yesterday</h4>
+												<h3 class="m-b-0">523</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Average</h4>
+												<h3 class="m-b-0">965</h3>
+											</li>
+										</ul>
+									</div>
+									
+								</div>
+							</div> -->
+						
+															
+									 <form action = "loyalty.jsp" method = "GET">
+         User Mac Address: <input type = "text" name = "macAddress">
+       
+         <input type = "submit" value = "Submit" />
+      </form>
+													
+															
+							<div class="col-lg-8">
+								<div class="card-box">
+									<div class="widget-chart text-center">
+										<ul class="list-inline">
+											<li>
+											
+												<h4 class="text-muted m-t-20">Number of Visit </h4>
+												<%	
+													database db = new database();
+													long usermac = 0L;
+													int loyalty= 0;
+													int stayTime = 0;
+													int storeid = 0;
+													int stayTimeInAstore = 0;
+													if(request.getParameter("macAddress") != null)
+													{
+														usermac =  Long.parseLong(request.getParameter("macAddress"));
+														loyalty = db.LoyaltyCheck(usermac);
+														stayTime = db.stayTimeInMall(usermac);
+													}
+												/* 	if(request.getParameter("storeid") != null && request.getParameter("macAddress") != null)
+													{
+														usermac =  Long.parseLong(request.getParameter("macAddress"));
+														storeid = Integer.parseInt(request.getParameter("storeid"));
+														stayTimeInAstore = db.stayTimeInEachStore(usermac, storeid);
+													} */
+													
+												%> 
+												<h3 class="m-b-0"><%=loyalty %></h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Total Dwell Time Of a User</h4>
+												<h3 class="m-b-0"><%= stayTime %></h3>
+											</li>
+											 <%-- <li>
+												<h4 class="text-muted m-t-20">Stay Time In Store Of a User</h4>
+												<h3 class="m-b-0"><%= stayTimeInAstore %></h3>
+											</li>  --%>
+											
+										<!-- 	<li>
+												<h4 class="text-muted m-t-20">Retention Rate</h4>
+												<h3 class="m-b-0">965</h3>
+											</li> -->
+										</ul>
+									
+										<div class="line-chart-second">
+											<svg style="height:400px;"></svg>
+										</div>
+										
+										<div class="text-left m-t-20" style="border-top:1px solid grey;">
+											<div class="btn-group">
+												<button type="button" class="btn btn-outline no-padding m-t-10" data-toggle="dropdown" aria-expanded="false">Past 7 Days <span class="caret"></span></button>
+												<ul class="dropdown-menu" role="menu">
+													<li><a href="javascript:void(0);">Past 7 Days</a></li>
+													<li><a href="javascript:void(0);">Past Month</a></li>
+												</ul>
+											</div>
+										</div>
 									</div>
 								</div>
 							</div>
-							<!-- end row -->
 							
-	
-							<!-- end row -->
-							
+							<div class="col-lg-4">
+								<div class="card-box">
+
+									<div class="clearfix">
+										<h4 class="m-t-0 header-title"><b>People Count</b></h4>
+										<span class="m-t-10 dropcap text-primary">100</span>
+									</div>
+				
+									<div class="clearfix">
+										<h4 class="m-t-40 header-title"><b>Average Dwell Time</b></h4>
+										<div class="bar-chart-second">
+											<svg style="height:220px;"></svg>
+										</div>
+									</div>
+									
+									
+				<!-- 
+									<div class="clearfix">
+										<h4 class="m-t-10 header-title"><b>Top Shop List</b></h4>
+										<table class="table">
+											<thead>
+												<tr>
+													<td>Top Shop</th>
+													<td align="right">Visitors</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Nike</td>
+													<td align="right">300</td>
+												</tr>
+												<tr>
+													<td>Apple</td>
+													<td align="right">200</td>
+												</tr>
+												<tr>
+													<td>Samsung</td>
+													<td align="right">100</td>
+												</tr>
+											</tbody>
+										</table>
+									</div> -->
+								</div>
+							</div>
 						</div>
 
-                       
-
-                          
-
+ 
 
                     </div>
                     <!-- end container -->
+
                 </div>
                 <!-- end content -->
 
+
+
+                <!-- FOOTER -->
                 <footer class="footer text-right">
                     2017 © P-Sense.
                 </footer>
+                <!-- End FOOTER -->
 
             </div>
             <!-- ============================================================== -->
@@ -853,7 +857,7 @@
             var resizefunc = [];
         </script>
 
-        <!-- Plugins  -->
+        <!-- jQuery  -->
         <script src="EEK/assets/js/jquery.min.js"></script>
         <script src="EEK/assets/js/bootstrap.min.js"></script>
         <script src="EEK/assets/js/detect.js"></script>
@@ -865,63 +869,18 @@
         <script src="EEK/assets/js/jquery.nicescroll.js"></script>
         <script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
         <script src="plugins/switchery/switchery.min.js"></script>
-        
-        <!-- Counter Up  -->
-        <script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
-        <script src="plugins/counterup/jquery.counterup.min.js"></script>
-
-        <!-- circliful Chart -->
-        <script src="plugins/jquery-circliful/js/jquery.circliful.min.js"></script>
-        <script src="plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
 
         <!-- Nvd3 js -->
         <script src="plugins/d3/d3.min.js"></script>
         <script src="plugins/nvd3/build/nv.d3.min.js"></script>
         <script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
 		
-        <!-- skycons -->
-        <script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
-        
-        <!-- Page js  -->
-        <script src="EEK/assets/pages/jquery.dashboard.js"></script>
-
-		<!-- HeatTable js  -->
-		<script src="EEK/assets/pages/jquery.heatTable.js"></script>
-		<script src="EEK/assets/pages/jquery.retentionTable.js"></script>
+		<script src="plugins/moment/moment.js"></script>
+     	<script src="plugins/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+     	<script src="plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
 		
-        <!-- Custom main Js -->
         <script src="EEK/assets/js/jquery.core.js"></script>
         <script src="EEK/assets/js/jquery.app.js"></script>
 
-        
-        <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                    delay: 100,
-                    time: 1200
-                });
-                $('.circliful-chart').circliful();
-            });
-
-            // BEGIN SVG WEATHER ICON
-            if (typeof Skycons !== 'undefined'){
-            var icons = new Skycons(
-                {"color": "#3bafda"},
-                {"resizeClear": true}
-                ),
-                    list  = [
-                        "clear-day", "clear-night", "partly-cloudy-day",
-                        "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-                        "fog"
-                    ],
-                    i;
-
-                for(i = list.length; i--; )
-                icons.set(list[i], list[i]);
-                icons.play();
-            };
-
-        </script>
-    
     </body>
 </html>
