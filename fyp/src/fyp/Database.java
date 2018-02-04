@@ -303,7 +303,52 @@ public class Database {
 			count = rs.getInt("count");
 		return count;
 	}
+	
+	public int dailyCount() {
+		int count = 0;
+		String sql = "select count (*)/365 as \"daily\" from store_results";
+		Connection connected = this.connect();
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				count = rs.getInt("daily");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
+	
+	public int eachShopVisitorCount(int storeid) {
+		int count = 0;
+		String sql = "select count (*) from store_results where storeid="+storeid;
+		Connection connected = this.connect();
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				count = rs.getInt("count");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
 
+	public int totalCount() {
+		int count = 0;
+		String sql = "SELECT count(*) from store_results";
+		Connection connected = this.connect();
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				count = rs.getInt("count");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
+	
 	// Temporary method for testing
 	public static void main(String[] args) throws SQLException {
 		Database db = new Database();
