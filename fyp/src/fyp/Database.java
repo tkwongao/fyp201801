@@ -14,7 +14,9 @@ import java.util.TimeZone;
 public class Database {
 	private Connection conn;
 	private int fetchSize = 0;
-
+	public static final int[] FUTURE = {2099, 12, 31, 23, 59, 59},
+			PAST = {2015, 1, 1, 0, 0, 0};
+	
 	public Database() {
 		try {
 			connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456", 400);
@@ -39,33 +41,68 @@ public class Database {
 		conn.setAutoCommit(false);
 		System.out.println("Connected to the PostgreSQL server successfully.");
 	}
-
+	
+	/*
+	public int dailyCount() {
+		int count = 0;
+		String sql = "select count (*)/365 as \"daily\" from store_results";
+		Connection connected = conn;
+		try {
+			PreparedStatement ps = connected.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				count = rs.getInt("daily");
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		}
+		return count;
+	}
+	*/
+	
 	/**
-	 * Connect the database to count the number of devices detected in the whole mall or a particular store in a certain period of time.
+	 * Connect the database to count the number of devices detected in the whole mall in a certain period of time.
 	 * @param period The earliest and latest times the counted data could come from, as UTC milliseconds from the epoch.
-	 * @param storeID The ID of the store. If {@code null}, the mall level data will be counted.
 	 * @return A non-negative {@code int} representing the count in the specific time range.
 	 * @throws SQLException if an error occurs on database operations.
 	 */
-	public int peopleCounting(final int[] start, final int[] end, final Integer storeID) throws SQLException {
+	public int totalCount(final int[] start, final int[] end) throws SQLException {
 		Long[] period = time2Period(start, end);
-		long count = -1;
-		String sql = (Objects.isNull(storeID)) ? 
-				"SELECT count(DISTINCT(DID)) FROM site_results WHERE startts BETWEEN ? AND ?" :
-					"SELECT count(DISTINCT(DID)) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?";
+		int count = -1;
+		String sql = "SELECT count(DISTINCT(DID)) FROM site_results WHERE startts BETWEEN ? AND ?";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setLong(1, period[0]);
+		ps.setLong(2, period[1]);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			count = rs.getInt("count");
+		if (count < 0)
+			throw new SQLException("Some exceptions have occurred.");
+		return count;
+	}
+	
+	/**
+	 * Connect the database to count the number of devices detected in a particular store in a certain period of time.
+	 * @param period The earliest and latest times the counted data could come from, as UTC milliseconds from the epoch.
+	 * @param storeID The ID of the store.
+	 * @return A non-negative {@code int} representing the count in the specific time range.
+	 * @throws SQLException if an error occurs on database operations.
+	 */
+	public int eachShopVisitorCount(final int[] start, final int[] end, final int storeID) throws SQLException {
+		Long[] period = time2Period(start, end);
+		int count = -1;
+		String sql = "SELECT count(DISTINCT(DID)) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]); // Use parameterized statement to prevent SQL injection.
 		ps.setLong(2, period[1]);
-		if (Objects.nonNull(storeID))
-			ps.setInt(3, storeID);
+		ps.setInt(3, storeID);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			count = rs.getLong("count");
+			count = rs.getInt("count");
 		if (count < 0)
 			throw new SQLException("Some exceptions have occurred.");
-		return (int) count;
+		return count;
 	}
-
+	
 	/**
 	 * 
 	 * @param start
@@ -228,7 +265,7 @@ public class Database {
 	 * @param end
 	 * @return
 	 */
-	public Long[] time2Period(final int[] start, final int[] end) {
+	public static Long[] time2Period(final int[] start, final int[] end) {
 		if (start.length != 6 || end.length != 6)
 			throw new IllegalArgumentException("The length of start and end time array must be 6");
 		Long[] period = {time2Period(start[0], start[1], start[2], start[3], start[4], start[5])[0],
@@ -251,7 +288,7 @@ public class Database {
 	 * The second element in the array is optional.
 	 * @throws IllegalArgumentException if year is less than 2015, or either of year, month, day, hour, minute or second is out of valid range.
 	 */
-	public Long[] time2Period(final Integer year, Integer month, final Integer day, final Integer hour, final Integer minute, final Integer second) {
+	public static Long[] time2Period(final Integer year, Integer month, final Integer day, final Integer hour, final Integer minute, final Integer second) {
 		Calendar c = new GregorianCalendar(TimeZone.getTimeZone("GMT+8:00"));
 		c.clear();
 		c.setLenient(false);
@@ -301,57 +338,12 @@ public class Database {
 		return count;
 	}
 	
-	public int dailyCount() {
-		int count = 0;
-		String sql = "select count (*)/365 as \"daily\" from store_results";
-		Connection connected = this.connect();
-		try {
-			PreparedStatement ps = connected.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				count = rs.getInt("daily");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return count;
-	}
-	
-	public int eachShopVisitorCount(int storeid) {
-		int count = 0;
-		String sql = "select count (*) from store_results where storeid="+storeid;
-		Connection connected = this.connect();
-		try {
-			PreparedStatement ps = connected.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				count = rs.getInt("count");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return count;
-	}
-
-	public int totalCount() {
-		int count = 0;
-		String sql = "SELECT count(*) from store_results";
-		Connection connected = this.connect();
-		try {
-			PreparedStatement ps = connected.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				count = rs.getInt("count");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return count;
-	}
-	
 	// Temporary method for testing
 	public static void main(String[] args) throws SQLException {
 		Database db = new Database();
 		int[] start = {2017, 10, 23, 22, 0, 0}, end = {2017, 10, 23, 23, 0, 0};
 		System.out.println(db.freqRatio(start, end));
-		System.out.println(db.peopleCounting(start, end, null));
+		System.out.println(db.totalCount(start, end));
 		System.out.println(db.bounceRate(start, end, 0.75));
 	}
 }
