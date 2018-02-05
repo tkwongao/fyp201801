@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -13,13 +12,13 @@ import java.util.TimeZone;
 
 public class Database {
 	private Connection conn;
-	private int fetchSize = 0;
+	private static final double MILLISECONDS_TO_SECONDS = 1000;
 	public static final int[] FUTURE = {2099, 12, 31, 23, 59, 59},
 			PAST = {2015, 1, 1, 0, 0, 0};
-	
+
 	public Database() {
 		try {
-			connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456", 400);
+			connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
 		} catch (ClassNotFoundException | SQLException e) {
 			e.printStackTrace();
 		}
@@ -30,66 +29,49 @@ public class Database {
 	 * @param url The JDBC URL of the database
 	 * @param user The user name to access the database
 	 * @param password The database password
-	 * @param fetchSize
 	 * @throws SQLException if an error occurs on database operations.
 	 * @throws ClassNotFoundException if the PostgreSQL Driver is not found.
 	 */
-	private void connect(String url, String user, String password, int fetchSize) throws SQLException, ClassNotFoundException {
-		this.fetchSize = fetchSize;
+	private void connect(String url, String user, String password) throws SQLException, ClassNotFoundException {
 		Class.forName("org.postgresql.Driver");
 		conn = DriverManager.getConnection(url, user, password);
 		conn.setAutoCommit(false);
 		System.out.println("Connected to the PostgreSQL server successfully.");
 	}
-	
-	/*
-	public int dailyCount() {
-		int count = 0;
-		String sql = "select count (*)/365 as \"daily\" from store_results";
-		Connection connected = conn;
-		try {
-			PreparedStatement ps = connected.prepareStatement(sql);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				count = rs.getInt("daily");
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
-		}
-		return count;
-	}
-	*/
-	
+
 	/**
 	 * Connect the database to count the number of devices detected in the whole mall in a certain period of time.
-	 * @param period The earliest and latest times the counted data could come from, as UTC milliseconds from the epoch.
-	 * @return A non-negative {@code int} representing the count in the specific time range.
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @return A {@code int} representing the count in the specific time range.
 	 * @throws SQLException if an error occurs on database operations.
 	 */
-	public int totalCount(final int[] start, final int[] end) throws SQLException {
+	public int totalVisitorCount(final int[] start, final int[] end) throws SQLException {
 		Long[] period = time2Period(start, end);
-		int count = -1;
 		String sql = "SELECT count(DISTINCT(DID)) FROM site_results WHERE startts BETWEEN ? AND ?";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]);
 		ps.setLong(2, period[1]);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			count = rs.getInt("count");
-		if (count < 0)
-			throw new SQLException("Some exceptions have occurred.");
-		return count;
+			return rs.getInt("count");
+		throw new SQLException("No value was sent from the database.");
 	}
-	
+
 	/**
 	 * Connect the database to count the number of devices detected in a particular store in a certain period of time.
-	 * @param period The earliest and latest times the counted data could come from, as UTC milliseconds from the epoch.
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
 	 * @param storeID The ID of the store.
 	 * @return A non-negative {@code int} representing the count in the specific time range.
 	 * @throws SQLException if an error occurs on database operations.
 	 */
-	public int eachShopVisitorCount(final int[] start, final int[] end, final int storeID) throws SQLException {
+	public int eachStoreVisitorCount(final int[] start, final int[] end, final int storeID) throws SQLException {
 		Long[] period = time2Period(start, end);
-		int count = -1;
 		String sql = "SELECT count(DISTINCT(DID)) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]); // Use parameterized statement to prevent SQL injection.
@@ -97,47 +79,173 @@ public class Database {
 		ps.setInt(3, storeID);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			count = rs.getInt("count");
-		if (count < 0)
-			throw new SQLException("Some exceptions have occurred.");
-		return count;
+			return rs.getInt("count");
+		throw new SQLException("No value was sent from the database.");
 	}
-	
+
 	/**
 	 * 
-	 * @param start
-	 * @param end
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @return
+	 * @throws SQLException
+	 */
+	public double averageEnterToLeaveTimeInMall(final int[] start, final int[] end) throws SQLException {
+		Long[] period = time2Period(start, end);
+		String sql = ("SELECT avg(endts - startts) FROM site_results WHERE startts BETWEEN ? AND ?");
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setLong(1, period[0]);
+		ps.setLong(2, period[1]);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			return rs.getLong("avg") / MILLISECONDS_TO_SECONDS;
+		throw new SQLException("No value was sent from the database.");
+	}
+
+	/**
+	 * 
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param storeId The ID of the store.
+	 * @return
+	 * @throws SQLException
+	 */
+	public double averageEnterToLeaveTimeInEachStore(final int[] start, final int[] end, final int storeId) throws SQLException {
+		Long[] period = time2Period(start, end);
+		String sql = ("SELECT avg(endts - startts) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?");
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setLong(1, period[0]);
+		ps.setLong(2, period[1]);
+		ps.setInt(3, storeId);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			return rs.getLong("avg") / MILLISECONDS_TO_SECONDS;
+		throw new SQLException("No value was sent from the database.");
+	}
+
+	/**
+	 * 
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @return
+	 * @throws SQLException
+	 */
+	public double totalFreqRatio(final int[] start, final int[] end) throws SQLException {
+		Long[] period = time2Period(start, end);
+		String sql = "SELECT cast(freq.count AS DOUBLE PRECISION) /" + 
+				"((SELECT count(DISTINCT (did)) FROM site_results WHERE startts BETWEEN ? AND ?) - freq.count) AS ratio FROM" + 
+				"(SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM site_results " + 
+				"WHERE startts BETWEEN ? AND ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setLong(1, period[0]);
+		ps.setLong(2, period[1]);
+		ps.setLong(3, period[0]);
+		ps.setLong(4, period[1]);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			return rs.getDouble("ratio");
+		throw new SQLException("No value was sent from the database.");
+	}
+
+	/**
+	 * 
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param storeId The ID of the store.
+	 * @return
+	 * @throws SQLException
+	 */
+	public double eachStoreFreqRatio(final int[] start, final int[] end, final int storeId) throws SQLException {
+		Long[] period = time2Period(start, end);
+		String sql = "SELECT cast(freq.count AS DOUBLE PRECISION) /" + 
+				"((SELECT count(DISTINCT (did)) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?) - freq.count) AS ratio FROM" + 
+				"(SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM store_results " + 
+				"WHERE startts BETWEEN ? AND ? AND storeid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
+		PreparedStatement ps = conn.prepareStatement(sql);
+		for (int i = 0; i < 2; i++) {
+			ps.setLong(3 * i + 1, period[0]);
+			ps.setLong(3 * i + 2, period[1]);
+			ps.setInt(3 * i + 3, storeId);
+		}
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			return rs.getDouble("ratio");
+		throw new SQLException("No value was sent from the database.");
+	}
+
+	/**
+	 * 
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param storeId The ID of the store.
+	 * @param thresholdSD
+	 * @return
+	 * @throws SQLException
+	 */
+	public int bounceRate(final int[] start, final int[] end, final int storeId, final double thresholdSD) throws SQLException {
+		Long[] period = time2Period(start, end);
+		String sql = "WITH cache AS (SELECT (endts - startts) / ? AS cache FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?)," + 
+				"stat AS (SELECT avg(cache) AS avg, count(*) FROM cache)," + 
+				"sd AS (SELECT POWER(SUM(POWER(cache - (SELECT avg FROM stat), 2)) / (SELECT count FROM stat), 0.5) FROM cache)" + 
+				"SELECT count(*) FROM cache WHERE cache < greatest(0, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";	
+		PreparedStatement ps = conn.prepareStatement(sql);
+		ps.setDouble(1, MILLISECONDS_TO_SECONDS);
+		ps.setLong(2, period[0]);
+		ps.setLong(3, period[1]);
+		ps.setInt(4, storeId);
+		ps.setDouble(5, thresholdSD);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next())
+			return rs.getInt("count");
+		throw new SQLException("No value was sent from the database.");
+	}
+
+	/**
+	 * 
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
 	 * @param macAddress
 	 * @return
 	 * @throws SQLException
 	 */
-	public int stayTimeInMall(final int[] start, final int[] end, final long macAddress) throws SQLException {
+	public int userStayTimeInMall(final int[] start, final int[] end, final long macAddress) throws SQLException {
 		Long[] period = time2Period(start, end);
-		double totalSecond = 0;
-		String sql = "SELECT sum(endts - startts) AS dwellTimeMs FROM store_results WHERE startts BETWEEN ? AND ? AND did = ?";
+		String sql = "SELECT sum(endts - startts) AS dwellTimeMs FROM site_results WHERE startts BETWEEN ? AND ? AND did = ?";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]);
 		ps.setLong(2, period[1]);
 		ps.setLong(3, macAddress);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			totalSecond = rs.getLong("dwellTimeMs") / 1000.0;
-		System.out.println(totalSecond + "seconds");
-		return (int) totalSecond;
+			return (int) (rs.getLong("dwellTimeMs") / MILLISECONDS_TO_SECONDS);
+		throw new SQLException("No value was sent from the database.");
 	}
 
 	/**
 	 * 
-	 * @param start
-	 * @param end
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
 	 * @param macAddress
-	 * @param storeId
+	 * @param storeId The ID of the store.
 	 * @return
 	 * @throws SQLException
 	 */
-	public int stayTimeInEachStore(final int[] start, final int[] end, final long macAddress, final int storeId) throws SQLException {
+	public int userStayTimeInEachStore(final int[] start, final int[] end, final long macAddress, final int storeId) throws SQLException {
 		Long[] period = time2Period(start, end);
-		double totalSecond = 0;
 		String sql = ("SELECT sum(endts - startts) AS dwellTimeMs FROM store_results WHERE startts BETWEEN ? AND ? AND did = ? AND storeid = ?");
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]);
@@ -146,75 +254,22 @@ public class Database {
 		ps.setInt(4, storeId);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			totalSecond = rs.getLong("dwellTimeMs") / 1000.0;
-		System.out.println(totalSecond + " seconds");
-		return (int) totalSecond;
+			return (int) (rs.getLong("dwellTimeMs") / MILLISECONDS_TO_SECONDS);
+		throw new SQLException("No value was sent from the database.");
 	}
 
 	/**
 	 * 
-	 * @param start
-	 * @param end
-	 * @return
-	 * @throws SQLException
-	 */
-	public double averageEnterToLeaveTimeInMall(final int[] start, final int[] end) throws SQLException {
-		Long[] period = time2Period(start, end);
-		double totalSecond = 0;
-		String sql = ("SELECT avg(endts - startts) FROM store_results WHERE startts BETWEEN ? AND ?");
-		PreparedStatement ps = conn.prepareStatement(sql);
-		ps.setLong(1, period[0]);
-		ps.setLong(2, period[1]);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next())
-			totalSecond = rs.getLong("avg") / 1000.0;
-		System.out.println(totalSecond + " seconds");
-		return totalSecond;
-	}
-
-	/**
-	 * 
-	 * @param start
-	 * @param end
-	 * @param thresholdSD
-	 * @return
-	 * @throws SQLException
-	 */
-	public int bounceRate(final int[] start, final int[] end, final double thresholdSD) throws SQLException {
-		Long[] period = time2Period(start, end);
-		double sd = 0, squaredDifferences = 0;
-		double mean = averageEnterToLeaveTimeInMall(start, end);
-		int count = 0;
-		ArrayList<Double> dwellTimeList = new ArrayList<Double>();
-		String sql = ("SELECT endts - startts AS dwellTimeMs FROM store_results WHERE startts BETWEEN ? AND ?");
-		PreparedStatement ps = conn.prepareStatement(sql);
-		ps.setLong(1, period[0]);
-		ps.setLong(2, period[1]);
-		ps.setFetchSize(fetchSize);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) { // TODO performance: fetching the data here currently takes a long time
-			double dwellTimeSeconds = rs.getLong("dwellTimeMs") / 1000.0;
-			dwellTimeList.add(dwellTimeSeconds);
-			squaredDifferences += Math.pow(dwellTimeSeconds - mean, 2);
-			count++;
-		}
-		sd = Math.sqrt(squaredDifferences / count);
-		final double belowSD = Math.max(0, mean - thresholdSD * sd);
-		System.out.println("Standard derivation: " + sd + ", " + thresholdSD + " standard derivations below mean: " + belowSD);
-		return dwellTimeList.stream().filter(e -> e < belowSD).toArray().length; // Same as what did by count(*), count elements < belowSD
-	}
-
-	/**
-	 * 
-	 * @param start
-	 * @param end
+	 * @param start The earliest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
+	 * @param end The latest time the counted data could come from, as arrays of length 6 containing
+	 * year, month, day, hour, minute, and second.
 	 * @param macAddress
 	 * @return
 	 * @throws SQLException
 	 */
 	public int LoyaltyCheck(final int[] start, final int[] end, final long macAddress) throws SQLException {
 		Long[] period = time2Period(start, end);
-		int count = 0;
 		String sql = "SELECT count(storeid) FROM store_results WHERE startts BETWEEN ? AND ? AND did = ?";
 		PreparedStatement ps = conn.prepareStatement(sql);
 		ps.setLong(1, period[0]);
@@ -222,50 +277,19 @@ public class Database {
 		ps.setLong(3, macAddress);
 		ResultSet rs = ps.executeQuery();
 		while (rs.next())
-			count = rs.getInt("count");
-		System.out.println(count);
-		return count;
+			return rs.getInt("count");
+		throw new SQLException("No value was sent from the database.");
 	}
+
 
 	/**
 	 * 
-	 * @param start
-	 * @param end
+	 * @param start The start time of the period, as arrays of length 6 containing year, month, day, hour, minute, and second.
+	 * @param end The end time of the period, as arrays of length 6 containing year, month, day, hour, minute, and second.
 	 * @return
-	 * @throws SQLException
+	 * @throws IllegalArgumentException
 	 */
-	public double freqRatio(final int[] start, final int[] end) throws SQLException {
-		Long[] period = time2Period(start, end);
-		int freqUsers = 0, distinctUsers = 0;
-		String sql1 = "SELECT count(*) FROM (SELECT DISTINCT (did) FROM "
-				+ "(SELECT did, cast(extract(ISOYEAR FROM to_timestamp(startts / 1000) AT TIME ZONE 'UTC+8') * 100 + "
-				+ "extract(WEEK FROM to_timestamp(startts / 1000) AT TIME ZONE 'UTC+8') AS INTEGER) AS weekId, "
-				+ "cast(extract(ISODOW FROM to_timestamp(startts / 1000) AT TIME ZONE 'UTC+8') AS SMALLINT) AS day "
-				+ "FROM store_results WHERE startts BETWEEN ? AND ?) AS dataWithWeek "
-				+ "GROUP BY did, weekId HAVING count(DISTINCT (day)) > 3) AS freq;",
-				sql2 = "SELECT count(DISTINCT (did)) FROM store_results WHERE startts BETWEEN ? AND ?;";
-		PreparedStatement ps1 = conn.prepareStatement(sql1), ps2 = conn.prepareStatement(sql2);
-		ps1.setLong(1, period[0]);
-		ps1.setLong(2, period[1]);
-		ps2.setLong(1, period[0]);
-		ps2.setLong(2, period[1]);
-		ResultSet rs2 = ps2.executeQuery();
-		while (rs2.next())
-			distinctUsers = rs2.getInt("count");
-		ResultSet rs1 = ps1.executeQuery();
-		while (rs1.next())
-			freqUsers = rs1.getInt("count");
-		// TODO This is to keep the same as the previous way of calculating the ratio, but it may be incorrect.
-		return (double) freqUsers / (distinctUsers - freqUsers);
-	}
-
-	/**
-	 * 
-	 * @param start
-	 * @param end
-	 * @return
-	 */
-	public static Long[] time2Period(final int[] start, final int[] end) {
+	public static Long[] time2Period(final int[] start, final int[] end) throws IllegalArgumentException{
 		if (start.length != 6 || end.length != 6)
 			throw new IllegalArgumentException("The length of start and end time array must be 6");
 		Long[] period = {time2Period(start[0], start[1], start[2], start[3], start[4], start[5])[0],
@@ -288,7 +312,7 @@ public class Database {
 	 * The second element in the array is optional.
 	 * @throws IllegalArgumentException if year is less than 2015, or either of year, month, day, hour, minute or second is out of valid range.
 	 */
-	public static Long[] time2Period(final Integer year, Integer month, final Integer day, final Integer hour, final Integer minute, final Integer second) {
+	public static Long[] time2Period(final Integer year, Integer month, final Integer day, final Integer hour, final Integer minute, final Integer second) throws IllegalArgumentException{
 		Calendar c = new GregorianCalendar(TimeZone.getTimeZone("GMT+8:00"));
 		c.clear();
 		c.setLenient(false);
@@ -327,23 +351,10 @@ public class Database {
 		return time;
 	}
 
-	// Temporary method
-	public int count() throws SQLException {
-		int count = 0;
-		String sql = "SELECT count(DISTINCT(did)) from store_results";
-		PreparedStatement ps = conn.prepareStatement(sql);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next())
-			count = rs.getInt("count");
-		return count;
-	}
-	
 	// Temporary method for testing
 	public static void main(String[] args) throws SQLException {
 		Database db = new Database();
 		int[] start = {2017, 10, 23, 22, 0, 0}, end = {2017, 10, 23, 23, 0, 0};
-		System.out.println(db.freqRatio(start, end));
-		System.out.println(db.totalCount(start, end));
-		System.out.println(db.bounceRate(start, end, 0.75));
+		System.out.println(db.bounceRate(start, end, 1000001, 0.75));
 	}
 }
