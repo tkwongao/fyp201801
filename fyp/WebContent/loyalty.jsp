@@ -500,8 +500,8 @@
 													if(request.getParameter("macAddress") != null)
 													{
 														usermac =  Long.parseLong(request.getParameter("macAddress"));
-														loyalty = db.LoyaltyCheck(Database.PAST, Database.FUTURE, usermac);
-														stayTime = db.stayTimeInMall(Database.PAST, Database.FUTURE, usermac);
+														loyalty = db.loyaltyCheck(Database.PAST, Database.FUTURE, usermac);
+														stayTime = db.userStayTimeInMall(Database.PAST, Database.FUTURE, usermac);
 													}
 												/* 	if(request.getParameter("storeid") != null && request.getParameter("macAddress") != null)
 													{

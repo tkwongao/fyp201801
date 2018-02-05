@@ -268,7 +268,7 @@ public class Database {
 	 * @return
 	 * @throws SQLException
 	 */
-	public int LoyaltyCheck(final int[] start, final int[] end, final long macAddress) throws SQLException {
+	public int loyaltyCheck(final int[] start, final int[] end, final long macAddress) throws SQLException {
 		Long[] period = time2Period(start, end);
 		String sql = "SELECT count(storeid) FROM store_results WHERE startts BETWEEN ? AND ? AND did = ?";
 		PreparedStatement ps = conn.prepareStatement(sql);

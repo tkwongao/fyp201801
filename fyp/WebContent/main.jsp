@@ -428,7 +428,7 @@
 <!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
 										<% 
 											Database db= new Database();
-											int id = db.totalCount(Database.PAST, Database.FUTURE);
+											int id = db.totalVisitorCount(Database.PAST, Database.FUTURE);
 											
 										%>
 										<h3 class="text-success counter"><%=id%></h3>
@@ -534,7 +534,7 @@
 
 										<div class="clearfix">
 											<h4 class="m-t-0 header-title"><b>Shopper Count</b></h4>
-											<% int shoppercount = db.count();%>
+											<% int shoppercount = db.totalVisitorCount(Database.PAST, Database.FUTURE);%>
 											<span class="m-t-10 dropcap text-primary"><%=shoppercount %></span>
 										</div>
 					
@@ -557,22 +557,22 @@
 												<tbody>
 													<tr>
 														<td>Nike(Shop 1)</td>
-														<% int shopOneShopperCount = db.eachShopVisitorCount(Database.PAST, Database.FUTURE, 1000001);%>
+														<% int shopOneShopperCount = db.eachStoreVisitorCount(Database.PAST, Database.FUTURE, 1000001);%>
 														<td align="right"><%= shopOneShopperCount%></td>
 													</tr>
 													<tr>
 														<td>Apple(Shop 2)</td>
-														<% int shopTwoShopperCount = db.eachShopVisitorCount(Database.PAST, Database.FUTURE, 1000002);%>
+														<% int shopTwoShopperCount = db.eachStoreVisitorCount(Database.PAST, Database.FUTURE, 1000002);%>
 														<td align="right"><%= shopTwoShopperCount%></td>
 													</tr>
 													<tr>
 														<td>Samsung(Shop 3)</td>
-														<% int shopThreeShopperCount = db.eachShopVisitorCount(Database.PAST, Database.FUTURE, 1000003);%>
+														<% int shopThreeShopperCount = db.eachStoreVisitorCount(Database.PAST, Database.FUTURE, 1000003);%>
 														<td align="right"><%= shopThreeShopperCount%></td>
 													</tr>
 													<tr>
 														<td>Adidas(Shop 4)</td>
-														<% int shopFourShopperCount = db.eachShopVisitorCount(Database.PAST, Database.FUTURE, 1000004);%>
+														<% int shopFourShopperCount = db.eachStoreVisitorCount(Database.PAST, Database.FUTURE, 1000004);%>
 														<td align="right"><%= shopFourShopperCount%></td>
 													</tr>
 												</tbody>
