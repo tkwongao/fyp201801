@@ -10,13 +10,13 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.TimeZone;
 
-public class Database {
+public class DatabaseConnection {
 	private Connection conn;
 	private static final double MILLISECONDS_TO_SECONDS = 1000;
 	public static final int[] FUTURE = {2099, 12, 31, 23, 59, 59},
 			PAST = {2015, 1, 1, 0, 0, 0};
 
-	public Database() {
+	public DatabaseConnection() {
 		try {
 			connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
 		} catch (ClassNotFoundException | SQLException e) {
@@ -353,8 +353,8 @@ public class Database {
 
 	// Temporary method for testing
 	public static void main(String[] args) throws SQLException {
-		Database db = new Database();
+		DatabaseConnection dbc = new DatabaseConnection();
 		int[] start = {2017, 10, 23, 22, 0, 0}, end = {2017, 10, 23, 23, 0, 0};
-		System.out.println(db.bounceRate(start, end, 1000001, 0.75));
+		System.out.println(dbc.bounceRate(start, end, 1000001, 0.75));
 	}
 }

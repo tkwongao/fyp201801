@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="fyp.Database,java.io.*,java.util.*, javax.servlet.*,java.text.*" %>
+    <%@ page import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -487,8 +487,8 @@
 											</li> -->
 											<li>
 												<h4 class="text-muted m-t-20">Average Dwell Time</h4>
-												<% Database db = new Database();
-													 double avgDwellTime = db.averageEnterToLeaveTimeInMall(Database.PAST, Database.FUTURE);
+												<% DatabaseConnection db = new DatabaseConnection();
+													 double avgDwellTime = db.averageEnterToLeaveTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
 														
 												%>
 												<h3 class="m-b-0"><%=avgDwellTime %></h3>

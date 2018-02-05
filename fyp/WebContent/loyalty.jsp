@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-    <%@ page import="fyp.Database,java.io.*,java.util.*, javax.servlet.*,java.text.*" %>
+    <%@ page import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -491,7 +491,7 @@
 											
 												<h4 class="text-muted m-t-20">Number of Visit </h4>
 												<%	
-													Database db = new Database();
+												DatabaseConnection dbc = new DatabaseConnection();
 													long usermac = 0L;
 													int loyalty= 0;
 													int stayTime = 0;
@@ -500,8 +500,8 @@
 													if(request.getParameter("macAddress") != null)
 													{
 														usermac =  Long.parseLong(request.getParameter("macAddress"));
-														loyalty = db.loyaltyCheck(Database.PAST, Database.FUTURE, usermac);
-														stayTime = db.userStayTimeInMall(Database.PAST, Database.FUTURE, usermac);
+														loyalty = dbc.loyaltyCheck(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
+														stayTime = dbc.userStayTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
 													}
 												/* 	if(request.getParameter("storeid") != null && request.getParameter("macAddress") != null)
 													{
