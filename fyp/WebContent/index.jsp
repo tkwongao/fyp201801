@@ -1,9 +1,7 @@
-
-<!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
-<%@ page
+	pageEncoding="ISO-8859-1"
 	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
+<%@ taglib prefix="s" uri="/struts-tags"%><!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -415,11 +413,17 @@
                                         </ul>
                                     </div>
  -->
-								<%
-									Date date = new Date();
-									SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy ");
-								%>
-								<h4 class="text-center no-margin"><%=ft.format(date)%></h4>
+								<h4 class="text-center no-margin">
+									<script>
+										document.write(new Intl.DateTimeFormat(
+												"en-HK", {
+													weekday : "long",
+													year : "numeric",
+													day : "numeric",
+													month : "long"
+												}).format(new Date()));
+									</script>
+								</h4>
 							</div>
 						</div>
 					</div>
@@ -430,11 +434,7 @@
 							<div class="col-sm-6 col-lg-4">
 								<div class="widget-simple-chart text-center card-box">
 									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
-									<%
-										DatabaseConnection db = new DatabaseConnection();
-										int id = db.totalVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
-									%>
-									<h3 class="text-success counter"><%=id%></h3>
+									<h3 class="text-success counter totalVisitorCount"></h3>
 									<p class="text-muted text-nowrap">Visitors Count</p>
 
 								</div>
@@ -444,21 +444,16 @@
 								<div class="widget-simple-chart text-center card-box">
 									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
  -->
-									<%
-										int dailyCount = 0;//db.dailyCount();
-									%>
-									<h3 class="text-primary counter"><%=dailyCount%></h3>
+									<h3 class="text-primary counter">0</h3>
 									<p class="text-muted text-nowrap">Daily Visitors</p>
+									<!-- TODO reorganize graph-->
 								</div>
 							</div>
 
 							<div class="col-sm-6 col-lg-4">
 								<div class="widget-simple-chart text-center card-box">
 									<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
-									<%
-										double dwelltime = db.averageEnterToLeaveTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
-									%>
-									<h3 class="text-inverse counter"><%=dwelltime%></h3>
+									<h3 class="text-inverse counter" id="avgDwellTime"></h3>
 									<p class="text-muted text-nowrap">Average Dwell Time
 										(seconds)</p>
 								</div>
@@ -544,10 +539,7 @@
 										<h4 class="m-t-0 header-title">
 											<b>Shopper Count</b>
 										</h4>
-										<%
-											int shoppercount = db.totalVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
-										%>
-										<span class="m-t-10 dropcap text-primary"><%=shoppercount%></span>
+										<span class="m-t-10 dropcap text-primary totalVisitorCount"></span>
 									</div>
 
 									<div class="clearfix">
@@ -575,35 +567,19 @@
 											<tbody>
 												<tr>
 													<td>Nike(Shop 1)</td>
-													<%
-														int shopOneShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
-																1000001);
-													%>
-													<td align="right"><%=shopOneShopperCount%></td>
+													<td align="right" id="s1scount"></td>
 												</tr>
 												<tr>
 													<td>Apple(Shop 2)</td>
-													<%
-														int shopTwoShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
-																1000002);
-													%>
-													<td align="right"><%=shopTwoShopperCount%></td>
+													<td align="right" id="s2scount"></td>
 												</tr>
 												<tr>
 													<td>Samsung(Shop 3)</td>
-													<%
-														int shopThreeShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
-																1000003);
-													%>
-													<td align="right"><%=shopThreeShopperCount%></td>
+													<td align="right" id="s3scount"></td>
 												</tr>
 												<tr>
 													<td>Adidas(Shop 4)</td>
-													<%
-														int shopFourShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
-																1000004);
-													%>
-													<td align="right"><%=shopFourShopperCount%></td>
+													<td align="right" id="s4scount"></td>
 												</tr>
 											</tbody>
 										</table>
@@ -885,6 +861,8 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
+	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
+
 	<!-- Counter Up  -->
 	<script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
 	<script src="plugins/counterup/jquery.counterup.min.js"></script>
@@ -914,13 +892,13 @@
 
 
 	<script type="text/javascript">
-		jQuery(document).ready(function($) {
+		function afterAJAXs() {
 			$('.counter').counterUp({
 				delay : 100,
 				time : 1200
 			});
 			$('.circliful-chart').circliful();
-		});
+		}
 
 		// BEGIN SVG WEATHER ICON
 		if (typeof Skycons !== 'undefined') {
@@ -937,6 +915,11 @@
 			icons.play();
 		};
 	</script>
-
+	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			changeScope(0, "index");
+		});
+	</script>
 </body>
 </html>

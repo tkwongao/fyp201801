@@ -25,10 +25,9 @@ function UpdateAllCharts()
 
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
-	lineChart_Second.options({
-		interpolate: 'basis'
-	})
-	lineChart_Second.forceY([0, 1])
+	
+	lineChart.forceY([0, 1]);
+	lineChart_Second.forceY([0, 1]);
 
 	function peopleCount() {
 		var values = [];
