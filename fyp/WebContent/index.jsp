@@ -62,7 +62,7 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./main.jsp" class="waves-effect waves-primary logo"><object
+					<a href="./index.jsp" class="waves-effect waves-primary logo"><object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
 							height="80"></object></a>
 				</div>
@@ -183,7 +183,7 @@
 					<ul class="in_top">
 						<li class="menu-title">Main</li>
 
-						<li><a href="./main.jsp"> <i class="md md-home"></i><span>Home</span></a>
+						<li><a href="./index.jsp"> <i class="md md-home"></i><span>Home</span></a>
 						</li>
 
 						<!--     <li class="has_sub">
