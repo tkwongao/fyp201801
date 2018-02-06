@@ -4,7 +4,7 @@
    "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 	<constant name="struts.devMode" value="true" />
-	<package name="helloworld" extends="struts-default, json-default">
+	<package name="fyp" extends="struts-default, json-default">
 		<action name="databaseConnection" class="fyp.DatabaseConnectionAction"
 			method="execute">
 			<result name="error">/EEK/pages-500.html</result>
