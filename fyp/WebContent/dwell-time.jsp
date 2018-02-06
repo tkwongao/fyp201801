@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ page
-	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
+	pageEncoding="UTF-8"
+	import="fyp.DatabaseConnection, java.io.*, java.util.*, javax.servlet.*, java.text.*"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -409,13 +409,17 @@
                                             <li><a href="javascript:void(0);">The Base</a></li>
                                         </ul>
                                     </div> -->
-
-
-								<%
-									Date date = new Date();
-									SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy ");
-								%>
-								<h4 class="text-center no-margin"><%=ft.format(date)%></h4>
+								<h4 class="text-center no-margin">
+									<script>
+										document.write(new Intl.DateTimeFormat(
+												"en-HK", {
+													weekday : "long",
+													year : "numeric",
+													day : "numeric",
+													month : "long"
+												}).format(new Date()));
+									</script>
+								</h4>
 							</div>
 						</div>
 					</div>
@@ -486,11 +490,8 @@
 												<h3 class="m-b-0">1000</h3>
 											</li> -->
 										<li>
-											<h4 class="text-muted m-t-20">Average Dwell Time</h4> <%
- 	DatabaseConnection db = new DatabaseConnection();
- 	double avgDwellTime = db.averageEnterToLeaveTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
- %>
-											<h3 class="m-b-0"><%=avgDwellTime%></h3>
+											<h4 class="text-muted m-t-20">Average Dwell Time</h4>
+											<h3 class="m-b-0" id="avgDwellTime"></h3>
 										</li>
 										<!-- 	<li>
 												<h4 class="text-muted m-t-20">Number of Visit</h4>
@@ -514,11 +515,16 @@
 											<button type="button"
 												class="btn btn-outline no-padding m-t-10"
 												data-toggle="dropdown" aria-expanded="false">
-												Past 7 Days <span class="caret"></span>
+												<span id="scope">Past Day</span> <span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu" role="menu">
-												<li><a href="javascript:void(0);">Past 7 Days</a></li>
-												<li><a href="javascript:void(0);">Past Month</a></li>
+												<li><a href="javascript:changeScope(0);">Past Day</a></li>
+												<li><a href="javascript:changeScope(1);">Past 7
+														Days</a></li>
+												<li><a href="javascript:changeScope(2);">Past Month</a></li>
+												<li><a href="javascript:changeScope(3);">Past 3
+														Month</a></li>
+												<li><a href="javascript:changeScope(4);">Past Year</a></li>
 											</ul>
 										</div>
 									</div>
@@ -842,6 +848,16 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
+
+	<script>
+		var valFromDB = new Array(25);
+		for (var j = 0; j <= 24; j++)
+			valFromDB[j] = 0;
+		var scope = 0;
+		var numberOfDataInGraph = 24;
+		var interval = 1;
+	</script>
+
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
@@ -855,5 +871,87 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script>
+		function changeScope(i) {
+			var interval;
+			switch (i) {
+			case 0:
+				$("#scope").text("Past Day");
+				interval = 1;
+				numberOfDataInGraph = 24;
+				break;
+			case 1:
+				$("#scope").text("Past 7 Days");
+				interval = 24;
+				numberOfDataInGraph = 7;
+				break;
+			case 2:
+				$("#scope").text("Past Month");
+				interval = 24;
+				numberOfDataInGraph = 30;
+				break;
+			case 3:
+				$("#scope").text("Past 3 Months");
+				interval = 720;
+				numberOfDataInGraph = 3;
+				break;
+			case 4:
+				$("#scope").text("Past Year");
+				interval = 720;
+				numberOfDataInGraph = 12;
+				break;
+			default:
+				interval = -1;
+				break;
+			}
+			scope = i;
+			var currentTime = 1508515200000;
+			$.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : currentTime - 3600000 * interval
+							* numberOfDataInGraph,
+					end : currentTime,
+					storeId : -1,
+					interval : 0,
+					userMac : 0,
+					type : "average"
+				},
+				success : function(json) {
+					valFromDB = new Array();
+					for ( var prop in json)
+						valFromDB.push(json[prop]);
+					$("#avgDwellTime").text(valFromDB[0]);
+				}
+			});
+
+			$.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : currentTime - 3600000 * interval
+							* numberOfDataInGraph,
+					end : currentTime,
+					storeId : -1,
+					interval : interval,
+					userMac : 0,
+					type : "average"
+				},
+				success : function(json) {
+					valFromDB = new Array();
+					for ( var prop in json)
+						valFromDB.push(json[prop]);
+					drawGraph();
+				}
+			});
+		}
+	</script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			changeScope(0);
+		});
+	</script>
 </body>
 </html>
