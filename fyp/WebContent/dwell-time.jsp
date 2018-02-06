@@ -13,7 +13,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard Template</title>
+<title>Minton - Responsive Admin Dashboard</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
