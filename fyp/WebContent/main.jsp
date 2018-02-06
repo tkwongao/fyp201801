@@ -1,77 +1,85 @@
 
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
-<%@ page import="fyp.database"%>
-<%@ page import = "java.io.*,java.util.*, javax.servlet.*" %>
-<%@ page import = "javax.servlet.*,java.text.*" %>
+	pageEncoding="ISO-8859-1"%>
+<%@ page
+	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width,initial-scale=1">
-        <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
-        <meta name="author" content="Coderthemes">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description"
+	content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+<meta name="author" content="Coderthemes">
 
-        <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
+<link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-        <title>Minton - Responsive Admin Dashboard Template</title>
-	
-		<link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet" type="text/css" />
+<title>Minton - Responsive Admin Dashboard Template</title>
 
-        <link href="plugins/switchery/switchery.min.css" rel="stylesheet" />
-        <link href="plugins/jquery-circliful/css/jquery.circliful.css" rel="stylesheet" type="text/css" />
-		<link href="plugins/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
-        <link href="EEK/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/core.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/icons.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/components.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/pages.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/menu.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/responsive.css" rel="stylesheet" type="text/css">
-        <link href="EEK/assets/css/custom.css" rel="stylesheet" type="text/css">
-		
-		
-		
-        <script src="EEK/assets/js/modernizr.min.js"></script>
-		
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
+<link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
+	type="text/css" />
+
+<link href="plugins/switchery/switchery.min.css" rel="stylesheet" />
+<link href="plugins/jquery-circliful/css/jquery.circliful.css"
+	rel="stylesheet" type="text/css" />
+<link href="plugins/bootstrap-daterangepicker/daterangepicker.css"
+	rel="stylesheet">
+<link href="EEK/assets/css/bootstrap.min.css" rel="stylesheet"
+	type="text/css">
+<link href="EEK/assets/css/core.css" rel="stylesheet" type="text/css">
+<link href="EEK/assets/css/icons.css" rel="stylesheet" type="text/css">
+<link href="EEK/assets/css/components.css" rel="stylesheet"
+	type="text/css">
+<link href="EEK/assets/css/pages.css" rel="stylesheet" type="text/css">
+<link href="EEK/assets/css/menu.css" rel="stylesheet" type="text/css">
+<link href="EEK/assets/css/responsive.css" rel="stylesheet"
+	type="text/css">
+<link href="EEK/assets/css/custom.css" rel="stylesheet" type="text/css">
+
+
+
+<script src="EEK/assets/js/modernizr.min.js"></script>
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
         <![endif]-->
 
-        
-    </head>
+
+</head>
 
 
-    <body class="fixed-left">
-        
-        <!-- Begin page -->
-        <div id="wrapper">
-        
-            <!-- Top Bar Start -->
-            <div class="topbar">
+<body class="fixed-left">
 
-                <!-- LOGO -->
-                <div class="topbar-left">
-                    <div class="text-center">
-                        <a href="./main.jsp" class="waves-effect waves-primary logo"><object id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml" height="80"></object></a>
-                    </div>
-                </div>
+	<!-- Begin page -->
+	<div id="wrapper">
 
-                <!-- Navbar -->
-                <div class="navbar navbar-default" role="navigation">
-                    <div class="container">
-                        <div class="">
-                            <div class="pull-left">
-                                <button class="button-menu-mobile open-left waves-effect">
-                                    <i class="md md-menu"></i>
-                                </button>
-                                <span class="clearfix"></span>
-                            </div>
+		<!-- Top Bar Start -->
+		<div class="topbar">
 
-                         <!--    <ul class="nav navbar-nav hidden-xs">
+			<!-- LOGO -->
+			<div class="topbar-left">
+				<div class="text-center">
+					<a href="./main.jsp" class="waves-effect waves-primary logo"><object
+							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
+							height="80"></object></a>
+				</div>
+			</div>
+
+			<!-- Navbar -->
+			<div class="navbar navbar-default" role="navigation">
+				<div class="container">
+					<div class="">
+						<div class="pull-left">
+							<button class="button-menu-mobile open-left waves-effect">
+								<i class="md md-menu"></i>
+							</button>
+							<span class="clearfix"></span>
+						</div>
+
+						<!--    <ul class="nav navbar-nav hidden-xs">
                                 <li class="dropdown">
                                     <a href="javascript:void(0);" class="dropdown-toggle waves-effect" data-toggle="dropdown"
                                        role="button" aria-haspopup="true" aria-expanded="false">Sites <span
@@ -85,108 +93,100 @@
                                 </li>
                             </ul> -->
 
-                            <form role="search" class="navbar-left app-search pull-left hidden-xs">
-			                     <input type="text" placeholder="Search..." class="form-control app-search-input">
-			                     <a href=""><i class="fa fa-search"></i></a>
-			                </form>
+						<form role="search"
+							class="navbar-left app-search pull-left hidden-xs">
+							<input type="text" placeholder="Search..."
+								class="form-control app-search-input"> <a href=""><i
+								class="fa fa-search"></i></a>
+						</form>
 
-                            <ul class="nav navbar-nav navbar-right pull-right">
+						<ul class="nav navbar-nav navbar-right pull-right">
 
-                                <li class="dropdown hidden-xs">
-                                    <a href="javascript:void(0);" data-target="#" class="dropdown-toggle waves-effect waves-light"
-                                       data-toggle="dropdown" aria-expanded="true">
-                                        <i class="md md-notifications"></i> <span
-                                            class="badge badge-xs badge-pink">3</span>
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-lg">
-                                        <li class="text-center notifi-title">Notification</li>
-                                        <li class="list-group nicescroll notification-list">
-                                            <!-- list item-->
-                                            <a href="javascript:void(0);" class="list-group-item">
-                                                <div class="media">
-                                                    <div class="pull-left p-r-10">
-                                                        <em class="fa fa-diamond noti-primary"></em>
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <h5 class="media-heading">A new order has been placed A new
-                                                            order has been placed</h5>
-                                                        <p class="m-0">
-                                                            <small>There are new settings available</small>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </a>
+							<li class="dropdown hidden-xs"><a href="javascript:void(0);"
+								data-target="#" class="dropdown-toggle waves-effect waves-light"
+								data-toggle="dropdown" aria-expanded="true"> <i
+									class="md md-notifications"></i> <span
+									class="badge badge-xs badge-pink">3</span>
+							</a>
+								<ul class="dropdown-menu dropdown-menu-lg">
+									<li class="text-center notifi-title">Notification</li>
+									<li class="list-group nicescroll notification-list">
+										<!-- list item--> <a href="javascript:void(0);"
+										class="list-group-item">
+											<div class="media">
+												<div class="pull-left p-r-10">
+													<em class="fa fa-diamond noti-primary"></em>
+												</div>
+												<div class="media-body">
+													<h5 class="media-heading">A new order has been placed
+														A new order has been placed</h5>
+													<p class="m-0">
+														<small>There are new settings available</small>
+													</p>
+												</div>
+											</div>
+									</a> <!-- list item--> <a href="javascript:void(0);"
+										class="list-group-item">
+											<div class="media">
+												<div class="pull-left p-r-10">
+													<em class="fa fa-cog noti-warning"></em>
+												</div>
+												<div class="media-body">
+													<h5 class="media-heading">New settings</h5>
+													<p class="m-0">
+														<small>There are new settings available</small>
+													</p>
+												</div>
+											</div>
+									</a> <!-- list item--> <a href="javascript:void(0);"
+										class="list-group-item">
+											<div class="media">
+												<div class="pull-left p-r-10">
+													<em class="fa fa-bell-o noti-success"></em>
+												</div>
+												<div class="media-body">
+													<h5 class="media-heading">Updates</h5>
+													<p class="m-0">
+														<small>There are <span class="text-primary">2</span>
+															new updates available
+														</small>
+													</p>
+												</div>
+											</div>
+									</a>
 
-                                            <!-- list item-->
-                                            <a href="javascript:void(0);" class="list-group-item">
-                                                <div class="media">
-                                                    <div class="pull-left p-r-10">
-                                                        <em class="fa fa-cog noti-warning"></em>
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <h5 class="media-heading">New settings</h5>
-                                                        <p class="m-0">
-                                                            <small>There are new settings available</small>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </a>
+									</li>
 
-                                            <!-- list item-->
-                                            <a href="javascript:void(0);" class="list-group-item">
-                                                <div class="media">
-                                                    <div class="pull-left p-r-10">
-                                                        <em class="fa fa-bell-o noti-success"></em>
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <h5 class="media-heading">Updates</h5>
-                                                        <p class="m-0">
-                                                            <small>There are <span class="text-primary">2</span> new
-                                                                updates available
-                                                            </small>
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </a>
+									<li><a href="javascript:void(0);" class=" text-right">
+											<small><b>See all notifications</b></small>
+									</a></li>
 
-                                        </li>
+								</ul></li>
+							<li class="hidden-xs"><a href="javascript:void(0);"
+								class="right-bar-toggle waves-effect waves-light"><i
+									class="md md-settings"></i></a></li>
 
-                                        <li>
-                                            <a href="javascript:void(0);" class=" text-right">
-                                                <small><b>See all notifications</b></small>
-                                            </a>
-                                        </li>
-
-                                    </ul>
-                                </li>
-                                <li class="hidden-xs">
-                                    <a href="javascript:void(0);" class="right-bar-toggle waves-effect waves-light"><i
-                                            class="md md-settings"></i></a>
-                                </li>
-
-                            </ul>
-                        </div>
-                        <!--/.nav-collapse -->
-                    </div>
-                </div>
-            </div>
-            <!-- Top Bar End -->
+						</ul>
+					</div>
+					<!--/.nav-collapse -->
+				</div>
+			</div>
+		</div>
+		<!-- Top Bar End -->
 
 
-            <!-- ========== Left Sidebar Start ========== -->
-            <div class="left side-menu">
-                <div class="sidebar-inner slimscrollleft">
+		<!-- ========== Left Sidebar Start ========== -->
+		<div class="left side-menu">
+			<div class="sidebar-inner slimscrollleft">
 
-                    <div id="sidebar-menu">
-                        <ul class="in_top">
-                            <li class="menu-title">Main</li>
+				<div id="sidebar-menu">
+					<ul class="in_top">
+						<li class="menu-title">Main</li>
 
-							<li>
-                                <a href="./main.jsp">
-								<i class="md md-home"></i><span>Home</span></a>
-                            </li>
-							
-                        <!--     <li class="has_sub">
+						<li><a href="./main.jsp"> <i class="md md-home"></i><span>Home</span></a>
+						</li>
+
+						<!--     <li class="has_sub">
                                    <a href="javascript:void(0);" class="waves-effect waves-primary"><i
                                         class="md md-access-time"></i><span>Realtime</span> <span class="menu-arrow"></span></a>
                                 <ul class="list-unstyled">
@@ -194,20 +194,20 @@
                                     <li><a href="map-view.html">Loactions</a></li>
                                 </ul>
                             </li> -->
-							
-                            <li class="has_sub">
-                                   <a href="javascript:void(0);" class="waves-effect waves-primary"><i
-                                        class="md md-share"></i><span> Analytics </span> <span class="menu-arrow"></span></a>
-                                <ul class="list-unstyled">
-                                    <li><a href="EEK/compare-location.html">Compare Location</a></li>
-									<li><a href="EEK/compare-date.html">Compare Date</a></li>
-									<li><a href="EEK/traffic.html">Traffic</a></li>
-									<li><a href="dwell-time.jsp">Dwell Time</a></li>
-									<li><a href="loyalty.jsp">Loyalty</a></li>
-                                </ul>
-                            </li>
 
-							<!--
+						<li class="has_sub"><a href="javascript:void(0);"
+							class="waves-effect waves-primary"><i class="md md-share"></i><span>
+									Analytics </span> <span class="menu-arrow"></span></a>
+							<ul class="list-unstyled">
+								<li><a href="EEK/compare-location.html">Compare
+										Location</a></li>
+								<li><a href="EEK/compare-date.html">Compare Date</a></li>
+								<li><a href="EEK/traffic.html">Traffic</a></li>
+								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="loyalty.jsp">Loyalty</a></li>
+							</ul></li>
+
+						<!--
                             <li class="has_sub">
                                 <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="md md-palette"></i> <span> UI Kit </span>
                                  <span class="menu-arrow"></span></a>
@@ -350,60 +350,63 @@
                             </li>
 
 							!-->
-							
-                        </ul>
-		
-						<ul class="in_bottom">
-							<li>
-                                <a href="javascript:void(0);">
-								<i class="md md-settings"></i><span> Setting </span></a>
-                            </li>
-						</ul>
-						<div class="clearfix"></div>
-                    </div>
 
-                    <div class="clearfix"></div>
-                </div>
+					</ul>
 
-                <div class="user-detail">
-                    <div class="dropup">
-                        <a href="" class="dropdown-toggle profile" data-toggle="dropdown" aria-expanded="true">
-                            <img  src="EEK/assets/images/users/avatar-2.jpg" alt="user-img" class="img-circle">
-                            <span class="user-info-span">
-                                <h5 class="m-t-0 m-b-0">Hugo Mar</h5>
-                                <p class="text-muted m-b-0">
-                                    <small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-                                </p>
-                            </span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)"><i class="md md-face-unlock"></i> Profile</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-settings"></i> Settings</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-lock"></i> Lock screen</a></li>
-                            <li><a href="javascript:void(0)"><i class="md md-settings-power"></i> Logout</a></li>
-                        </ul>
+					<ul class="in_bottom">
+						<li><a href="javascript:void(0);"> <i
+								class="md md-settings"></i><span> Setting </span></a></li>
+					</ul>
+					<div class="clearfix"></div>
+				</div>
 
-                    </div>
-                </div>
-            </div>
-            <!-- Left Sidebar End --> 
+				<div class="clearfix"></div>
+			</div>
+
+			<div class="user-detail">
+				<div class="dropup">
+					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
+						aria-expanded="true"> <img
+						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
+						class="img-circle"> <span class="user-info-span">
+							<h5 class="m-t-0 m-b-0">Hugo Mar</h5>
+							<p class="text-muted m-b-0">
+								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
+							</p>
+					</span>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="javascript:void(0)"><i
+								class="md md-face-unlock"></i> Profile</a></li>
+						<li><a href="javascript:void(0)"><i
+								class="md md-settings"></i> Settings</a></li>
+						<li><a href="javascript:void(0)"><i class="md md-lock"></i>
+								Lock screen</a></li>
+						<li><a href="javascript:void(0)"><i
+								class="md md-settings-power"></i> Logout</a></li>
+					</ul>
+
+				</div>
+			</div>
+		</div>
+		<!-- Left Sidebar End -->
 
 
 
-            <!-- ============================================================== -->
-            <!-- Start right Content here -->
-            <!-- ============================================================== -->                      
-            <div class="content-page">
-                <!-- Start content -->
-                <div class="content">
-                    <div class="container">
+		<!-- ============================================================== -->
+		<!-- Start right Content here -->
+		<!-- ============================================================== -->
+		<div class="content-page">
+			<!-- Start content -->
+			<div class="content">
+				<div class="container">
 
-                        <!-- Page-Title -->
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <div class="page-title-box">
-									<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
-                              <!--       <div class="btn-group pull-right">
+					<!-- Page-Title -->
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="page-title-box">
+								<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
+								<!--       <div class="btn-group pull-right">
                                         <button type="button" class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn" data-toggle="dropdown" aria-expanded="false">K11 <span class="caret"></span></button>
                                         <ul class="dropdown-menu" role="menu">
                                             <li><a href="javascript:void(0);">K11</a></li>
@@ -412,516 +415,528 @@
                                         </ul>
                                     </div>
  -->
- <%
-         Date date = new Date();
- SimpleDateFormat ft = 
-         new SimpleDateFormat ("E dd/MM/yyyy ");
-      %>
-									<h4 class="text-center no-margin"><%=ft.format(date) %></h4>
-                                </div>
-                            </div>
-                        </div>
+								<%
+									Date date = new Date();
+									SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy ");
+								%>
+								<h4 class="text-center no-margin"><%=ft.format(date)%></h4>
+							</div>
+						</div>
+					</div>
 
 
-						<div class="m-l-80 m-r-80">
-							<div class="row">
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-<!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
-										<% 
-											database db= new database();
-											int id = db.totalCount();
-											
-										%>
-										<h3 class="text-success counter"><%=id%></h3>
-										<p class="text-muted text-nowrap">Visitors Count</p>
-										
+					<div class="m-l-80 m-r-80">
+						<div class="row">
+							<div class="col-sm-6 col-lg-4">
+								<div class="widget-simple-chart text-center card-box">
+									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
+									<%
+										DatabaseConnection db = new DatabaseConnection();
+										int id = db.totalVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
+									%>
+									<h3 class="text-success counter"><%=id%></h3>
+									<p class="text-muted text-nowrap">Visitors Count</p>
+
+								</div>
+							</div>
+
+							<div class="col-sm-6 col-lg-4">
+								<div class="widget-simple-chart text-center card-box">
+									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
+ -->
+									<%
+										int dailyCount = 0;//db.dailyCount();
+									%>
+									<h3 class="text-primary counter"><%=dailyCount%></h3>
+									<p class="text-muted text-nowrap">Daily Visitors</p>
+								</div>
+							</div>
+
+							<div class="col-sm-6 col-lg-4">
+								<div class="widget-simple-chart text-center card-box">
+									<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
+									<%
+										double dwelltime = db.averageEnterToLeaveTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
+									%>
+									<h3 class="text-inverse counter"><%=dwelltime%></h3>
+									<p class="text-muted text-nowrap">Average Dwell Time
+										(seconds)</p>
+								</div>
+							</div>
+						</div>
+						<!-- end row -->
+
+						<div class="row">
+							<div class="col-sm-6 col-lg-6">
+								<div class="card-box">
+									<h4 class="m-t-0 m-b-20 header-title">
+										<div class="text-center">
+											<b>People Count</b>
+										</div>
+									</h4>
+
+									<div class="widget-chart text-center">
+										<div class="line-chart">
+											<svg style="height: 400px;"></svg>
+										</div>
+
+										<ul class="list-inline m-t-15">
+											<li>
+												<h4 class="text-muted m-t-20">Today</h4>
+												<h3 class="m-b-0">1000</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Yesterday</h4>
+												<h3 class="m-b-0">523</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Average</h4>
+												<h3 class="m-b-0">965</h3>
+											</li>
+										</ul>
 									</div>
 								</div>
+							</div>
 
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
- -->										
- 										<% 
-											
-											int dailyCount = db.dailyCount();
-											
-										%>
- 										<h3 class="text-primary counter"><%=dailyCount %></h3>
-										<p class="text-muted text-nowrap">Daily Visitors</p>
+
+							<div class="col-sm-6 col-lg-6">
+								<div class="card-box">
+									<h4 class="m-t-0 m-b-20 header-title">
+										<div class="text-center">
+											<b>Daily Average User Dwell Time</b>
+										</div>
+									</h4>
+
+									<div class="widget-chart text-center">
+										<div class="bar-chart">
+											<svg style="height: 400px;"></svg>
+										</div>
+
+										<ul class="list-inline m-t-15">
+											<li>
+												<h4 class="text-muted m-t-20">Today</h4>
+												<h3 class="m-b-0">1000</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Yesterday</h4>
+												<h3 class="m-b-0">523</h3>
+											</li>
+											<li>
+												<h4 class="text-muted m-t-20">Average</h4>
+												<h3 class="m-b-0">965</h3>
+											</li>
+										</ul>
 									</div>
-								</div>
 
-								<div class="col-sm-6 col-lg-4">
-									<div class="widget-simple-chart text-center card-box">
-										<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
+								</div>
+							</div>
+
+						</div>
+						<!-- end row -->
+
+						<div class="row">
+
+
+							<div class="col-lg-4">
+								<div class="card-box">
+
+									<div class="clearfix">
+										<h4 class="m-t-0 header-title">
+											<b>Shopper Count</b>
+										</h4>
 										<%
-
-										double dwelltime = db.averageEnterToLeaveTimeInMall();
-										
+											int shoppercount = db.totalVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE);
 										%>
-										<h3 class="text-inverse counter"><%=dwelltime%></h3>
-										<p class="text-muted text-nowrap">Average Dwell Time (seconds)</p>
+										<span class="m-t-10 dropcap text-primary"><%=shoppercount%></span>
 									</div>
+
+									<div class="clearfix">
+										<h4 class="m-t-40 header-title">
+											<b>Average Dwell Time</b>
+										</h4>
+										<div class="bar-chart-second">
+											<svg style="height: 220px;"></svg>
+										</div>
+									</div>
+
+									<div class="clearfix">
+										<h4 class="m-t-10 header-title">
+											<b>Shop List</b>
+										</h4>
+										<table class="table">
+											<thead>
+												<tr>
+													<td>Shop
+													</th>
+													<td align="right">Visitors
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Nike(Shop 1)</td>
+													<%
+														int shopOneShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
+																1000001);
+													%>
+													<td align="right"><%=shopOneShopperCount%></td>
+												</tr>
+												<tr>
+													<td>Apple(Shop 2)</td>
+													<%
+														int shopTwoShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
+																1000002);
+													%>
+													<td align="right"><%=shopTwoShopperCount%></td>
+												</tr>
+												<tr>
+													<td>Samsung(Shop 3)</td>
+													<%
+														int shopThreeShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
+																1000003);
+													%>
+													<td align="right"><%=shopThreeShopperCount%></td>
+												</tr>
+												<tr>
+													<td>Adidas(Shop 4)</td>
+													<%
+														int shopFourShopperCount = db.eachStoreVisitorCount(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
+																1000004);
+													%>
+													<td align="right"><%=shopFourShopperCount%></td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+
 								</div>
 							</div>
-							<!-- end row -->
-
-							<div class="row">
-								<div class="col-sm-6 col-lg-6">
-									<div class="card-box">
-										<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
-
-										<div class="widget-chart text-center">
-											<div class="line-chart">
-												<svg style="height:400px;"></svg>
-											</div>
-											
-											<ul class="list-inline m-t-15">
-												<li>
-													<h4 class="text-muted m-t-20">Today</h4>
-													<h3 class="m-b-0">1000</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Yesterday</h4>
-													<h3 class="m-b-0">523</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Average</h4>
-													<h3 class="m-b-0">965</h3>
-												</li>
-											</ul>
-										</div>
-									</div>
-								</div>
+						</div>
+						<!-- end row -->
 
 
-								<div class="col-sm-6 col-lg-6">
-									<div class="card-box">
-										<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
-										
-										<div class="widget-chart text-center">
-											<div class="bar-chart">
-												<svg style="height:400px;"></svg>
-											</div>
-											
-											<ul class="list-inline m-t-15">
-												<li>
-													<h4 class="text-muted m-t-20">Today</h4>
-													<h3 class="m-b-0">1000</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Yesterday</h4>
-													<h3 class="m-b-0">523</h3>
-												</li>
-												<li>
-													<h4 class="text-muted m-t-20">Average</h4>
-													<h3 class="m-b-0">965</h3>
-												</li>
-											</ul>
-										</div>
-										
-									</div>
-								</div>
+						<!-- end row -->
 
-							</div>
-							<!-- end row -->
-							
-							<div class="row">
-								
-								
-								<div class="col-lg-4">
-									<div class="card-box">
+					</div>
 
-										<div class="clearfix">
-											<h4 class="m-t-0 header-title"><b>Shopper Count</b></h4>
-											<% int shoppercount = db.count();%>
-											<span class="m-t-10 dropcap text-primary"><%=shoppercount %></span>
-										</div>
-					
-										<div class="clearfix">
-											<h4 class="m-t-40 header-title"><b>Average Dwell Time</b></h4>
-											<div class="bar-chart-second">
-												<svg style="height:220px;"></svg>
-											</div>
-										</div>
-					
-										<div class="clearfix">
-											<h4 class="m-t-10 header-title"><b>Shop List</b></h4>
-											<table class="table">
-												<thead>
-													<tr>
-														<td>Shop</th>
-														<td align="right">Visitors</th>
-													</tr>
-												</thead>
-												<tbody>
-													<tr>
-														<td>Nike(Shop 1)</td>
-														<% int shopOneShopperCount = db.eachShopVisitorCount(1000001);%>
-														<td align="right"><%= shopOneShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Apple(Shop 2)</td>
-														<% int shopTwoShopperCount = db.eachShopVisitorCount(1000002);%>
-														<td align="right"><%= shopTwoShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Samsung(Shop 3)</td>
-														<% int shopThreeShopperCount = db.eachShopVisitorCount(1000003);%>
-														<td align="right"><%= shopThreeShopperCount%></td>
-													</tr>
-													<tr>
-														<td>Adidas(Shop 4)</td>
-														<% int shopFourShopperCount = db.eachShopVisitorCount(1000004);%>
-														<td align="right"><%= shopFourShopperCount%></td>
-													</tr>
-												</tbody>
-											</table>
-										</div>
-									
-									</div>
+
+
+
+
+
+				</div>
+				<!-- end container -->
+			</div>
+			<!-- end content -->
+
+			<footer class="footer text-right"> 2017 © P-Sense. </footer>
+
+		</div>
+		<!-- ============================================================== -->
+		<!-- End Right content here -->
+		<!-- ============================================================== -->
+
+
+		<!-- Right Sidebar -->
+		<div class="side-bar right-bar">
+			<div class="nicescroll">
+				<ul class="nav nav-tabs tabs">
+					<li class="active tab"><a href="#home-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-home"></i></span> <span class="hidden-xs">Activity</span>
+					</a></li>
+					<li class="tab"><a href="#profile-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-user"></i></span> <span class="hidden-xs">Chat</span>
+					</a></li>
+					<li class="tab"><a href="#messages-2" data-toggle="tab"
+						aria-expanded="true"> <span class="visible-xs"><i
+								class="fa fa-envelope-o"></i></span> <span class="hidden-xs">Settings</span>
+					</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="home-2">
+						<div class="timeline-2">
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 minutes ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong>
+									</p>
 								</div>
 							</div>
-							<!-- end row -->
-							
-	
-							<!-- end row -->
-							
+
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">30 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
+							</div>
+
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">59 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
+							</div>
+
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">1 hour ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong>Uploaded 2 new photos
+									</p>
+								</div>
+							</div>
+
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">3 hours ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
+							</div>
+
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 hours ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+					<div class="tab-pane fade" id="profile-2">
+						<div class="contact-list nicescroll">
+							<ul class="list-group contacts-list">
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-1.jpg" alt="">
+										</div> <span class="name">Chadengle</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-2.jpg" alt="">
+										</div> <span class="name">Tomaslau</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-3.jpg" alt="">
+										</div> <span class="name">Stillnotdavid</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-4.jpg" alt="">
+										</div> <span class="name">Kurafire</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-5.jpg" alt="">
+										</div> <span class="name">Shahedk</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-6.jpg" alt="">
+										</div> <span class="name">Adhamdannaway</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-7.jpg" alt="">
+										</div> <span class="name">Ok</span> <i class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-8.jpg" alt="">
+										</div> <span class="name">Arashasghari</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-9.jpg" alt="">
+										</div> <span class="name">Joshaustin</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-10.jpg" alt="">
+										</div> <span class="name">Sortino</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+							</ul>
+						</div>
+					</div>
+
+
+
+					<div class="tab-pane fade" id="messages-2">
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Notifications</h5>
+								<p class="text-muted m-b-0">
+									<small>Do you need them?</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
 						</div>
 
-                       
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">API Access</h5>
+								<p class="m-b-0 text-muted">
+									<small>Enable/Disable access</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
 
-                          
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Auto Updates</h5>
+								<p class="m-b-0 text-muted">
+									<small>Keep up to date</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
 
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Online Status</h5>
+								<p class="m-b-0 text-muted">
+									<small>Show your status to all</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
 
-                    </div>
-                    <!-- end container -->
-                </div>
-                <!-- end content -->
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- /Right-bar -->
 
-                <footer class="footer text-right">
-                    2017 © P-Sense.
-                </footer>
-
-            </div>
-            <!-- ============================================================== -->
-            <!-- End Right content here -->
-            <!-- ============================================================== -->
-
-
-            <!-- Right Sidebar -->
-            <div class="side-bar right-bar">
-                <div class="nicescroll">
-                    <ul class="nav nav-tabs tabs">
-                        <li class="active tab">
-                            <a href="#home-2" data-toggle="tab" aria-expanded="false">
-                                <span class="visible-xs"><i class="fa fa-home"></i></span>
-                                <span class="hidden-xs">Activity</span>
-                            </a>
-                        </li>
-                        <li class="tab">
-                            <a href="#profile-2" data-toggle="tab" aria-expanded="false">
-                                <span class="visible-xs"><i class="fa fa-user"></i></span>
-                                <span class="hidden-xs">Chat</span>
-                            </a>
-                        </li>
-                        <li class="tab">
-                            <a href="#messages-2" data-toggle="tab" aria-expanded="true">
-                                <span class="visible-xs"><i class="fa fa-envelope-o"></i></span>
-                                <span class="hidden-xs">Settings</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="home-2">
-                            <div class="timeline-2">
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">5 minutes ago</small>
-                                        <p><strong><a href="javascript:void(0);" class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong></p>
-                                    </div>
-                                </div>
-
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">30 minutes ago</small>
-                                        <p><a href="" class="text-info">Lorem</a> commented your post.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
-
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">59 minutes ago</small>
-                                        <p><a href="" class="text-info">Jessi</a> attended a meeting with<a href="javascript:void(0);" class="text-success">John Doe</a>.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
-
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">1 hour ago</small>
-                                        <p><strong><a href="javascript:void(0);" class="text-info">John Doe</a></strong>Uploaded 2 new photos</p>
-                                    </div>
-                                </div>
-
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">3 hours ago</small>
-                                        <p><a href="" class="text-info">Lorem</a> commented your post.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
-
-                                <div class="time-item">
-                                    <div class="item-info">
-                                        <small class="text-muted">5 hours ago</small>
-                                        <p><a href="" class="text-info">Jessi</a> attended a meeting with<a href="javascript:void(0);" class="text-success">John Doe</a>.</p>
-                                        <p><em>"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. "</em></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+	</div>
+	<!-- END wrapper -->
 
 
 
-                        <div class="tab-pane fade" id="profile-2">
-                            <div class="contact-list nicescroll">
-                                <ul class="list-group contacts-list">
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-1.jpg" alt="">
-                                            </div>
-                                            <span class="name">Chadengle</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-2.jpg" alt="">
-                                            </div>
-                                            <span class="name">Tomaslau</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-3.jpg" alt="">
-                                            </div>
-                                            <span class="name">Stillnotdavid</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-4.jpg" alt="">
-                                            </div>
-                                            <span class="name">Kurafire</span>
-                                            <i class="fa fa-circle online"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-5.jpg" alt="">
-                                            </div>
-                                            <span class="name">Shahedk</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-6.jpg" alt="">
-                                            </div>
-                                            <span class="name">Adhamdannaway</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-7.jpg" alt="">
-                                            </div>
-                                            <span class="name">Ok</span>
-                                            <i class="fa fa-circle away"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-8.jpg" alt="">
-                                            </div>
-                                            <span class="name">Arashasghari</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-9.jpg" alt="">
-                                            </div>
-                                            <span class="name">Joshaustin</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                    <li class="list-group-item">
-                                        <a href="javascript:void(0);">
-                                            <div class="avatar">
-                                                <img src="EEK/assets/images/users/avatar-10.jpg" alt="">
-                                            </div>
-                                            <span class="name">Sortino</span>
-                                            <i class="fa fa-circle offline"></i>
-                                        </a>
-                                        <span class="clearfix"></span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+	<script>
+		var resizefunc = [];
+	</script>
+
+	<!-- Plugins  -->
+	<script src="EEK/assets/js/jquery.min.js"></script>
+	<script src="EEK/assets/js/bootstrap.min.js"></script>
+	<script src="EEK/assets/js/detect.js"></script>
+	<script src="EEK/assets/js/fastclick.js"></script>
+	<script src="EEK/assets/js/jquery.slimscroll.js"></script>
+	<script src="EEK/assets/js/jquery.blockUI.js"></script>
+	<script src="EEK/assets/js/waves.js"></script>
+	<script src="EEK/assets/js/wow.min.js"></script>
+	<script src="EEK/assets/js/jquery.nicescroll.js"></script>
+	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
+	<script src="plugins/switchery/switchery.min.js"></script>
+
+	<!-- Counter Up  -->
+	<script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
+	<script src="plugins/counterup/jquery.counterup.min.js"></script>
+
+	<!-- circliful Chart -->
+	<script src="plugins/jquery-circliful/js/jquery.circliful.min.js"></script>
+	<script src="plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
+
+	<!-- Nvd3 js -->
+	<script src="plugins/d3/d3.min.js"></script>
+	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
+	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
+
+	<!-- skycons -->
+	<script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
+
+	<!-- Page js  -->
+	<script src="EEK/assets/pages/jquery.dashboard.js"></script>
+
+	<!-- HeatTable js  -->
+	<script src="EEK/assets/pages/jquery.heatTable.js"></script>
+	<script src="EEK/assets/pages/jquery.retentionTable.js"></script>
+
+	<!-- Custom main Js -->
+	<script src="EEK/assets/js/jquery.core.js"></script>
+	<script src="EEK/assets/js/jquery.app.js"></script>
 
 
+	<script type="text/javascript">
+		jQuery(document).ready(function($) {
+			$('.counter').counterUp({
+				delay : 100,
+				time : 1200
+			});
+			$('.circliful-chart').circliful();
+		});
 
-                        <div class="tab-pane fade" id="messages-2">
+		// BEGIN SVG WEATHER ICON
+		if (typeof Skycons !== 'undefined') {
+			var icons = new Skycons({
+				"color" : "#3bafda"
+			}, {
+				"resizeClear" : true
+			}), list = [ "clear-day", "clear-night", "partly-cloudy-day",
+					"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
+					"wind", "fog" ], i;
 
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Notifications</h5>
-                                    <p class="text-muted m-b-0"><small>Do you need them?</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
-                            </div>
+			for (i = list.length; i--;)
+				icons.set(list[i], list[i]);
+			icons.play();
+		};
+	</script>
 
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">API Access</h5>
-                                    <p class="m-b-0 text-muted"><small>Enable/Disable access</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
-                            </div>
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Auto Updates</h5>
-                                    <p class="m-b-0 text-muted"><small>Keep up to date</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
-                            </div>
-
-                            <div class="row m-t-20">
-                                <div class="col-xs-8">
-                                    <h5 class="m-0">Online Status</h5>
-                                    <p class="m-b-0 text-muted"><small>Show your status to all</small></p>
-                                </div>
-                                <div class="col-xs-4 text-right">
-                                    <input type="checkbox" checked data-plugin="switchery" data-color="#3bafda" data-size="small"/>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- /Right-bar -->
-
-        </div>
-        <!-- END wrapper -->
-
-
-    
-        <script>
-            var resizefunc = [];
-        </script>
-
-        <!-- Plugins  -->
-        <script src="EEK/assets/js/jquery.min.js"></script>
-        <script src="EEK/assets/js/bootstrap.min.js"></script>
-        <script src="EEK/assets/js/detect.js"></script>
-        <script src="EEK/assets/js/fastclick.js"></script>
-        <script src="EEK/assets/js/jquery.slimscroll.js"></script>
-        <script src="EEK/assets/js/jquery.blockUI.js"></script>
-        <script src="EEK/assets/js/waves.js"></script>
-        <script src="EEK/assets/js/wow.min.js"></script>
-        <script src="EEK/assets/js/jquery.nicescroll.js"></script>
-        <script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
-        <script src="plugins/switchery/switchery.min.js"></script>
-        
-        <!-- Counter Up  -->
-        <script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
-        <script src="plugins/counterup/jquery.counterup.min.js"></script>
-
-        <!-- circliful Chart -->
-        <script src="plugins/jquery-circliful/js/jquery.circliful.min.js"></script>
-        <script src="plugins/jquery-sparkline/jquery.sparkline.min.js"></script>
-
-        <!-- Nvd3 js -->
-        <script src="plugins/d3/d3.min.js"></script>
-        <script src="plugins/nvd3/build/nv.d3.min.js"></script>
-        <script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
-		
-        <!-- skycons -->
-        <script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
-        
-        <!-- Page js  -->
-        <script src="EEK/assets/pages/jquery.dashboard.js"></script>
-
-		<!-- HeatTable js  -->
-		<script src="EEK/assets/pages/jquery.heatTable.js"></script>
-		<script src="EEK/assets/pages/jquery.retentionTable.js"></script>
-		
-        <!-- Custom main Js -->
-        <script src="EEK/assets/js/jquery.core.js"></script>
-        <script src="EEK/assets/js/jquery.app.js"></script>
-
-        
-        <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                $('.counter').counterUp({
-                    delay: 100,
-                    time: 1200
-                });
-                $('.circliful-chart').circliful();
-            });
-
-            // BEGIN SVG WEATHER ICON
-            if (typeof Skycons !== 'undefined'){
-            var icons = new Skycons(
-                {"color": "#3bafda"},
-                {"resizeClear": true}
-                ),
-                    list  = [
-                        "clear-day", "clear-night", "partly-cloudy-day",
-                        "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-                        "fog"
-                    ],
-                    i;
-
-                for(i = list.length; i--; )
-                icons.set(list[i], list[i]);
-                icons.play();
-            };
-
-        </script>
-    
-    </body>
+</body>
 </html>
