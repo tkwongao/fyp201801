@@ -12,13 +12,9 @@ public class DatabaseConnection {
 	private static final double MILLISECONDS_TO_SECONDS = 1000;
 	public static final GregorianCalendar PAST = new GregorianCalendar(2015, 0, 1, 0, 0, 0),
 			FUTURE = new GregorianCalendar(2099, 12, 31, 23, 59, 59);
-			
-	public DatabaseConnection() {
-		try {
-			connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
-		} catch (ClassNotFoundException | SQLException e) {
-			e.printStackTrace();
-		}
+
+	public DatabaseConnection() throws ClassNotFoundException, SQLException {
+		connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
 	}
 
 	/**
@@ -259,7 +255,7 @@ public class DatabaseConnection {
 	}
 
 	// Temporary method for testing
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		System.out.println(new DatabaseConnection().bounceRate(PAST, FUTURE, 1000001, 0.75));
 	}
 }

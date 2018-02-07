@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ page
+	pageEncoding="UTF-8"
 	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -418,12 +418,17 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-
-								<%
-									Date date = new Date();
-									SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy ");
-								%>
-								<h4 class="text-center no-margin"><%=ft.format(date)%></h4>
+								<h4 class="text-center no-margin">
+									<script>
+										document.write(new Intl.DateTimeFormat(
+												"en-HK", {
+													weekday : "long",
+													year : "numeric",
+													day : "numeric",
+													month : "long"
+												}).format(new Date()));
+									</script>
+								</h4>
 							</div>
 						</div>
 					</div>
@@ -486,11 +491,14 @@
 							</div> -->
 
 
-					<form action="loyalty.jsp" method="GET">
-						User Mac Address: <input type="text" name="macAddress"> <input
-							type="submit" value="Submit" />
-					</form>
-
+					<div>
+					<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
+						User MAC Address: <input type="text" id="macAddress"
+							value="B4EF3992723A"> Store ID: <input type="text"
+							id="storeId">
+						<button type="button"
+							onclick="changeScopeWithMac(scope, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
+					</div>
 
 					<div class="col-lg-8">
 						<div class="card-box">
@@ -498,35 +506,18 @@
 								<ul class="list-inline">
 									<li>
 
-										<h4 class="text-muted m-t-20">Number of Visit</h4> <%
- 	DatabaseConnection dbc = new DatabaseConnection();
- 	long usermac = 0;
- 	int loyalty = 0;
- 	int stayTime = 0;
- 	int storeid = 0;
- 	int stayTimeInAstore = 0;
- 	if (request.getParameter("macAddress") != null) {
- 		usermac = Long.parseLong(request.getParameter("macAddress"));
- 		loyalty = dbc.loyaltyCheck(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
- 		stayTime = dbc.userStayTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
- 	}
- 	/* if (request.getParameter("storeid") != null && request.getParameter("macAddress") != null) {
- 		usermac = Long.parseLong(request.getParameter("macAddress"));
- 		storeid = Integer.parseInt(request.getParameter("storeid"));
- 		stayTimeInAstore = dbc.userStayTimeInEachStore(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
- 				usermac, storeid);
- 	} */
- %>
-										<h3 class="m-b-0"><%=loyalty%></h3>
+										<h4 class="text-muted m-t-20">Number of Visit</h4>
+										<h3 class="m-b-0" id="loyalty"></h3>
 									</li>
 									<li>
 										<h4 class="text-muted m-t-20">Total Dwell Time Of a User</h4>
-										<h3 class="m-b-0"><%=stayTime%></h3>
+										<h3 class="m-b-0" id="userDwellTime"></h3>
 									</li>
-									<!-- <li>
-												<h4 class="text-muted m-t-20">Stay Time In Store Of a User</h4>
-												<h3 class="m-b-0"><%=stayTimeInAstore%></h3>
-											</li>  --%>
+									<li>
+										<h4 class="text-muted m-t-20">Stay Time In Store Of a
+											User</h4>
+										<h3 class="m-b-0" id="userDwellTimeInStore"></h3>
+									</li>
 
 									<!-- 	<li>
 												<h4 class="text-muted m-t-20">Retention Rate</h4>
@@ -547,8 +538,21 @@
 											Past 7 Days <span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu" role="menu">
-											<li><a href="javascript:void(0);">Past 7 Days</a></li>
-											<li><a href="javascript:void(0);">Past Month</a></li>
+											<li><a
+												href="javascript:changeScope(0, &quot;average&quot;);">Past
+													Day</a></li>
+											<li><a
+												href="javascript:changeScope(1, &quot;average&quot;);">Past
+													7 Days</a></li>
+											<li><a
+												href="javascript:changeScope(2, &quot;average&quot;);">Past
+													Month</a></li>
+											<li><a
+												href="javascript:changeScope(3, &quot;average&quot;);">Past
+													3 Month</a></li>
+											<li><a
+												href="javascript:changeScope(4, &quot;average&quot;);">Past
+													Year</a></li>
 										</ul>
 									</div>
 								</div>
@@ -873,6 +877,9 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
+	<!-- Global Variables -->
+	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
+
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
@@ -886,5 +893,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 </body>
 </html>

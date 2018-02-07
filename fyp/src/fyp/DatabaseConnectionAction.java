@@ -78,7 +78,7 @@ public class DatabaseConnectionAction extends ActionSupport implements ServletRe
 						dbc.userStayTimeInEachStore(startTimeInInterval, endTimeInInterval, macAddress, storeId);
 					break;
 				case "loyalty":
-					macAddress = Long.parseLong(request.getParameter("userMac"), 16);
+					macAddress = Long.parseLong(request.getParameter("userMac").replaceAll("\"", ""), 16);
 					value = dbc.loyaltyCheck(startTimeInInterval, endTimeInInterval, macAddress);
 					break;
 				default:

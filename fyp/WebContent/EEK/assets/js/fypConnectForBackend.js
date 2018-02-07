@@ -1,4 +1,66 @@
 var currentTime = 1508515200000;
+var userMac;
+var storeId;
+
+function changeScopeWithMac(i, requestType, macAddress, stid) {
+	userMac = macAddress;
+	storeId = stid;
+	changeScope(i, requestType);
+	$.ajax({
+		type : "get",
+		url : "databaseConnection",
+		data : {
+			start : currentTime - 3600000 * interval * numberOfDataInGraph,
+			end : currentTime,
+			storeId : -1,
+			interval : 0,
+			userMac : userMac,
+			type : "loyalty"
+		},
+		success : function(json) {
+			valFromDB = new Array();
+			for ( var prop in json)
+				valFromDB.push(json[prop]);
+			$("#loyalty").text(valFromDB[0]);
+		}
+	});
+	$.ajax({
+		type : "get",
+		url : "databaseConnection",
+		data : {
+			start : currentTime - 3600000 * interval * numberOfDataInGraph,
+			end : currentTime,
+			storeId : -1,
+			interval : 0,
+			userMac : userMac,
+			type : "user"
+		},
+		success : function(json) {
+			valFromDB = new Array();
+			for ( var prop in json)
+				valFromDB.push(json[prop]);
+			$("#userDwellTime").text(valFromDB[0]);
+		}
+	});
+	$.ajax({
+		type : "get",
+		url : "databaseConnection",
+		data : {
+			start : currentTime - 3600000 * interval * numberOfDataInGraph,
+			end : currentTime,
+			storeId : stid,
+			interval : 0,
+			userMac : userMac,
+			type : "user"
+		},
+		success : function(json) {
+			valFromDB = new Array();
+			for ( var prop in json)
+				valFromDB.push(json[prop]);
+			$("#userDwellTimeInStore").text(valFromDB[0]);
+		}
+	});
+}
 
 function changeScope(i, requestType) {
 	var interval;
@@ -207,6 +269,27 @@ function updateGraph(requestType) {
 				valFromDB = new Array();
 				for ( var prop in json)
 					valFromDB.push(json[prop]);
+				drawGraph();
+			}
+		});
+	}
+	else if (requestTypeL === "loyalty") {
+		$.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				end : currentTime,
+				storeId : -1,
+				interval : interval,
+				userMac : userMac,
+				type : "loyalty"
+			},
+			success : function(json) {
+				var i = 0;
+				valFromDB = new Array();
+				for ( var prop in json)
+					valFromDB.push(json["dataPoint" + ++i]);
 				drawGraph();
 			}
 		});
