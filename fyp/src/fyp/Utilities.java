@@ -27,7 +27,7 @@ public final class Utilities {
 	 */
 	final static long[] timeToPeriod(final ZonedDateTime start, final ZonedDateTime end) throws IllegalArgumentException {
 		if (start.isBefore(PAST))
-			throw new IllegalArgumentException("Starting year too early: "); // The system was not there such early...... this means invalid data
+			throw new IllegalArgumentException("Starting time too early: " + start); // The system was not there such early...... this means invalid data
 		if (start.isBefore(end))
 			return new long[] {start.toInstant().toEpochMilli(), end.toInstant().toEpochMilli()};
 		throw new IllegalArgumentException("The starting time must be earlier than the end time");
