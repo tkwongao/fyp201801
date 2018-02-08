@@ -7,7 +7,7 @@
 	<package name="fyp" extends="struts-default, json-default">
 		<action name="databaseConnection" class="fyp.DatabaseConnectionAction"
 			method="execute">
-			<result name="Seriouserror">/EEK/pages-500.html</result>
+			<result name="Unknownerror">/EEK/pages-500.html</result>
 			<result name="error">/EEK/pages-500.html</result>
 			<result type="json">
 				<param name="root">dataMap</param>
