@@ -18,9 +18,10 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			type : "loyalty"
 		},
 		success : function(json) {
+			var i = 0;
 			valFromDB = new Array();
 			for ( var prop in json)
-				valFromDB.push(json[prop]);
+				valFromDB.push(json["dataPoint" + ++i]);
 			$("#loyalty").text(valFromDB[0]);
 		}
 	});
@@ -36,9 +37,10 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			type : "user"
 		},
 		success : function(json) {
+			var i = 0;
 			valFromDB = new Array();
 			for ( var prop in json)
-				valFromDB.push(json[prop]);
+				valFromDB.push(json["dataPoint" + ++i]);
 			$("#userDwellTime").text(valFromDB[0]);
 		}
 	});
@@ -54,9 +56,10 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			type : "user"
 		},
 		success : function(json) {
+			var i = 0;
 			valFromDB = new Array();
 			for ( var prop in json)
-				valFromDB.push(json[prop]);
+				valFromDB.push(json["dataPoint" + ++i]);
 			$("#userDwellTimeInStore").text(valFromDB[0]);
 		}
 	});
@@ -113,9 +116,10 @@ function updateGraph(requestType) {
 				type : requestTypeL
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				$("#avgDwellTime").text(valFromDB[0]);
 			}
 		});
@@ -131,9 +135,10 @@ function updateGraph(requestType) {
 				type : requestTypeL
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				drawGraph();
 			}
 		});
@@ -155,9 +160,10 @@ function updateGraph(requestType) {
 					type : "count"
 				},
 				success : function(json) {
+					var i = 0;
 					valFromDB = new Array();
 					for ( var prop in json)
-						valFromDB.push(json[prop]);
+						valFromDB.push(json["dataPoint" + ++i]);
 					$(".totalVisitorCount").text(valFromDB[0]);
 				}
 			});
@@ -175,9 +181,10 @@ function updateGraph(requestType) {
 					type : "average"
 				},
 				success : function(json) {
+					var i = 0;
 					valFromDB = new Array();
 					for ( var prop in json)
-						valFromDB.push(json[prop]);
+						valFromDB.push(json["dataPoint" + ++i]);
 					$("#avgDwellTime").text(valFromDB[0]);
 				}
 			});
@@ -194,9 +201,10 @@ function updateGraph(requestType) {
 				type : "count"
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				$("#s1scount").text(valFromDB[0]);
 			}
 		});
@@ -212,9 +220,10 @@ function updateGraph(requestType) {
 				type : "count"
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				$("#s2scount").text(valFromDB[0]);
 			}
 		});
@@ -230,9 +239,10 @@ function updateGraph(requestType) {
 				type : "count"
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				$("#s3scount").text(valFromDB[0]);
 			}
 		});
@@ -248,9 +258,10 @@ function updateGraph(requestType) {
 				type : "count"
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				$("#s4scount").text(valFromDB[0]);
 			}
 		});
@@ -266,9 +277,10 @@ function updateGraph(requestType) {
 				type : "count"
 			},
 			success : function(json) {
+				var i = 0;
 				valFromDB = new Array();
 				for ( var prop in json)
-					valFromDB.push(json[prop]);
+					valFromDB.push(json["dataPoint" + ++i]);
 				drawGraph();
 			}
 		});
