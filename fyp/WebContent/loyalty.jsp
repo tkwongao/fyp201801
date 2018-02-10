@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
-<%@ page
+	pageEncoding="UTF-8"
 	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
+<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +13,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard Template</title>
+<title>Minton - Responsive Admin Dashboard</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
@@ -60,7 +60,7 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./main.jsp" class="logo"><object id="logo"
+					<a href="./index.jsp" class="logo"><object id="logo"
 							data="EEK/assets/images/logo.svg" type="image/svg+xml"
 							height="80"></object></a>
 				</div>
@@ -182,7 +182,7 @@
 					<ul>
 						<li class="menu-title">Main</li>
 
-						<li><a href="./main.jsp" class="waves-effect waves-primary">
+						<li><a href="./index.jsp" class="waves-effect waves-primary">
 								<i class="md md-home"></i><span>Home</span>
 						</a></li>
 
@@ -418,12 +418,17 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-
-								<%
-									Date date = new Date();
-									SimpleDateFormat ft = new SimpleDateFormat("E dd/MM/yyyy ");
-								%>
-								<h4 class="text-center no-margin"><%=ft.format(date)%></h4>
+								<h4 class="text-center no-margin">
+									<script>
+										document.write(new Intl.DateTimeFormat(
+												"en-HK", {
+													weekday : "long",
+													year : "numeric",
+													day : "numeric",
+													month : "long"
+												}).format(new Date()));
+									</script>
+								</h4>
 							</div>
 						</div>
 					</div>
@@ -486,55 +491,30 @@
 							</div> -->
 
 
-					<form action="loyalty.jsp" method="GET">
-						User Mac Address: <input type="text" name="macAddress"> <input
-							type="submit" value="Submit" />
-					</form>
+					<div>
+						<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
+						User MAC Address: <input type="text" id="macAddress"
+							value="B4EF3992723A"> Store ID: <input type="text"
+							id="storeId" value=-1>
+						<button type="button"
+							onclick="changeScopeWithMac(scope, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
+					</div>
 
-
-					<div class="col-lg-8">
+					<div class="col-lg-6">
 						<div class="card-box">
 							<div class="widget-chart text-center">
 								<ul class="list-inline">
 									<li>
-
-										<h4 class="text-muted m-t-20">Number of Visit</h4> <%
- 	DatabaseConnection dbc = new DatabaseConnection();
- 	long usermac = 0;
- 	int loyalty = 0;
- 	int stayTime = 0;
- 	int storeid = 0;
- 	int stayTimeInAstore = 0;
- 	if (request.getParameter("macAddress") != null) {
- 		usermac = Long.parseLong(request.getParameter("macAddress"));
- 		loyalty = dbc.loyaltyCheck(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
- 		stayTime = dbc.userStayTimeInMall(DatabaseConnection.PAST, DatabaseConnection.FUTURE, usermac);
- 	}
- 	/* if (request.getParameter("storeid") != null && request.getParameter("macAddress") != null) {
- 		usermac = Long.parseLong(request.getParameter("macAddress"));
- 		storeid = Integer.parseInt(request.getParameter("storeid"));
- 		stayTimeInAstore = dbc.userStayTimeInEachStore(DatabaseConnection.PAST, DatabaseConnection.FUTURE,
- 				usermac, storeid);
- 	} */
- %>
-										<h3 class="m-b-0"><%=loyalty%></h3>
+										<h4 class="text-muted m-t-20">Number of Visit</h4>
+										<h3 class="m-b-0" id="loyalty">0</h3>
 									</li>
 									<li>
-										<h4 class="text-muted m-t-20">Total Dwell Time Of a User</h4>
-										<h3 class="m-b-0"><%=stayTime%></h3>
+										<h4 class="text-muted m-t-20">Total Stay Time of a User</h4>
+										<h3 class="m-b-0" id="userDwellTime">0</h3>
 									</li>
-									<!-- <li>
-												<h4 class="text-muted m-t-20">Stay Time In Store Of a User</h4>
-												<h3 class="m-b-0"><%=stayTimeInAstore%></h3>
-											</li>  --%>
-
-									<!-- 	<li>
-												<h4 class="text-muted m-t-20">Retention Rate</h4>
-												<h3 class="m-b-0">965</h3>
-											</li> -->
 								</ul>
 
-								<div class="line-chart-second">
+								<div class="userLoyaltyCheckChart">
 									<svg style="height: 400px;"></svg>
 								</div>
 
@@ -544,11 +524,24 @@
 										<button type="button"
 											class="btn btn-outline no-padding m-t-10"
 											data-toggle="dropdown" aria-expanded="false">
-											Past 7 Days <span class="caret"></span>
+											<span id="scope">Past Day</span> <span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu" role="menu">
-											<li><a href="javascript:void(0);">Past 7 Days</a></li>
-											<li><a href="javascript:void(0);">Past Month</a></li>
+											<li><a
+												href="javascript:changeScopeWithMac(0, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
+													Day</a></li>
+											<li><a
+												href="javascript:changeScopeWithMac(1, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
+													7 Days</a></li>
+											<li><a
+												href="javascript:changeScopeWithMac(2, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
+													Month</a></li>
+											<li><a
+												href="javascript:changeScopeWithMac(3, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
+													3 Month</a></li>
+											<li><a
+												href="javascript:changeScopeWithMac(4, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
+													Year</a></li>
 										</ul>
 									</div>
 								</div>
@@ -556,7 +549,7 @@
 						</div>
 					</div>
 
-					<div class="col-lg-4">
+					<div class="col-lg-6">
 						<div class="card-box">
 
 							<div class="clearfix">
@@ -568,10 +561,10 @@
 
 							<div class="clearfix">
 								<h4 class="m-t-40 header-title">
-									<b>Average Dwell Time</b>
+									<b>User Stay Time in Mall</b>
 								</h4>
-								<div class="bar-chart-second">
-									<svg style="height: 220px;"></svg>
+								<div class="userStayTimeChart">
+									<svg style="height: 400px;"></svg>
 								</div>
 							</div>
 
@@ -873,10 +866,13 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
+	<!-- Global Variables -->
+	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
+
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
+	<script src="EEK/assets/js/fypLoyalty.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -886,5 +882,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 </body>
 </html>

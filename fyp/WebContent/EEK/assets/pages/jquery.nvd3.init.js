@@ -1,20 +1,15 @@
 /**
- * Theme: Minton Admin
- * Author: Coderthemes
+ * Theme: Admin
+ * Author: Coderthemes, faifai and GCH2 group
  * Chart Nvd3 chart
  */
 
 var charts = [];
 
-function UpdateAllCharts()
-{
-	for(var i in charts)
-	{
-		if(charts[i].update)
-		{
+function UpdateAllCharts() {
+	for (var i in charts)
+		if (charts[i].update)
 			charts[i].update();
-		}
-	}
 }
 
 (drawGraph = function($) {
@@ -22,26 +17,29 @@ function UpdateAllCharts()
 
 	var lineChart = nv.models.lineChart();
 	charts.push(lineChart);
-
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
-	lineChart_Second.options({
-		interpolate: 'basis'
-	})
-	lineChart_Second.forceY([0, 1])
-
-	function peopleCount() {
+	var barChart = nv.models.discreteBarChart();
+	charts.push(barChart);
+	var barChart_Second = nv.models.discreteBarChart();
+	charts.push(barChart_Second);
+	barChart_Second.color(['#00b19d', '#ef5350', '#3ddcf7', '#ffaa00','#81c868', '#dcdcdc', '#555555', '#fb6d9d', '#98a6ad', '#3bafda']);
+	
+	lineChart.forceY([0, 1]);
+	lineChart_Second.forceY([0, 1]);
+	barChart.forceY([0, 1]);
+	barChart_Second.forceY([0, 1]);
+	
+	function getData(key) {
 		var values = [];
-		for (var i = 0; i < numberOfDataInGraph; i++) {
+		for (var i = 0; i < numberOfDataInGraph; i++)
 			values.push({
 				x: i,
 				y: valFromDB[i]
 			});
-		}
-
 		return [{
 			values: values,
-			key: 'People Count',
+			key: key,
 			color: "#00b19d",
 			area: true
 		}];
@@ -50,9 +48,9 @@ function UpdateAllCharts()
 	nv.addGraph(function() {
 		var height = 300;
 		lineChart.useInteractiveGuideline(true);
-		lineChart.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d + 'h';});
-		lineChart.yAxis.axisLabel('Number of Visistors').scale(100).tickFormat(d3.format('d'));
-		d3.select('.line-chart svg').attr('perserveAspectRatio', 'xMinYMid').datum(peopleCount()).transition().duration(500).call(lineChart);
+		lineChart.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d;});
+		lineChart.yAxis.axisLabel('Number of Visistors').scale(100).tickFormat(d3.format('.2f'));
+		d3.select('.line-chart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('People Count')).transition().duration(500).call(lineChart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(lineChart.update);
 		return lineChart;
@@ -63,37 +61,17 @@ function UpdateAllCharts()
 		lineChart_Second.useInteractiveGuideline(true);
 		lineChart_Second.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d;});
 		lineChart_Second.yAxis.axisLabel('Number of Visistors').scale(100).tickFormat(d3.format('.2f'));
-		d3.select('.line-chart-second svg').attr('perserveAspectRatio', 'xMinYMid').datum(peopleCount()).transition().duration(500).call(lineChart_Second);
+		d3.select('.line-chart-second svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('People Count')).transition().duration(500).call(lineChart_Second);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(lineChart_Second.update);
 		return lineChart_Second;
 	});
 
-	var barChart = nv.models.discreteBarChart();
-	charts.push(barChart);
-
-	var barChart_Second = nv.models.discreteBarChart();
-	charts.push(barChart_Second);
-	barChart_Second.color(['#ffff00']);
-	function dwellTime() {
-		var values = [];
-		for (var i = 0; i <= 24; i+=4) {
-			values.push({
-				x: i,
-				y: i * Math.random()
-			});
-		}
-		return [{
-			values: values,
-			key: 'People Count',
-			color: "#00b19d"
-		}];
-	}
 	nv.addGraph(function() {
 		var height = 300;
-		barChart.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d + 'h';});
+		barChart.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d;});
 		barChart.yAxis.axisLabel('Average Dwell Time').scale(1).tickFormat(d3.format('.2f'));
-		d3.select('.bar-chart svg').attr('perserveAspectRatio', 'xMinYMid').datum(dwellTime()).transition().duration(500).call(barChart);
+		d3.select('.bar-chart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('People Count')).transition().duration(500).call(barChart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(barChart.update);
 		return barChart;
@@ -101,23 +79,22 @@ function UpdateAllCharts()
 
 	nv.addGraph(function() {
 		var height = 300;
-		barChart_Second.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d + 'h';});
+		barChart_Second.xAxis.axisLabel('Time').scale(1).tickFormat(function(d){return d;});
 		barChart_Second.yAxis.axisLabel('Average Dwell Time').scale(1).tickFormat(d3.format('.2f'));
-		d3.select('.bar-chart-second svg').attr('perserveAspectRatio', 'xMinYMid').datum(dwellTime()).transition().duration(500).call(barChart_Second);
+		d3.select('.bar-chart-second svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('People Count')).transition().duration(500).call(barChart_Second);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(barChart_Second.update);
 		return barChart_Second;
 	});
-
 	return;
-
+	/* These are not being executed in this version.
 	var i, j;
 	nv.utils.symbolMap.set('thin-x', function(size) {
 		size = Math.sqrt(size);
 		return 'M' + (-size / 2) + ',' + (-size / 2) + 'l' + size + ',' + size + 'm0,' + -(size) + 'l' + (-size) + ',' + size;
 	});
 	var scatterChart;
-	var colors = ['#00b19d', '#ef5350','#3ddcf7', '#ffaa00','#81c868', '#dcdcdc','#555555	', '#fb6d9d','#98a6ad', '#3bafda'];
+	var colors = ['#00b19d', '#ef5350','#3ddcf7', '#ffaa00','#81c868', '#dcdcdc', '#555555', '#fb6d9d','#98a6ad', '#3bafda'];
 	//d3.scale.category10().range()
 	nv.addGraph(function() {
 		scatterChart = nv.models.scatterChart().useVoronoi(true).color(colors).duration(300);
@@ -306,5 +283,5 @@ function UpdateAllCharts()
 			} 
 
 			];
-	}
+	}*/
 })(jQuery);
