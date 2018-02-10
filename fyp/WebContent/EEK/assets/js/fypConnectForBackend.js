@@ -66,7 +66,6 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 }
 
 function changeScope(i, requestType) {
-	var interval;
 	switch (i) {
 	case 0:
 		$("#scope").text("Past Day");
@@ -97,6 +96,10 @@ function changeScope(i, requestType) {
 		interval = -1;
 	break;
 	}
+	var a = new Array(numberOfDataInGraph);
+	for (var j = 0; j < numberOfDataInGraph; j++)
+		a[j] = 0;
+	valFromDB = a;
 	scope = i;
 	updateGraph(requestType);
 }
@@ -144,7 +147,7 @@ function updateGraph(requestType) {
 		});
 	}
 	else if (requestTypeL === "index") {
-		$.when(ajax1(), ajax2()).done(function(a1, a2) {
+		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
 			afterAJAXs();
 		});
 		function ajax1() {
@@ -186,6 +189,34 @@ function updateGraph(requestType) {
 					for ( var prop in json)
 						valFromDB.push(json["dataPoint" + ++i]);
 					$("#avgDwellTime").text(valFromDB[0]);
+				}
+			});
+		}
+		function ajax3() {
+			return $.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : currentTime - 3600000 * interval * numberOfDataInGraph,
+					end : currentTime,
+					storeId : -1,
+					interval : interval,
+					userMac : 0,
+					type : "count"
+				},
+				success : function(json) {
+					var i = 0;
+					var sum = 0;
+					valFromDB = new Array();
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + ++i] 
+						valFromDB.push(thisDataPoint);
+						sum += thisDataPoint;
+					}
+					$(".dailyVisitors").text(sum / valFromDB.length);
+					$("#todayVisitors").text(valFromDB[valFromDB.length - 1]);
+					$("#yesterdayVisitors").text(valFromDB[valFromDB.length - 2]);
+					drawGraph();
 				}
 			});
 		}
@@ -263,25 +294,6 @@ function updateGraph(requestType) {
 				for ( var prop in json)
 					valFromDB.push(json["dataPoint" + ++i]);
 				$("#s4scount").text(valFromDB[0]);
-			}
-		});
-		$.ajax({
-			type : "get",
-			url : "databaseConnection",
-			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
-				end : currentTime,
-				storeId : -1,
-				interval : interval,
-				userMac : 0,
-				type : "count"
-			},
-			success : function(json) {
-				var i = 0;
-				valFromDB = new Array();
-				for ( var prop in json)
-					valFromDB.push(json["dataPoint" + ++i]);
-				drawGraph();
 			}
 		});
 	}

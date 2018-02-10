@@ -434,7 +434,7 @@
 							<div class="col-sm-6 col-lg-4">
 								<div class="widget-simple-chart text-center card-box">
 									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="35%" data-width="5" data-fontsize="14" data-percent="35" data-fgcolor="#5fbeaa" data-bgcolor="#ebeff2"></div> -->
-									<h3 class="text-success counter totalVisitorCount"></h3>
+									<h3 class="text-success counter totalVisitorCount">0</h3>
 									<p class="text-muted text-nowrap">Visitors Count</p>
 
 								</div>
@@ -444,16 +444,15 @@
 								<div class="widget-simple-chart text-center card-box">
 									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
  -->
-									<h3 class="text-primary counter">0</h3>
+									<h3 class="text-primary counter dailyVisitors">0</h3>
 									<p class="text-muted text-nowrap">Daily Visitors</p>
-									<!-- TODO reorganize graph-->
 								</div>
 							</div>
 
 							<div class="col-sm-6 col-lg-4">
 								<div class="widget-simple-chart text-center card-box">
 									<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
-									<h3 class="text-inverse counter" id="avgDwellTime"></h3>
+									<h3 class="text-inverse counter" id="avgDwellTime">0</h3>
 									<p class="text-muted text-nowrap">Average Dwell Time
 										(seconds)</p>
 								</div>
@@ -478,15 +477,15 @@
 										<ul class="list-inline m-t-15">
 											<li>
 												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
+												<h3 class="m-b-0" id="todayVisitors">0</h3>
 											</li>
 											<li>
 												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
+												<h3 class="m-b-0" id="yesterdayVisitors">0</h3>
 											</li>
 											<li>
 												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
+												<h3 class="m-b-0 dailyVisitors">0</h3>
 											</li>
 										</ul>
 									</div>
@@ -918,7 +917,7 @@
 	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {
-			changeScope(0, "index");
+			changeScope(2, "index");
 		});
 	</script>
 </body>
