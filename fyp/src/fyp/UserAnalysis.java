@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Objects;
 
 public class UserAnalysis {
@@ -27,25 +28,30 @@ public class UserAnalysis {
 	 * @param storeId The ID of the store.
 	 * @return
 	 */
-	int userStayTime(final long[] period, final int storeId) {
+	Integer[] userStayTime(final long[] period, final int numberOfIntervals, final int storeId) {
 		try {
 			String dbName = (storeId == MallAndStoreAnalysis.WHOLE_MALL) ? "site_results" : "store_results",
-					sql = "SELECT sum(endts - startts) AS dwellTimeMs FROM " + dbName + " WHERE startts BETWEEN ? AND ? AND did = ?";
-			if (storeId != MallAndStoreAnalysis.WHOLE_MALL)
-				sql += " AND storeid = ?";
+					storeIdFilter = (storeId == MallAndStoreAnalysis.WHOLE_MALL) ? "" : "AND storeid = ? ",
+							sql = "SELECT width_bucket(startts, ?, ?, ?), sum(endts - startts) FROM " + dbName +
+							" WHERE startts BETWEEN ? AND ? AND did = ? " + storeIdFilter + "GROUP BY width_bucket;";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
-			ps.setLong(3, macAddress);
+			ps.setInt(3, numberOfIntervals);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			ps.setLong(6, macAddress);
 			if (storeId != MallAndStoreAnalysis.WHOLE_MALL)
-				ps.setInt(4, storeId);
+				ps.setInt(7, storeId);
+			Integer[] value = new Integer[numberOfIntervals];
+			Arrays.fill(value, 0);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next())
-				return (int) (rs.getLong("dwellTimeMs") / Utilities.MILLISECONDS_TO_SECONDS);
-			throw new SQLException("No value was sent from the database.");
+				value[rs.getInt("width_bucket") - 1] = (int) (rs.getLong("sum") / Utilities.MILLISECONDS_TO_SECONDS);
+			return value;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return -1;
+			return new Integer[] {-1};
 		}
 	}
 
@@ -55,20 +61,26 @@ public class UserAnalysis {
 	 * as {@code long} array of length 2 containing UTC milliseconds. 
 	 * @return
 	 */
-	int loyaltyCheck(final long[] period) {
+	Integer[] loyaltyCheck(final long[] period, final int numberOfIntervals) {
 		try {
-			String sql = "SELECT count(storeid) FROM store_results WHERE startts BETWEEN ? AND ? AND did = ?";
+			String sql = "SELECT width_bucket(startts, ?, ?, ?), count(storeid) FROM store_results "
+					+ "WHERE startts BETWEEN ? AND ? AND did = ? GROUP BY width_bucket;";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
-			ps.setLong(3, macAddress);
+			ps.setInt(3, numberOfIntervals);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			ps.setLong(6, macAddress);
+			Integer[] value = new Integer[numberOfIntervals];
+			Arrays.fill(value, 0);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next())
-				return rs.getInt("count");
-			throw new SQLException("No value was sent from the database.");
+				value[rs.getInt("width_bucket") - 1] = rs.getInt("count");
+			return value;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return -1;
+			return new Integer[] {-1};
 		}
 	}
 }

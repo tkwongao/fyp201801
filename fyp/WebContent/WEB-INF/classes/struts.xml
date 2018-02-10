@@ -5,7 +5,7 @@
 <struts>
 	<constant name="struts.devMode" value="true" />
 	<package name="fyp" extends="struts-default, json-default">
-		<action name="databaseConnection" class="fyp.DatabaseConnectionAction"
+		<action name="databaseConnection" class="fyp.Application"
 			method="execute">
 			<result name="Unknownerror">/EEK/pages-500.html</result>
 			<result name="error">/EEK/pages-500.html</result>
