@@ -566,19 +566,19 @@
 											<tbody>
 												<tr>
 													<td>Nike(Shop 1)</td>
-													<td align="right" id="s1scount"></td>
+													<td align="right" id="s1scount">0</td>
 												</tr>
 												<tr>
 													<td>Apple(Shop 2)</td>
-													<td align="right" id="s2scount"></td>
+													<td align="right" id="s2scount">0</td>
 												</tr>
 												<tr>
 													<td>Samsung(Shop 3)</td>
-													<td align="right" id="s3scount"></td>
+													<td align="right" id="s3scount">0</td>
 												</tr>
 												<tr>
 													<td>Adidas(Shop 4)</td>
-													<td align="right" id="s4scount"></td>
+													<td align="right" id="s4scount">0</td>
 												</tr>
 											</tbody>
 										</table>

@@ -1,4 +1,6 @@
-var currentTime = 1508515200000;
+var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
+// To be replaced by getting the current date
+
 var userMac;
 var storeId;
 
@@ -12,7 +14,7 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 		data : {
 			start : currentTime - 3600000 * interval * numberOfDataInGraph,
 			end : currentTime,
-			storeId : -1,
+			storeId : storeId,
 			interval : 0,
 			userMac : userMac,
 			type : "loyalty"
@@ -31,7 +33,7 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 		data : {
 			start : currentTime - 3600000 * interval * numberOfDataInGraph,
 			end : currentTime,
-			storeId : -1,
+			storeId : storeId,
 			interval : 0,
 			userMac : userMac,
 			type : "user"
@@ -44,25 +46,7 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			$("#userDwellTime").text(valFromDB[0]);
 		}
 	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : currentTime - 3600000 * interval * numberOfDataInGraph,
-			end : currentTime,
-			storeId : stid,
-			interval : 0,
-			userMac : userMac,
-			type : "user"
-		},
-		success : function(json) {
-			var i = 0;
-			valFromDB = new Array();
-			for ( var prop in json)
-				valFromDB.push(json["dataPoint" + ++i]);
-			$("#userDwellTimeInStore").text(valFromDB[0]);
-		}
-	});
+	updateGraph(requestType);
 }
 
 function changeScope(i, requestType) {
@@ -105,13 +89,14 @@ function changeScope(i, requestType) {
 }
 
 function updateGraph(requestType) {
+	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 	var requestTypeL = requestType.toLowerCase();
 	if (requestTypeL === "average") {
 		$.ajax({
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : -1,
 				interval : 0,
@@ -130,7 +115,7 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : -1,
 				interval : interval,
@@ -155,7 +140,7 @@ function updateGraph(requestType) {
 				type : "get",
 				url : "databaseConnection",
 				data : {
-					start : currentTime - 3600000 * interval * numberOfDataInGraph,
+					start : startTime,
 					end : currentTime,
 					storeId : -1,
 					interval : 0,
@@ -176,7 +161,7 @@ function updateGraph(requestType) {
 				type : "get",
 				url : "databaseConnection",
 				data : {
-					start : currentTime - 3600000 * interval * numberOfDataInGraph,
+					start : startTime,
 					end : currentTime,
 					storeId : -1,
 					interval : 0,
@@ -197,7 +182,7 @@ function updateGraph(requestType) {
 				type : "get",
 				url : "databaseConnection",
 				data : {
-					start : currentTime - 3600000 * interval * numberOfDataInGraph,
+					start : startTime,
 					end : currentTime,
 					storeId : -1,
 					interval : interval,
@@ -224,7 +209,7 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : 1000001,
 				interval : 0,
@@ -243,7 +228,7 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : 1000002,
 				interval : 0,
@@ -262,7 +247,7 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : 1000003,
 				interval : 0,
@@ -281,7 +266,7 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
 				storeId : 1000004,
 				interval : 0,
@@ -302,9 +287,9 @@ function updateGraph(requestType) {
 			type : "get",
 			url : "databaseConnection",
 			data : {
-				start : currentTime - 3600000 * interval * numberOfDataInGraph,
+				start : startTime,
 				end : currentTime,
-				storeId : -1,
+				storeId : storeId,
 				interval : interval,
 				userMac : userMac,
 				type : "loyalty"
