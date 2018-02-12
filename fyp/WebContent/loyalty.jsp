@@ -511,11 +511,6 @@
 										<h4 class="text-muted m-t-20">Number of Visit</h4>
 										<h3 class="m-b-0" id="loyalty">0</h3>
 									</li>
-									<li>
-										<h4 class="text-muted m-t-20">Total Stay Time of a User
-											(seconds)</h4>
-										<h3 class="m-b-0" id="userDwellTime">0</h3>
-									</li>
 								</ul>
 
 								<div class="userLoyaltyCheckChart">
@@ -558,14 +553,14 @@
 
 							<div class="clearfix">
 								<h4 class="m-t-0 header-title">
-									<b>People Count</b>
+									<b>Total Stay Time of a User (seconds)</b>
 								</h4>
-								<span class="m-t-10 dropcap text-primary">100</span>
+								<span class="m-t-10 dropcap text-primary" id="userDwellTime">0</span>
 							</div>
 
 							<div class="clearfix">
 								<h4 class="m-t-40 header-title">
-									<b>User Stay Time in Mall</b>
+									<b>User Stay Time (seconds)</b>
 								</h4>
 								<div class="userStayTimeChart">
 									<svg style="height: 400px;"></svg>
