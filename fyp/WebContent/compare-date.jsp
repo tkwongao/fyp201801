@@ -439,12 +439,14 @@
 							<div class="card-box">
 								<div id="searchPanel" class="row in m-b-20">
 									<div class="col-lg-6">
-										<div class="calendar-picker form-control">
+										<div class="calendar-picker form-control" id="startDate"
+											value="0">
 											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
 									</div>
 									<div class="col-lg-6">
-										<div class="calendar-picker form-control">
+										<div class="calendar-picker form-control" id="endDate"
+											value="0">
 											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
 									</div>
@@ -468,24 +470,24 @@
 											</h4>
 
 											<div class="widget-chart text-center">
-												<div class="line-chart">
+												<div class="numberOfVisitChart">
 													<svg style="height: 400px;"></svg>
 												</div>
 
-												<ul class="list-inline m-t-15">
+												<!--ul class="list-inline m-t-15">
 													<li>
 														<h4 class="text-muted m-t-20">Today</h4>
-														<h3 class="m-b-0">1000</h3>
+														<h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
 													</li>
 													<li>
 														<h4 class="text-muted m-t-20">Yesterday</h4>
-														<h3 class="m-b-0">523</h3>
+														<h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
 													</li>
 													<li>
 														<h4 class="text-muted m-t-20">Average</h4>
-														<h3 class="m-b-0">965</h3>
+														<h3 class="m-b-0 totalAverageDwellTime">0</h3>
 													</li>
-												</ul>
+												</ul-->
 											</div>
 										</div>
 									</div>
@@ -500,29 +502,29 @@
 											</h4>
 
 											<div class="widget-chart text-center">
-												<div class="bar-chart">
+												<div class="averageDwellTimeChart">
 													<svg style="height: 400px;"></svg>
 												</div>
 
-												<ul class="list-inline m-t-15">
+												<!--ul class="list-inline m-t-15">
 													<li>
 														<h4 class="text-muted m-t-20">Today</h4>
-														<h3 class="m-b-0">1000</h3>
+														<h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
 													</li>
 													<li>
 														<h4 class="text-muted m-t-20">Yesterday</h4>
-														<h3 class="m-b-0">523</h3>
+														<h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
 													</li>
 													<li>
 														<h4 class="text-muted m-t-20">Average</h4>
-														<h3 class="m-b-0">965</h3>
+														<h3 class="m-b-0 totalAverageDwellTime">0</h3>
 													</li>
-												</ul>
+												</ul-->
 											</div>
 
 										</div>
 									</div>
-
+									<!--
 									<div class="col-lg-8">
 										<div class="card-box">
 											<div class="widget-chart text-center">
@@ -546,7 +548,7 @@
 													</li>
 												</ul>
 
-												<div class="line-chart-second">
+												<div class="numberOfVisitChart">
 													<svg style="height: 400px;"></svg>
 												</div>
 
@@ -556,11 +558,24 @@
 														<button type="button"
 															class="btn btn-outline no-padding m-t-10"
 															data-toggle="dropdown" aria-expanded="false">
-															Past 7 Days <span class="caret"></span>
+															Past Day <span class="caret"></span>
 														</button>
 														<ul class="dropdown-menu" role="menu">
-															<li><a href="javascript:void(0);">Past 7 Days</a></li>
-															<li><a href="javascript:void(0);">Past Month</a></li>
+															<li><a
+																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+																	Day</a></li>
+															<li><a
+																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+																	7 Days</a></li>
+															<li><a
+																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+																	Month</a></li>
+															<li><a
+																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+																	3 Month</a></li>
+															<li><a
+																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+																	Year</a></li>
 														</ul>
 													</div>
 												</div>
@@ -582,7 +597,7 @@
 												<h4 class="m-t-40 header-title">
 													<b>Average Dwell Time</b>
 												</h4>
-												<div class="bar-chart-second">
+												<div class="averageDwellTimeChart">
 													<svg style="height: 220px;"></svg>
 												</div>
 											</div>
@@ -602,22 +617,27 @@
 													</thead>
 													<tbody>
 														<tr>
-															<td>Nike</td>
-															<td align="right">300</td>
+															<td>Shop #1</td>
+															<td align="right" id="s1scount">0</td>
 														</tr>
 														<tr>
-															<td>Apple</td>
-															<td align="right">200</td>
+															<td>Shop #2</td>
+															<td align="right" id="s2scount">0</td>
 														</tr>
 														<tr>
-															<td>Samsung</td>
-															<td align="right">100</td>
+															<td>Shop #3</td>
+															<td align="right" id="s3scount">0</td>
+														</tr>
+														<tr>
+															<td>Shop #4</td>
+															<td align="right" id="s4scount">0</td>
 														</tr>
 													</tbody>
 												</table>
 											</div>
 										</div>
 									</div>
+									-->
 								</div>
 
 								<div class="clearfix"></div>
@@ -891,12 +911,12 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-	<script src="EEK/assets/pages/jquery.compare-date.init.js"></script>
+	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
 
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
+	<script src="EEK/assets/js/fypCompareDate.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -906,5 +926,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 </body>
 </html>

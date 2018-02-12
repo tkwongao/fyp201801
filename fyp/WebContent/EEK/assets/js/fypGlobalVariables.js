@@ -1,4 +1,4 @@
-var numberOfDataInGraph = 24;
+var numberOfDataInGraph = 30;
 var valFromDB1 = new Array(numberOfDataInGraph);
 var valFromDB2 = new Array(numberOfDataInGraph);
 for (var j = 0; j < numberOfDataInGraph; j++) {
