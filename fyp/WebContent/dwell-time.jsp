@@ -186,14 +186,14 @@
 								<i class="md md-home"></i><span>Home</span>
 						</a></li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
+						<!--li class="has_sub"><a href="javascript:void(0);"
 							class="waves-effect waves-primary"><i
 								class="md md-access-time"></i><span>Realtime</span> <span
 								class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<li><a href="overview.html">Overview</a></li>
 								<li><a href="map-view.html">Loactions</a></li>
-							</ul></li>
+							</ul></li-->
 
 						<li class="has_sub"><a href="javascript:void(0);"
 							class="waves-effect waves-primary"><i class="md md-share"></i><span>

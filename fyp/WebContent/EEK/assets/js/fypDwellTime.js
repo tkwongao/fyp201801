@@ -54,7 +54,7 @@ function UpdateAllCharts() {
 	});
 
 	nv.addGraph(function() {
-		barChart_Second.forceY([0, 1]).margin({"bottom": 120}).color(['#00b19d']).xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+		barChart_Second.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format(timeFormat)(new Date(d));
 		});
 		barChart_Second.yAxis.axisLabel('Average Dwell Time (seconds)').scale(1).tickFormat(d3.format('.2f'));

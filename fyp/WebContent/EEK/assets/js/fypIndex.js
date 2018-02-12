@@ -61,7 +61,7 @@ function UpdateAllCharts() {
 		}];
 	}
 	nv.addGraph(function() {
-		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80}).color(['#00b19d']).xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format('%d %b %Y')(new Date(d));
 		});
 		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
