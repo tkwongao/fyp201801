@@ -70,8 +70,6 @@ public class MallAndStoreAnalysis {
 					storeIdFilter = (storeId == WHOLE_MALL) ? "" : "AND storeid = ? ",
 							sql = "SELECT width_bucket(startts, ?, ?, ?), avg(endts - startts) FROM " + dbName
 							+ " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "GROUP BY width_bucket;";
-			if (storeId != WHOLE_MALL)
-				sql += " AND storeid = ?";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);

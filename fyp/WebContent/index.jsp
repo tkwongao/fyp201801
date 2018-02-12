@@ -197,10 +197,10 @@
 							class="waves-effect waves-primary"><i class="md md-share"></i><span>
 									Analytics </span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
-								<li><a href="EEK/compare-location.html">Compare
-										Location</a></li>
-								<li><a href="EEK/compare-date.html">Compare Date</a></li>
-								<li><a href="EEK/traffic.html">Traffic</a></li>
+								<!--li><a href="EEK/compare-location.html">Compare
+										Location</a></li-->
+								<li><a href="compare-date.jsp">Compare Date</a></li>
+								<!--li><a href="EEK/traffic.html">Traffic</a></li-->
 								<li><a href="dwell-time.jsp">Dwell Time</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
@@ -404,15 +404,19 @@
 						<div class="col-sm-12">
 							<div class="page-title-box">
 								<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
-								<!--       <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn" data-toggle="dropdown" aria-expanded="false">K11 <span class="caret"></span></button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="javascript:void(0);">K11</a></li>
-                                            <li><a href="javascript:void(0);">HKUST</a></li>
-                                            <li><a href="javascript:void(0);">The Base</a></li>
-                                        </ul>
-                                    </div>
- -->
+								<div class="btn-group pull-right">
+									<button type="button"
+										class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn"
+										data-toggle="dropdown" aria-expanded="false">
+										The Base <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<!--li><a href="javascript:void(0);">K11</a></li-->
+										<!--li><a href="javascript:void(0);">HKUST</a></li-->
+										<li><a href="javascript:void(0);">The Base</a></li>
+									</ul>
+								</div>
+
 								<h4 class="text-center no-margin">
 									<script>
 										document.write(new Intl.DateTimeFormat(
@@ -445,14 +449,14 @@
 									<!-- 										<div class="circliful-chart" data-dimension="90" data-text="75%" data-width="5" data-fontsize="14" data-percent="75" data-fgcolor="#3bafda" data-bgcolor="#ebeff2"></div>
  -->
 									<h3 class="text-primary counter dailyVisitors">0</h3>
-									<p class="text-muted text-nowrap">Daily Visitors</p>
+									<p class="text-muted text-nowrap">Average Daily Visitors</p>
 								</div>
 							</div>
 
 							<div class="col-sm-6 col-lg-4">
 								<div class="widget-simple-chart text-center card-box">
 									<!-- <div class="circliful-chart" data-dimension="90" data-text="49%" data-width="5" data-fontsize="14" data-percent="49" data-fgcolor="#98a6ad" data-bgcolor="#ebeff2"> </div>-->
-									<h3 class="text-inverse counter" id="avgDwellTime">0</h3>
+									<h3 class="text-inverse counter totalAverageDwellTime">0</h3>
 									<p class="text-muted text-nowrap">Average Dwell Time
 										(seconds)</p>
 								</div>
@@ -470,7 +474,7 @@
 									</h4>
 
 									<div class="widget-chart text-center">
-										<div class="line-chart">
+										<div class="numberOfVisitChart">
 											<svg style="height: 400px;"></svg>
 										</div>
 
@@ -484,7 +488,7 @@
 												<h3 class="m-b-0" id="yesterdayVisitors">0</h3>
 											</li>
 											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
+												<h4 class="text-muted m-t-20">Daily Average</h4>
 												<h3 class="m-b-0 dailyVisitors">0</h3>
 											</li>
 										</ul>
@@ -497,27 +501,27 @@
 								<div class="card-box">
 									<h4 class="m-t-0 m-b-20 header-title">
 										<div class="text-center">
-											<b>Daily Average User Dwell Time</b>
+											<b>Average Dwell Time (seconds)</b>
 										</div>
 									</h4>
 
 									<div class="widget-chart text-center">
-										<div class="bar-chart">
+										<div class="averageDwellTimeChart">
 											<svg style="height: 400px;"></svg>
 										</div>
 
 										<ul class="list-inline m-t-15">
 											<li>
 												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
+												<h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
 											</li>
 											<li>
 												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
+												<h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
 											</li>
 											<li>
 												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
+												<h3 class="m-b-0 totalAverageDwellTime">0</h3>
 											</li>
 										</ul>
 									</div>
@@ -565,19 +569,19 @@
 											</thead>
 											<tbody>
 												<tr>
-													<td>Nike(Shop 1)</td>
+													<td>Shop #1</td>
 													<td align="right" id="s1scount">0</td>
 												</tr>
 												<tr>
-													<td>Apple(Shop 2)</td>
+													<td>Shop #2</td>
 													<td align="right" id="s2scount">0</td>
 												</tr>
 												<tr>
-													<td>Samsung(Shop 3)</td>
+													<td>Shop #3</td>
 													<td align="right" id="s3scount">0</td>
 												</tr>
 												<tr>
-													<td>Adidas(Shop 4)</td>
+													<td>Shop #4</td>
 													<td align="right" id="s4scount">0</td>
 												</tr>
 											</tbody>
@@ -873,7 +877,7 @@
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
+	<script src="EEK/assets/js/fypIndex.js"></script>
 
 	<!-- skycons -->
 	<script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
@@ -889,31 +893,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-
-	<script type="text/javascript">
-		function afterAJAXs() {
-			$('.counter').counterUp({
-				delay : 100,
-				time : 1200
-			});
-			$('.circliful-chart').circliful();
-		}
-
-		// BEGIN SVG WEATHER ICON
-		if (typeof Skycons !== 'undefined') {
-			var icons = new Skycons({
-				"color" : "#3bafda"
-			}, {
-				"resizeClear" : true
-			}), list = [ "clear-day", "clear-night", "partly-cloudy-day",
-					"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
-					"wind", "fog" ], i;
-
-			for (i = list.length; i--;)
-				icons.set(list[i], list[i]);
-			icons.play();
-		};
-	</script>
 	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function() {

@@ -1,7 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"
-	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
-<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,9 +56,8 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="logo"><object id="logo"
-							data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object></a>
+					<a href="./" class="logo"><object id="logo"
+							data="EEK/assets/images/logo.svg" type="image/svg+xml" height="80"></object></a>
 				</div>
 			</div>
 
@@ -418,6 +413,7 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
+
 								<h4 class="text-center no-margin">
 									<script>
 										document.write(new Intl.DateTimeFormat(
@@ -432,421 +428,441 @@
 							</div>
 						</div>
 					</div>
-					<div>
-						<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
-						User MAC Address: <input type="text" id="macAddress"
-							value="B4EF3992723A"> Store: <select id="storeId">
-							<option value="-1" selected>All Stores</option>
-							<option value="1000001">Store 1</option>
-							<option value="1000002">Store 2</option>
-							<option value="1000003">Store 3</option>
-							<option value="1000004">Store 4</option>
-						</select>
-						<button type="button"
-							onclick="changeScopeWithMac(scope, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
-					</div>
 
-					<!-- <div class="row">
-							<div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
-
-									<div class="widget-chart text-center">
-										<div class="line-chart">
-											<svg style="height:400px;"></svg>
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="card-box">
+								<div id="searchPanel" class="row in m-b-20">
+									<div class="col-lg-6">
+										<div class="calendar-picker form-control">
+											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
-												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
 									</div>
-								</div>
-							</div>
-
-
-							<div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
-									
-									<div class="widget-chart text-center">
-										<div class="bar-chart">
-											<svg style="height:400px;"></svg>
+									<div class="col-lg-6">
+										<div class="calendar-picker form-control">
+											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
-												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
-									</div>
-									
-								</div>
-							</div> -->
-
-					<div class="col-lg-6">
-						<div class="card-box">
-							<div class="widget-chart text-center">
-								<ul class="list-inline">
-									<li>
-										<h4 class="text-muted m-t-20">Number of Visit</h4>
-										<h3 class="m-b-0" id="loyalty">0</h3>
-									</li>
-									<li>
-										<h4 class="text-muted m-t-20">Total Stay Time of a User
-											(seconds)</h4>
-										<h3 class="m-b-0" id="userDwellTime">0</h3>
-									</li>
-								</ul>
-
-								<div class="userLoyaltyCheckChart">
-									<svg style="height: 400px;"></svg>
-								</div>
-
-								<div class="text-left m-t-20"
-									style="border-top: 1px solid grey;">
-									<div class="btn-group">
-										<button type="button"
-											class="btn btn-outline no-padding m-t-10"
-											data-toggle="dropdown" aria-expanded="false">
-											<span id="scope">Past Day</span> <span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu" role="menu">
-											<li><a
-												href="javascript:changeScopeWithMac(0, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Day</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(1, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													7 Days</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(2, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Month</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(3, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													3 Month</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(4, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Year</a></li>
-										</ul>
 									</div>
 								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<button type="button" class="btn btn-primary btn-block"
+											data-toggle="collapse" data-target="#searchPanel"
+											aria-expanded="true">Compare</button>
+									</div>
+								</div>
+
+								<div id="resultPanel" class="row collapse m-t-20">
+									<div class="col-sm-6 col-lg-6">
+										<div class="card-box">
+											<h4 class="m-t-0 m-b-20 header-title">
+												<div class="text-center">
+													<b>People Count</b>
+												</div>
+											</h4>
+
+											<div class="widget-chart text-center">
+												<div class="line-chart">
+													<svg style="height: 400px;"></svg>
+												</div>
+
+												<ul class="list-inline m-t-15">
+													<li>
+														<h4 class="text-muted m-t-20">Today</h4>
+														<h3 class="m-b-0">1000</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Yesterday</h4>
+														<h3 class="m-b-0">523</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+												</ul>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-sm-6 col-lg-6">
+										<div class="card-box">
+											<h4 class="m-t-0 m-b-20 header-title">
+												<div class="text-center">
+													<b>Daily Average User Dwell Time</b>
+												</div>
+											</h4>
+
+											<div class="widget-chart text-center">
+												<div class="bar-chart">
+													<svg style="height: 400px;"></svg>
+												</div>
+
+												<ul class="list-inline m-t-15">
+													<li>
+														<h4 class="text-muted m-t-20">Today</h4>
+														<h3 class="m-b-0">1000</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Yesterday</h4>
+														<h3 class="m-b-0">523</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+												</ul>
+											</div>
+
+										</div>
+									</div>
+
+									<div class="col-lg-8">
+										<div class="card-box">
+											<div class="widget-chart text-center">
+												<ul class="list-inline">
+													<li>
+														<h4 class="text-muted m-t-20">People Count</h4>
+														<h3 class="m-b-0">1000</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average Dwell Time</h4>
+														<h3 class="m-b-0">523</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Number of Visit</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+
+													<li>
+														<h4 class="text-muted m-t-20">Retention Rate</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+												</ul>
+
+												<div class="line-chart-second">
+													<svg style="height: 400px;"></svg>
+												</div>
+
+												<div class="text-left m-t-20"
+													style="border-top: 1px solid grey;">
+													<div class="btn-group">
+														<button type="button"
+															class="btn btn-outline no-padding m-t-10"
+															data-toggle="dropdown" aria-expanded="false">
+															Past 7 Days <span class="caret"></span>
+														</button>
+														<ul class="dropdown-menu" role="menu">
+															<li><a href="javascript:void(0);">Past 7 Days</a></li>
+															<li><a href="javascript:void(0);">Past Month</a></li>
+														</ul>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-4">
+										<div class="card-box">
+
+											<div class="clearfix">
+												<h4 class="m-t-0 header-title">
+													<b>People Count</b>
+												</h4>
+												<span class="m-t-10 dropcap text-primary">100</span>
+											</div>
+
+											<div class="clearfix">
+												<h4 class="m-t-40 header-title">
+													<b>Average Dwell Time</b>
+												</h4>
+												<div class="bar-chart-second">
+													<svg style="height: 220px;"></svg>
+												</div>
+											</div>
+
+											<div class="clearfix">
+												<h4 class="m-t-10 header-title">
+													<b>Top Shop List</b>
+												</h4>
+												<table class="table">
+													<thead>
+														<tr>
+															<td>Top Shop
+															</th>
+															<td align="right">Visitors
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>Nike</td>
+															<td align="right">300</td>
+														</tr>
+														<tr>
+															<td>Apple</td>
+															<td align="right">200</td>
+														</tr>
+														<tr>
+															<td>Samsung</td>
+															<td align="right">100</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="clearfix"></div>
 							</div>
 						</div>
 					</div>
 
-					<div class="col-lg-6">
-						<div class="card-box">
-
-							<div class="clearfix">
-								<h4 class="m-t-0 header-title">
-									<b>People Count</b>
-								</h4>
-								<span class="m-t-10 dropcap text-primary">100</span>
-							</div>
-
-							<div class="clearfix">
-								<h4 class="m-t-40 header-title">
-									<b>User Stay Time in Mall</b>
-								</h4>
-								<div class="userStayTimeChart">
-									<svg style="height: 400px;"></svg>
-								</div>
-							</div>
-
-
-							<!-- 
-									<div class="clearfix">
-										<h4 class="m-t-10 header-title"><b>Top Shop List</b></h4>
-										<table class="table">
-											<thead>
-												<tr>
-													<td>Top Shop</th>
-													<td align="right">Visitors</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Nike</td>
-													<td align="right">300</td>
-												</tr>
-												<tr>
-													<td>Apple</td>
-													<td align="right">200</td>
-												</tr>
-												<tr>
-													<td>Samsung</td>
-													<td align="right">100</td>
-												</tr>
-											</tbody>
-										</table>
-									</div> -->
-						</div>
-					</div>
 				</div>
-
-
+				<!-- end container -->
 
 			</div>
-			<!-- end container -->
+			<!-- end content -->
+
+
+
+			<!-- FOOTER -->
+			<footer class="footer text-right"> 2017 © P-Sense. </footer>
+			<!-- End FOOTER -->
 
 		</div>
-		<!-- end content -->
+		<!-- ============================================================== -->
+		<!-- End Right content here -->
+		<!-- ============================================================== -->
 
 
-
-		<!-- FOOTER -->
-		<footer class="footer text-right"> 2017 © P-Sense. </footer>
-		<!-- End FOOTER -->
-
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Right content here -->
-	<!-- ============================================================== -->
-
-
-	<!-- Right Sidebar -->
-	<div class="side-bar right-bar">
-		<div class="nicescroll">
-			<ul class="nav nav-tabs tabs">
-				<li class="active tab"><a href="#home-2" data-toggle="tab"
-					aria-expanded="false"> <span class="visible-xs"><i
-							class="fa fa-home"></i></span> <span class="hidden-xs">Activity</span>
-				</a></li>
-				<li class="tab"><a href="#profile-2" data-toggle="tab"
-					aria-expanded="false"> <span class="visible-xs"><i
-							class="fa fa-user"></i></span> <span class="hidden-xs">Chat</span>
-				</a></li>
-				<li class="tab"><a href="#messages-2" data-toggle="tab"
-					aria-expanded="true"> <span class="visible-xs"><i
-							class="fa fa-envelope-o"></i></span> <span class="hidden-xs">Settings</span>
-				</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane fade in active" id="home-2">
-					<div class="timeline-2">
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">5 minutes ago</small>
-								<p>
-									<strong><a href="javascript:void(0);"
-										class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong>
-								</p>
+		<!-- Right Sidebar -->
+		<div class="side-bar right-bar">
+			<div class="nicescroll">
+				<ul class="nav nav-tabs tabs">
+					<li class="active tab"><a href="#home-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-home"></i></span> <span class="hidden-xs">Activity</span>
+					</a></li>
+					<li class="tab"><a href="#profile-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-user"></i></span> <span class="hidden-xs">Chat</span>
+					</a></li>
+					<li class="tab"><a href="#messages-2" data-toggle="tab"
+						aria-expanded="true"> <span class="visible-xs"><i
+								class="fa fa-envelope-o"></i></span> <span class="hidden-xs">Settings</span>
+					</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="home-2">
+						<div class="timeline-2">
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 minutes ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">30 minutes ago</small>
-								<p>
-									<a href="" class="text-info">Lorem</a> commented your post.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">30 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">59 minutes ago</small>
-								<p>
-									<a href="" class="text-info">Jessi</a> attended a meeting with<a
-										href="javascript:void(0);" class="text-success">John Doe</a>.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">59 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">1 hour ago</small>
-								<p>
-									<strong><a href="javascript:void(0);"
-										class="text-info">John Doe</a></strong>Uploaded 2 new photos
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">1 hour ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong>Uploaded 2 new photos
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">3 hours ago</small>
-								<p>
-									<a href="" class="text-info">Lorem</a> commented your post.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">3 hours ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">5 hours ago</small>
-								<p>
-									<a href="" class="text-info">Jessi</a> attended a meeting with<a
-										href="javascript:void(0);" class="text-success">John Doe</a>.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 hours ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
 
 
-				<div class="tab-pane fade" id="profile-2">
-					<div class="contact-list nicescroll">
-						<ul class="list-group contacts-list">
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-1.jpg" alt="">
-									</div> <span class="name">Chadengle</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-2.jpg" alt="">
-									</div> <span class="name">Tomaslau</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-3.jpg" alt="">
-									</div> <span class="name">Stillnotdavid</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-4.jpg" alt="">
-									</div> <span class="name">Kurafire</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-5.jpg" alt="">
-									</div> <span class="name">Shahedk</span> <i class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-6.jpg" alt="">
-									</div> <span class="name">Adhamdannaway</span> <i
-									class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-7.jpg" alt="">
-									</div> <span class="name">Ok</span> <i class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-8.jpg" alt="">
-									</div> <span class="name">Arashasghari</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-9.jpg" alt="">
-									</div> <span class="name">Joshaustin</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-10.jpg" alt="">
-									</div> <span class="name">Sortino</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-						</ul>
-					</div>
-				</div>
-
-
-
-				<div class="tab-pane fade" id="messages-2">
-
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Notifications</h5>
-							<p class="text-muted m-b-0">
-								<small>Do you need them?</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
+					<div class="tab-pane fade" id="profile-2">
+						<div class="contact-list nicescroll">
+							<ul class="list-group contacts-list">
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-1.jpg" alt="">
+										</div> <span class="name">Chadengle</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-2.jpg" alt="">
+										</div> <span class="name">Tomaslau</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-3.jpg" alt="">
+										</div> <span class="name">Stillnotdavid</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-4.jpg" alt="">
+										</div> <span class="name">Kurafire</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-5.jpg" alt="">
+										</div> <span class="name">Shahedk</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-6.jpg" alt="">
+										</div> <span class="name">Adhamdannaway</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-7.jpg" alt="">
+										</div> <span class="name">Ok</span> <i class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-8.jpg" alt="">
+										</div> <span class="name">Arashasghari</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-9.jpg" alt="">
+										</div> <span class="name">Joshaustin</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-10.jpg" alt="">
+										</div> <span class="name">Sortino</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+							</ul>
 						</div>
 					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">API Access</h5>
-							<p class="m-b-0 text-muted">
-								<small>Enable/Disable access</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Auto Updates</h5>
-							<p class="m-b-0 text-muted">
-								<small>Keep up to date</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Online Status</h5>
-							<p class="m-b-0 text-muted">
-								<small>Show your status to all</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
+					<div class="tab-pane fade" id="messages-2">
 
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Notifications</h5>
+								<p class="text-muted m-b-0">
+									<small>Do you need them?</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">API Access</h5>
+								<p class="m-b-0 text-muted">
+									<small>Enable/Disable access</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Auto Updates</h5>
+								<p class="m-b-0 text-muted">
+									<small>Keep up to date</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Online Status</h5>
+								<p class="m-b-0 text-muted">
+									<small>Show your status to all</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- /Right-bar -->
+		<!-- /Right-bar -->
 
 	</div>
 	<!-- END wrapper -->
@@ -870,13 +886,12 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-	<!-- Global Variables -->
-	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
+	<script src="EEK/assets/pages/jquery.compare-date.init.js"></script>
 
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/js/fypLoyalty.js"></script>
+	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -886,6 +901,5 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
 </body>
 </html>
