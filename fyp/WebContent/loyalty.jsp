@@ -60,9 +60,9 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="logo"><object id="logo"
-							data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object></a>
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
+							height="80"></object--></a>
 				</div>
 			</div>
 

@@ -60,9 +60,9 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="logo"><object id="logo"
-							data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object></a>
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
+							height="80"></object--></a>
 				</div>
 			</div>
 
@@ -532,19 +532,19 @@
 											</button>
 											<ul class="dropdown-menu" role="menu">
 												<li><a
-													href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+													href="javascript:changeScopeWithStoreId(0, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														Day</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+													href="javascript:changeScopeWithStoreId(1, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														7 Days</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+													href="javascript:changeScopeWithStoreId(2, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														Month</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+													href="javascript:changeScopeWithStoreId(3, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														3 Month</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+													href="javascript:changeScopeWithStoreId(4, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														Year</a></li>
 											</ul>
 										</div>
