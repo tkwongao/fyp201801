@@ -612,7 +612,7 @@
 
 
 			<!-- FOOTER -->
-			<footer class="footer text-right"> 2017 © P-Sense. </footer>
+			<footer class="footer text-right"> 2018 © HKUST. </footer>
 			<!-- End FOOTER -->
 
 		</div>
