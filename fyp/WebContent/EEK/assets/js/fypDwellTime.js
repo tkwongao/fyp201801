@@ -1,5 +1,5 @@
 var charts = [];
-var storeId = -1;
+var storeId = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -11,7 +11,7 @@ function UpdateAllCharts() {
 	'use strict';
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
-	var barChart_Second = nv.models.discreteBarChart();
+	var barChart_Second = nv.models.multiBarChart();
 	charts.push(barChart_Second);
 	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -54,7 +54,8 @@ function UpdateAllCharts() {
 	});
 
 	nv.addGraph(function() {
-		barChart_Second.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+		barChart_Second.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
+		barChart_Second.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format(timeFormat)(new Date(d));
 		});
 		barChart_Second.yAxis.axisLabel('Average Dwell Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
@@ -89,6 +90,14 @@ function updateDwellTimeGraph() {
 			for ( var prop in json)
 				avgDwellTime.push(json["dataPoint" + ++i]);
 			$(".averageDwellTime").text(avgDwellTime[0]);
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 	$.ajax({
@@ -108,10 +117,55 @@ function updateDwellTimeGraph() {
 			for ( var prop in json)
 				valFromDB1.push(json["dataPoint" + ++i]);
 			drawGraph();
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 }
 
 $(document).ready(function() {
-	changeScope(0, "average", document.getElementById("storeId").value);
+	$("#date").html(new Intl.DateTimeFormat(
+			"en-HK", {
+				weekday : "long",
+				year : "numeric",
+				day : "numeric",
+				month : "long"
+			}).format(new Date()));
+	function ajaxGettingStores(mallName) {
+		return $.ajax({
+			type : "get",
+			url : "prepareStores",
+			data : { mallName: mallName },
+			success : function(json) {
+				var shops = new Array();
+				for ( var prop in json)
+					shops.push({ id: json[prop], name: prop });
+				shops.sort(function (a, b) {
+					return a.name.localeCompare( b.name );
+				});
+				var select_html = "<option value=\"-1\" selected>All Stores</option>";
+				for (var i = 0; i < shops.length; i++)
+					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
+				$("#storeId").html(select_html);
+				storeId = -1;
+			},
+			statusCode: {
+				403: function() {
+					window.location.href = "EEK/pages-403.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			}
+		});
+	}
+	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+		changeScope(0, "average", document.getElementById("storeId").value);
+	});
 });

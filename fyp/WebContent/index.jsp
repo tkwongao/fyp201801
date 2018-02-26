@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"
 	import="fyp.DatabaseConnection,java.io.*,java.util.*, javax.servlet.*,java.text.*"%>
 <%@ taglib prefix="s" uri="/struts-tags"%><!DOCTYPE html>
 <html>
@@ -417,16 +417,7 @@
 									</ul>
 								</div>
 
-								<h4 class="text-center no-margin">
-									<script>
-										document.write(new Intl.DateTimeFormat(
-												"en-HK", {
-													weekday : "long",
-													year : "numeric",
-													day : "numeric",
-													month : "long"
-												}).format(new Date()));
-									</script>
+								<h4 class="text-center no-margin" id="date">
 								</h4>
 							</div>
 						</div>
@@ -547,9 +538,9 @@
 
 									<div class="clearfix">
 										<h4 class="m-t-40 header-title">
-											<b>Average Dwell Time</b>
+											<b>People Count for Each Shop</b>
 										</h4>
-										<div class="bar-chart-second">
+										<div class="peopleCountForEachShopChart">
 											<svg style="height: 220px;"></svg>
 										</div>
 									</div>
@@ -567,23 +558,7 @@
 													</th>
 												</tr>
 											</thead>
-											<tbody>
-												<tr>
-													<td>Shop #1</td>
-													<td align="right" id="s1scount">0</td>
-												</tr>
-												<tr>
-													<td>Shop #2</td>
-													<td align="right" id="s2scount">0</td>
-												</tr>
-												<tr>
-													<td>Shop #3</td>
-													<td align="right" id="s3scount">0</td>
-												</tr>
-												<tr>
-													<td>Shop #4</td>
-													<td align="right" id="s4scount">0</td>
-												</tr>
+											<tbody id="popularShops">
 											</tbody>
 										</table>
 									</div>
@@ -894,10 +869,5 @@
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
 	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			changeScope(2, "index");
-		});
-	</script>
 </body>
 </html>

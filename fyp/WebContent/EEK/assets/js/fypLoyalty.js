@@ -1,6 +1,6 @@
 var charts = [];
 var userMac;
-var storeId;
+var storeId = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -182,3 +182,42 @@ function updateLoyaltyGraph() {
 		}
 	});
 }
+$(document).ready(function() {
+	$("#date").html(new Intl.DateTimeFormat(
+			"en-HK", {
+				weekday : "long",
+				year : "numeric",
+				day : "numeric",
+				month : "long"
+			}).format(new Date()));
+	function ajaxGettingStores(mallName) {
+		return $.ajax({
+			type : "get",
+			url : "prepareStores",
+			data : { mallName: mallName },
+			success : function(json) {
+				var shops = new Array();
+				for ( var prop in json)
+					shops.push({ id: json[prop], name: prop });
+				shops.sort(function (a, b) {
+					return a.name.localeCompare( b.name );
+				});
+				var select_html = "<option value=\"-1\" selected>All Stores</option>";
+				for (var i = 0; i < shops.length; i++)
+					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
+				$("#storeId").html(select_html);
+				storeId = -1;
+			},
+			statusCode: {
+				403: function() {
+					window.location.href = "EEK/pages-403.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			}
+		});
+	}
+	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+	});
+});

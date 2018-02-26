@@ -410,16 +410,7 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-								<h4 class="text-center no-margin">
-									<script>
-										document.write(new Intl.DateTimeFormat(
-												"en-HK", {
-													weekday : "long",
-													year : "numeric",
-													day : "numeric",
-													month : "long"
-												}).format(new Date()));
-									</script>
+								<h4 class="text-center no-margin" id="date">
 								</h4>
 							</div>
 						</div>
@@ -428,11 +419,6 @@
 					<div>
 						Store: <select id="storeId"
 							onchange="changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value)">
-							<option value="-1">All Stores</option>
-							<option value="1000001">Store 1</option>
-							<option value="1000002">Store 2</option>
-							<option value="1000003">Store 3</option>
-							<option value="1000004">Store 4</option>
 						</select>
 					</div>
 

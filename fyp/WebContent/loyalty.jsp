@@ -418,16 +418,7 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-								<h4 class="text-center no-margin">
-									<script>
-										document.write(new Intl.DateTimeFormat(
-												"en-HK", {
-													weekday : "long",
-													year : "numeric",
-													day : "numeric",
-													month : "long"
-												}).format(new Date()));
-									</script>
+								<h4 class="text-center no-margin" id="date">
 								</h4>
 							</div>
 						</div>
@@ -436,11 +427,6 @@
 						<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
 						User MAC Address: <input type="text" id="macAddress"
 							value="B4EF3992723A"> Store: <select id="storeId">
-							<option value="-1" selected>All Stores</option>
-							<option value="1000001">Store 1</option>
-							<option value="1000002">Store 2</option>
-							<option value="1000003">Store 3</option>
-							<option value="1000004">Store 4</option>
 						</select>
 						<button type="button"
 							onclick="changeScopeWithMac(scope, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>

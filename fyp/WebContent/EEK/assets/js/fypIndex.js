@@ -1,4 +1,6 @@
 var charts = [];
+var shops = [];
+var PeopleCountForEachShopResults = [];
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -28,7 +30,7 @@ function UpdateAllCharts() {
 		}];
 	}
 	nv.addGraph(function() {
-		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale())
+		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
 		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format('%d %b %Y')(new Date(d));
 		});
@@ -42,7 +44,7 @@ function UpdateAllCharts() {
 
 (drawAverageDwellTimeGraph = function($) {
 	'use strict';
-	var averageDwellTimeChart = nv.models.discreteBarChart();
+	var averageDwellTimeChart = nv.models.multiBarChart();
 	charts.push(averageDwellTimeChart);
 	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_IN_A_DAY = 86400000;
@@ -61,7 +63,8 @@ function UpdateAllCharts() {
 		}];
 	}
 	nv.addGraph(function() {
-		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
+		averageDwellTimeChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format('%d %b %Y')(new Date(d));
 		});
 		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
@@ -69,6 +72,42 @@ function UpdateAllCharts() {
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(averageDwellTimeChart.update);
 		return averageDwellTimeChart;
+	});
+})(jQuery);
+
+(drawPeopleCountForEachShopGraph = function($) {
+	'use strict';
+	var peopleCountForEachShopChart = nv.models.stackedAreaChart();
+	charts.push(peopleCountForEachShopChart);
+	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
+	const MILLISECONDS_IN_A_DAY = 86400000;
+	function getPeopleCountForEachShopData() {
+		var datum = new Array();
+		for (var i = 0; i < PeopleCountForEachShopResults.length; i++) {
+			var values = [];
+			for (var j = 0; j < numberOfDataInGraph; j++) {
+				values.push({
+					x: END_MILLISECOND + MILLISECONDS_IN_A_DAY * (j - numberOfDataInGraph),
+					y: PeopleCountForEachShopResults[i][j]
+				});
+			}
+			datum.push({
+				values: values,
+				key: shops[i].name
+			});
+		}
+		return datum;
+	}
+	nv.addGraph(function() {
+		peopleCountForEachShopChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.style('stack').useInteractiveGuideline(true).xScale(d3.time.scale()).showControls(false);
+		peopleCountForEachShopChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+			return d3.time.format('%d %b %Y')(new Date(d));
+		});
+		peopleCountForEachShopChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.d'));
+		d3.select('.peopleCountForEachShopChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountForEachShopData()).transition().duration(500).call(peopleCountForEachShopChart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(peopleCountForEachShopChart.update);
+		return peopleCountForEachShopChart;
 	});
 })(jQuery);
 
@@ -80,15 +119,15 @@ function afterAJAXs() {
 	$('.circliful-chart').circliful();
 }
 
-// BEGIN SVG WEATHER ICON
+//BEGIN SVG WEATHER ICON
 if (typeof Skycons !== 'undefined') {
 	var icons = new Skycons({
 		"color" : "#3bafda"
 	}, {
 		"resizeClear" : true
 	}), list = [ "clear-day", "clear-night", "partly-cloudy-day",
-			"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
-			"wind", "fog" ], i;
+		"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
+		"wind", "fog" ], i;
 
 	for (i = list.length; i--;)
 		icons.set(list[i], list[i]);
@@ -195,80 +234,100 @@ function updateIndexGraph() {
 			drawAverageDwellTimeGraph();
 		}
 	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : currentTime,
-			storeId : 1000001,
-			interval : 0,
-			userMac : 0,
-			type : "count"
-		},
-		success : function(json) {
-			var i = 0;
-			var s1scount = new Array();
-			for ( var prop in json)
-				s1scount.push(json["dataPoint" + ++i]);
-			$("#s1scount").text(s1scount[0]);
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : currentTime,
-			storeId : 1000002,
-			interval : 0,
-			userMac : 0,
-			type : "count"
-		},
-		success : function(json) {
-			var i = 0;
-			var s2scount = new Array();
-			for ( var prop in json)
-				s2scount.push(json["dataPoint" + ++i]);
-			$("#s2scount").text(s2scount[0]);
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : currentTime,
-			storeId : 1000003,
-			interval : 0,
-			userMac : 0,
-			type : "count"
-		},
-		success : function(json) {
-			var i = 0;
-			var s3scount = new Array();
-			for ( var prop in json)
-				s3scount.push(json["dataPoint" + ++i]);
-			$("#s3scount").text(s3scount[0]);
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : currentTime,
-			storeId : 1000004,
-			interval : 0,
-			userMac : 0,
-			type : "count"
-		},
-		success : function(json) {
-			var i = 0;
-			var s4scount = new Array();
-			for ( var prop in json)
-				s4scount.push(json["dataPoint" + ++i]);
-			$("#s4scount").text(s4scount[0]);
-		}
+
+	for (var i = 0; i < shops.length; i++)
+		(function() {
+			var k = i + 1;
+			$.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : currentTime,
+					storeId : shops[i].id,
+					interval : 0,
+					userMac : 0,
+					type : "count"
+				},
+				success : function(json) {
+					var j = 0;
+					var thisStoreCount = new Array();
+					for ( var prop in json)
+						thisStoreCount.push(json["dataPoint" + ++j]);
+					$("#s" + k + "scount").text(thisStoreCount[0]);
+				}
+			});
+		})();
+
+	var ajaxs = new Array();
+	PeopleCountForEachShopResults = new Array();
+	for (var i = 0; i < shops.length; i++) {
+		var anAjax;
+		(function() {
+			var k = i;
+			anAjax = $.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : currentTime,
+					storeId : shops[i].id,
+					interval : interval,
+					userMac : 0,
+					type : "count"
+				},
+				success : function(json) {
+					var j = 0;
+					var sum = 0;
+					PeopleCountForEachShopResults[k] = new Array();
+					for ( var prop in json)
+						PeopleCountForEachShopResults[k].push(json["dataPoint" + ++j]);
+				}
+			});
+		})();
+		ajaxs.push(anAjax);
+	}
+	$.when.apply($, ajaxs).done(function() {
+		drawPeopleCountForEachShopGraph();
 	});
 }
+
+$(document).ready(function() {
+	$("#date").html(new Intl.DateTimeFormat(
+			"en-HK", {
+				weekday : "long",
+				year : "numeric",
+				day : "numeric",
+				month : "long"
+			}).format(new Date()));
+	function ajaxGettingStores(mallName) {
+		return $.ajax({
+			type : "get",
+			url : "prepareStores",
+			data : { mallName: mallName },
+			success : function(json) {
+				shops = new Array();
+				for ( var prop in json)
+					shops.push({ id: json[prop], name: prop });
+				shops.sort(function (a, b) {
+					return a.name.localeCompare( b.name );
+				});
+				var popularShopsHtml = "";
+				for (var i = 0; i < shops.length; i++)
+					popularShopsHtml += "<tr><td>" + shops[i].name + "</td><td align=\"right\" id=\"s" + (i + 1) + "scount\">0</td></tr>";
+				$("#popularShops").html(popularShopsHtml);
+			},
+			statusCode: {
+				403: function() {
+					window.location.href = "EEK/pages-403.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			}
+		});
+	}
+	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+		changeScope(2, "index");
+	});
+});

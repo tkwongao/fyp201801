@@ -1,5 +1,6 @@
 package fyp;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -8,17 +9,21 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.apache.struts2.interceptor.ServletResponseAware;
 import org.apache.struts2.json.annotations.JSON;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-public class Application extends ActionSupport implements ServletRequestAware {
+public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
 	private HttpServletRequest request;
+	private HttpServletResponse response;
 	private HashMap<String, Number> dataMap;
 
+	@SuppressWarnings("finally")
 	@Override
 	public String execute() {
 		try {
@@ -68,10 +73,22 @@ public class Application extends ActionSupport implements ServletRequestAware {
 			}
 		} catch (IllegalArgumentException | IllegalStateException | NullPointerException e) {
 			e.printStackTrace();
-			return ERROR;
+			try {
+				response.sendError(500);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				return ERROR;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Unknown" + ERROR;
+			try {
+				response.sendError(501);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+				return "Unknown" + ERROR;
+			}
 		}
 		return SUCCESS;
 	}
@@ -114,5 +131,10 @@ public class Application extends ActionSupport implements ServletRequestAware {
 
 	public HashMap<String, Number> getDataMap() {  
 		return dataMap;  
-	} 
+	}
+
+	@Override
+	public void setServletResponse(HttpServletResponse response) {
+		this.response = response;
+	}
 }
