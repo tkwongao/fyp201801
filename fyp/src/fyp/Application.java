@@ -19,15 +19,18 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
-	private HttpServletRequest request;
-	private HttpServletResponse response;
-	private HashMap<String, Number> dataMap;
+	private HttpServletRequest request = null;
+	private HttpServletResponse response = null;
+	private HashMap<String, Number> dataMap = null;
+	private int interval, storeId;
+	private long start, end;
+	private String type = null, userMac = null;
+	private int[] dwellTimeThresholds = null;
 
 	@SuppressWarnings("finally")
 	@Override
 	public String execute() {
 		try {
-			int interval = Integer.parseInt(request.getParameter("interval"));
 			ChronoUnit internalInterval;
 			switch (interval) {
 			case 0:
@@ -43,8 +46,8 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			default:
 				throw new IllegalArgumentException("Interval is invalid: " + interval);
 			}
-			ZonedDateTime startTime = Utilities.timestampToTime(Long.parseLong(request.getParameter("start"))),
-					endTime = Utilities.timestampToTime(Long.parseLong(request.getParameter("end")));
+			ZonedDateTime startTime = Utilities.timestampToTime(start),
+					endTime = Utilities.timestampToTime(end);
 			int numberOfIntervals = 0;
 			boolean isLastIntervalIncomplete = false;
 			ZonedDateTime endTimeForCompleteIntervals = startTime;
@@ -94,34 +97,29 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	}
 
 	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, int numberOfIntervals) {
-		int storeId = Integer.parseInt(request.getParameter("storeId"));
-		String requestType = request.getParameter("type").toLowerCase();
 		Connection connection = Objects.requireNonNull(DatabaseConnection.getConnection(), "Failed to connect to the database server");
 		long[] period = Objects.requireNonNull(Utilities.timeToPeriod(startTime, endTime), "Invalid start or end time");
-		if (requestType.equals("user") || requestType.equals("loyalty")) {
-			UserAnalysis ua = new UserAnalysis(connection, Long.parseLong(request.getParameter("userMac").replaceAll(":", ""), 16));
-			return (requestType.equals("user")) ? ua.userStayTime(period, numberOfIntervals, storeId) : ua.loyaltyCheck(period, numberOfIntervals);
+		if (type.equals("user") || type.equals("loyalty")) {
+			UserAnalysis ua = new UserAnalysis(connection, Long.parseLong(userMac.replaceAll(":", ""), 16));
+			return (type.equals("user")) ? ua.userStayTime(period, numberOfIntervals, storeId) : ua.loyaltyCheck(period, numberOfIntervals);
 		}
 		else {
 			MallAndStoreAnalysis msa = new MallAndStoreAnalysis(storeId, connection);
-			switch (requestType) {
+			switch (type) {
 			case "count":
 				return msa.visitorCount(period, numberOfIntervals);
 			case "average":
 				return msa.averageEnterToLeaveTime(period, numberOfIntervals);
+			case "avgtimedistribution":
+				return msa.averageEnterToLeaveTimeDistribution(period, numberOfIntervals, dwellTimeThresholds);
 			case "freq":
 				return msa.freqRatio(period, numberOfIntervals);
 			case "bounce":
 				return msa.bounceRate(period, numberOfIntervals, 0.75);
 			default:
-				throw new IllegalArgumentException("Request type is invalid: " + requestType);
+				throw new IllegalArgumentException("Request type is invalid: " + type);
 			}
 		}
-	}
-
-	@Override
-	public void setServletRequest(HttpServletRequest request) {
-		this.request = request;
 	}
 
 	@JSON(serialize = false) 
@@ -133,8 +131,81 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		return dataMap;  
 	}
 
+	@JSON(serialize = false)
+	public HttpServletResponse getServletResponse() {
+		return response;
+	}
+
+	@JSON(serialize = false)
+	public int getInterval() {
+		return interval;
+	}
+
+	@JSON(serialize = false)
+	public int getStoreId() {
+		return storeId;
+	}
+
+	@JSON(serialize = false)
+	public long getStart() {
+		return start;
+	}
+
+	@JSON(serialize = false)
+	public long getEnd() {
+		return end;
+	}
+
+	@JSON(serialize = false)
+	public String getUserMac() {
+		return userMac;
+	}
+
+	@JSON(serialize = false)
+	public String getType() {
+		return type;
+	}
+
+	@JSON(serialize = false)
+	public int[] getDwellTimeThresholds() {
+		return dwellTimeThresholds;
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
+	}
+
+	public void setInterval(int interval) {
+		this.interval = interval;
+	}
+
+	public void setStoreId(int storeId) {
+		this.storeId = storeId;
+	}
+
+	public void setStart(long start) {
+		this.start = start;
+	}
+
+	public void setEnd(long end) {
+		this.end = end;
+	}
+
+	public void setUserMac(String userMac) {
+		this.userMac = userMac;
+	}
+
+	public void setType(String type) {
+		this.type = type.toLowerCase();
+	}
+
+	public void setDwellTimeThresholds(int[] dwellTimeThresholds) {
+		this.dwellTimeThresholds = dwellTimeThresholds;
 	}
 }

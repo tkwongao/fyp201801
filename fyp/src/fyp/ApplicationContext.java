@@ -17,13 +17,13 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class ApplicationContext extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = 5958518038208358569L;
-	private HttpServletRequest request;
-	private HttpServletResponse response;
-	private HashMap<String, Number> dataMap;
+	private HttpServletRequest request = null;
+	private HttpServletResponse response = null;
+	private HashMap<String, Number> dataMap = null;
+	private String mallName = null;
 
 	@Override
 	public String execute() {
-		String mallName = request.getParameter("mallName");
 		try {
 			switch (mallName) {
 			case "base_1":
@@ -52,11 +52,6 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 		return SUCCESS;
 	}
 
-	@Override
-	public void setServletRequest(HttpServletRequest request) {
-		this.request = request;
-	}
-
 	@JSON(serialize = false) 
 	public HttpServletRequest getServletRequest() {
 		return request;
@@ -66,8 +61,22 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 		return dataMap;  
 	}
 
+	@JSON(serialize = false) 
+	public String getMallName() {
+		return mallName;
+	}
+
+	@Override
+	public void setServletRequest(HttpServletRequest request) {
+		this.request = request;
+	}
+
 	@Override
 	public void setServletResponse(HttpServletResponse response) {
 		this.response = response;
+	}
+
+	public void setMallName(String mallName) {
+		this.mallName = mallName.toLowerCase();
 	}
 }

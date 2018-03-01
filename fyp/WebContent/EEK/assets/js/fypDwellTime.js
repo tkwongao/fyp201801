@@ -84,6 +84,7 @@ function updateDwellTimeGraph() {
 			userMac : 0,
 			type : "average"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			var avgDwellTime = new Array();
@@ -111,6 +112,7 @@ function updateDwellTimeGraph() {
 			userMac : 0,
 			type : "average"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			valFromDB1 = new Array();
@@ -142,6 +144,7 @@ $(document).ready(function() {
 			type : "get",
 			url : "prepareStores",
 			data : { mallName: mallName },
+			traditional: true,
 			success : function(json) {
 				var shops = new Array();
 				for ( var prop in json)

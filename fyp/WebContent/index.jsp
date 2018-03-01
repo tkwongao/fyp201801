@@ -60,9 +60,11 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2
+						Project<!--object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object--></a>
+							height="80"></object-->
+					</a>
 				</div>
 			</div>
 
@@ -417,8 +419,7 @@
 									</ul>
 								</div>
 
-								<h4 class="text-center no-margin" id="date">
-								</h4>
+								<h4 class="text-center no-margin" id="date"></h4>
 							</div>
 						</div>
 					</div>
@@ -524,9 +525,22 @@
 						<!-- end row -->
 
 						<div class="row">
+							<div class="col-sm-6 col-lg-6">
+								<div class="card-box">
+									<div class="widget-chart text-center">
+										<h4 class="m-t-0 m-b-20 header-title">
+											<div class="text-center">
+												<b>Average Dwell Time Distribution</b>
+											</div>
+										</h4>
+										<div class="averageDwellTimeDistribution">
+											<svg style="height: 580px;"></svg>
+										</div>
+									</div>
+								</div>
+							</div>
 
-
-							<div class="col-lg-4">
+							<div class="col-sm-6 col-lg-6">
 								<div class="card-box">
 
 									<div class="clearfix">
@@ -541,7 +555,7 @@
 											<b>People Count for Each Shop</b>
 										</h4>
 										<div class="peopleCountForEachShopChart">
-											<svg style="height: 220px;"></svg>
+											<svg style="height: 300px;"></svg>
 										</div>
 									</div>
 

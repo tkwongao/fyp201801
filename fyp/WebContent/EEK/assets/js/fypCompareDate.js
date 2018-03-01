@@ -136,12 +136,21 @@ function updateIndexGraph() {
 				userMac : 0,
 				type : "count"
 			},
+			traditional: true,
 			success : function(json) {
 				var i = 0;
 				var totalVisitorCount = new Array();
 				for ( var prop in json)
 					totalVisitorCount.push(json["dataPoint" + ++i]);
 				$(".totalVisitorCount").text(totalVisitorCount[0]);
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
 			}
 		});
 		$.ajax({
@@ -155,12 +164,21 @@ function updateIndexGraph() {
 				userMac : 0,
 				type : "average"
 			},
+			traditional: true,
 			success : function(json) {
 				var i = 0;
 				var totalAverageDwellTime = new Array();
 				for ( var prop in json)
 					totalAverageDwellTime.push(json["dataPoint" + ++i]);
 				$(".totalAverageDwellTime").text(totalAverageDwellTime[0]);
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
 			}
 		});
 		$.ajax({
@@ -174,6 +192,7 @@ function updateIndexGraph() {
 				userMac : 0,
 				type : "count"
 			},
+			traditional: true,
 			success : function(json) {
 				const firstArrayIndex = 2 * i1;
 				var i = 0;
@@ -190,6 +209,14 @@ function updateIndexGraph() {
 				$("#yesterdayVisitors").text(valFromDB[firstArrayIndex][valFromDB[firstArrayIndex].length - 2]);
 				drawPeopleCountingGraph();
 			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			},
 			async: false
 		});
 		$.ajax({
@@ -203,6 +230,7 @@ function updateIndexGraph() {
 				userMac : 0,
 				type : "average"
 			},
+			traditional: true,
 			success : function(json) {
 				const firstArrayIndex = 2 * i1 + 1;
 				var i = 0;
@@ -217,6 +245,14 @@ function updateIndexGraph() {
 				$("#todayAverageDwellTime").text(valFromDB[firstArrayIndex][valFromDB[firstArrayIndex].length - 1]);
 				$("#yesterdayAverageDwellTime").text(valFromDB[firstArrayIndex][valFromDB[firstArrayIndex].length - 2]);
 				drawAverageDwellTimeGraph();
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
 			},
 			async: false
 		});

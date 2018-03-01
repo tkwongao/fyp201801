@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.OptionalInt;
 
 public class MallAndStoreAnalysis {
 	static final int WHOLE_MALL = -1;
@@ -87,6 +88,64 @@ public class MallAndStoreAnalysis {
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return new Double[] {(double) -1};
+		}
+	}
+
+	/**
+	 * 
+	 * @param period The earliest and latest time the counted data could come from,
+	 * as {@code long} array of length 2 containing UTC milliseconds. 
+	 * @param storeId The ID of the store.
+	 * @return
+	 */
+	Integer[] averageEnterToLeaveTimeDistribution(final long[] period, final int numberOfIntervals, final int[] thresholds) {
+		boolean noThresholds = Objects.isNull(thresholds);
+		OptionalInt minimumThreshold = null;
+		if (!noThresholds) {
+			minimumThreshold = Arrays.stream(thresholds).min();
+			noThresholds |= !minimumThreshold.isPresent();
+		}
+		if (noThresholds) {
+			return visitorCount(period, numberOfIntervals);
+		} else if (minimumThreshold.getAsInt() < 0)
+			throw new IllegalArgumentException("Illegal Thresholds");
+		final long[] thresholdsMsArr = Arrays.stream(thresholds).distinct().sorted().asLongStream().map(x -> x * 1000).toArray();
+		try {
+			String sql = "WITH arr AS (SELECT ARRAY" + Arrays.toString(thresholdsMsArr) + "::BIGINT[]),\n" + 
+					"histogram AS (SELECT\n" + 
+					"                     width_bucket(startts, ?, ?, ?),\n" + 
+					"                     width_bucket((endts - startts), arr.array) AS dwell_time_distribution,\n" + 
+					"                     min(endts - startts), max(endts - startts), count(DISTINCT (did))\n" + 
+					"                   FROM " + ((storeId == WHOLE_MALL) ? "site_results" : "store_results") + ", arr\n" + 
+					"                   WHERE startts BETWEEN ? AND ? " + ((storeId == WHOLE_MALL) ? "" : "AND storeid = ? ") + "\n" +
+					"                   GROUP BY width_bucket, dwell_time_distribution)\n" + 
+					"SELECT\n" + 
+					"  width_bucket,\n" + 
+					"  dwell_time_distribution,\n" + 
+					"  coalesce(arr.array[dwell_time_distribution], min) AS min,\n" + 
+					"  coalesce(arr.array[dwell_time_distribution + 1] - 1, max) AS max,\n" + 
+					"  count\n" + 
+					"FROM histogram, arr;";
+			PreparedStatement ps = connection.prepareStatement(sql);
+			ps.setLong(1, period[0]);
+			ps.setLong(2, period[1]);
+			ps.setInt(3, numberOfIntervals);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			if (storeId != WHOLE_MALL)
+				ps.setInt(6, storeId);
+			Integer[] value = new Integer[numberOfIntervals * (thresholdsMsArr.length + 1)];
+			Arrays.fill(value, 0);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				value[(rs.getInt("width_bucket") - 1) * (thresholdsMsArr.length + 1) + rs.getInt("dwell_time_distribution")] = rs.getInt("count");
+			return value;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return new Integer[] {-1};
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return new Integer[] {-2};
 		}
 	}
 

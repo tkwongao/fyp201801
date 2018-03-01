@@ -111,12 +111,21 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			userMac : userMac,
 			type : "loyalty"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			var loyalty = new Array();
 			for ( var prop in json)
 				loyalty.push(json["dataPoint" + ++i]);
 			$("#loyalty").text(loyalty[0]);
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 	$.ajax({
@@ -130,12 +139,21 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			userMac : userMac,
 			type : "user"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			var userDwellTime = new Array();
 			for ( var prop in json)
 				userDwellTime.push(json["dataPoint" + ++i]);
 			$("#userDwellTime").text(userDwellTime[0]);
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 	updateGraph(requestType);
@@ -154,12 +172,21 @@ function updateLoyaltyGraph() {
 			userMac : userMac,
 			type : "loyalty"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			valFromDB1 = new Array();
 			for ( var prop in json)
 				valFromDB1.push(json["dataPoint" + ++i]);
 			drawPeopleCountingGraph();
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 	$.ajax({
@@ -173,12 +200,21 @@ function updateLoyaltyGraph() {
 			userMac : userMac,
 			type : "user"
 		},
+		traditional: true,
 		success : function(json) {
 			var i = 0;
 			valFromDB2 = new Array();
 			for ( var prop in json)
 				valFromDB2.push(json["dataPoint" + ++i]);
 			drawUserStayTimeGraph();
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
 		}
 	});
 }
@@ -195,6 +231,7 @@ $(document).ready(function() {
 			type : "get",
 			url : "prepareStores",
 			data : { mallName: mallName },
+			traditional: true,
 			success : function(json) {
 				var shops = new Array();
 				for ( var prop in json)
