@@ -60,9 +60,9 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="logo"><object id="logo"
-							data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object></a>
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
+							height="80"></object--></a>
 				</div>
 			</div>
 
@@ -186,27 +186,27 @@
 								<i class="md md-home"></i><span>Home</span>
 						</a></li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
+						<!--li class="has_sub"><a href="javascript:void(0);"
 							class="waves-effect waves-primary"><i
 								class="md md-access-time"></i><span>Realtime</span> <span
 								class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<li><a href="overview.html">Overview</a></li>
 								<li><a href="map-view.html">Loactions</a></li>
-							</ul></li>
+							</ul></li-->
 
 						<li class="has_sub"><a href="javascript:void(0);"
 							class="waves-effect waves-primary"><i class="md md-share"></i><span>
 									Analytics </span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
-								<li><a href="compare-location.html">Compare Location</a></li>
-								<li><a href="compare-date.html">Compare Date</a></li>
-								<li><a href="traffic.html">Traffic</a></li>
+								<!--li><a href="compare-location.html">Compare Location</a></li-->
+								<li><a href="compare-date.jsp">Compare Date</a></li>
+								<!--li><a href="traffic.html">Traffic</a></li-->
 								<li><a href="dwell-time.jsp">Dwell Time</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 
-
+						<!--  
 						<li class="has_sub"><a href="javascript:void(0);"
 							class="waves-effect waves-primary"><i class="md md-palette"></i>
 								<span> UI Kit </span> <span class="menu-arrow"></span></a>
@@ -341,11 +341,8 @@
 								<li><a href="extras-faq.html">FAQ</a></li>
 								<li><a href="extras-treeview.html">Treeview</a></li>
 							</ul></li>
-
-
-
+-->
 					</ul>
-
 
 					<ul class="in_bottom">
 						<li><a href="javascript:void(0);"
@@ -401,27 +398,28 @@
 						<div class="col-sm-12">
 							<div class="page-title-box">
 								<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
-								<!-- <div class="btn-group pull-right">
-                                        <button type="button" class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn" data-toggle="dropdown" aria-expanded="false">K11 <span class="caret"></span></button>
-                                        <ul class="dropdown-menu" role="menu">
-                                            <li><a href="javascript:void(0);">K11</a></li>
-                                            <li><a href="javascript:void(0);">HKUST</a></li>
-                                            <li><a href="javascript:void(0);">The Base</a></li>
-                                        </ul>
-                                    </div> -->
-								<h4 class="text-center no-margin">
-									<script>
-										document.write(new Intl.DateTimeFormat(
-												"en-HK", {
-													weekday : "long",
-													year : "numeric",
-													day : "numeric",
-													month : "long"
-												}).format(new Date()));
-									</script>
+								<div class="btn-group pull-right">
+									<button type="button"
+										class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn"
+										data-toggle="dropdown" aria-expanded="false">
+										The Base <span class="caret"></span>
+									</button>
+									<ul class="dropdown-menu" role="menu">
+										<!--li><a href="javascript:void(0);">K11</a></li-->
+										<!--li><a href="javascript:void(0);">HKUST</a></li-->
+										<li><a href="javascript:void(0);">The Base</a></li>
+									</ul>
+								</div>
+								<h4 class="text-center no-margin" id="date">
 								</h4>
 							</div>
 						</div>
+					</div>
+
+					<div>
+						Store: <select id="storeId"
+							onchange="changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value)">
+						</select>
 					</div>
 
 					<div class="row">
@@ -490,8 +488,9 @@
 												<h3 class="m-b-0">1000</h3>
 											</li> -->
 										<li>
-											<h4 class="text-muted m-t-20">Average Dwell Time</h4>
-											<h3 class="m-b-0" id="avgDwellTime"></h3>
+											<h4 class="text-muted m-t-20">Average Dwell Time
+												(seconds)</h4>
+											<h3 class="m-b-0 averageDwellTime"></h3>
 										</li>
 										<!-- 	<li>
 												<h4 class="text-muted m-t-20">Number of Visit</h4>
@@ -518,13 +517,21 @@
 												<span id="scope">Past Day</span> <span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu" role="menu">
-												<li><a href="javascript:changeScope(0, &quot;average&quot;);">Past Day</a></li>
-												<li><a href="javascript:changeScope(1, &quot;average&quot;);">Past 7
-														Days</a></li>
-												<li><a href="javascript:changeScope(2, &quot;average&quot;);">Past Month</a></li>
-												<li><a href="javascript:changeScope(3, &quot;average&quot;);">Past 3
+												<li><a
+													href="javascript:changeScopeWithStoreId(0, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+														Day</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(1, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+														7 Days</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(2, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
 														Month</a></li>
-												<li><a href="javascript:changeScope(4, &quot;average&quot;);">Past Year</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(3, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+														3 Month</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(4, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
+														Year</a></li>
 											</ul>
 										</div>
 									</div>
@@ -537,14 +544,14 @@
 
 								<div class="clearfix">
 									<h4 class="m-t-0 header-title">
-										<b>People Count</b>
+										<b>Average Dwell Time (seconds)</b>
 									</h4>
-									<span class="m-t-10 dropcap text-primary">100</span>
+									<span class="m-t-10 dropcap text-primary averageDwellTime">0</span>
 								</div>
 
 								<div class="clearfix">
 									<h4 class="m-t-40 header-title">
-										<b>Average Dwell Time</b>
+										<b>Average Dwell Time (seconds)</b>
 									</h4>
 									<div class="bar-chart-second">
 										<svg style="height: 220px;"></svg>
@@ -591,7 +598,7 @@
 
 
 			<!-- FOOTER -->
-			<footer class="footer text-right"> 2017 © P-Sense. </footer>
+			<footer class="footer text-right"> 2018 © HKUST. </footer>
 			<!-- End FOOTER -->
 
 		</div>
@@ -854,7 +861,7 @@
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/pages/jquery.nvd3.init.js"></script>
+	<script src="EEK/assets/js/fypDwellTime.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -865,11 +872,5 @@
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
 	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
-
-	<script type="text/javascript">
-		$(document).ready(function() {
-			changeScope(0, "average");
-		});
-	</script>
 </body>
 </html>
