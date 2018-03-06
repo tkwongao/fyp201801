@@ -1,5 +1,10 @@
+var numberOfDataInGraph = 30;
+var scope = 0;
+var interval = 1;
+var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
+//To be replaced by getting the current date
+
 var charts = [];
-var storeId = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -7,27 +12,28 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-(drawGraph = function($) {
+(drawGraph = function(data) {
 	'use strict';
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
 	var barChart_Second = nv.models.multiBarChart();
 	charts.push(barChart_Second);
-	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
-		var values = [];
-		for (var i = 0; i < numberOfDataInGraph; i++)
-			values.push({
-				x: END_MILLISECOND + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
-				y: valFromDB1[i]
-			});
-		return [{
-			values: values,
-			key: key,
-			color: "#00b19d",
-			area: true
-		}];
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < numberOfDataInGraph; i++)
+				values.push({
+					x: currentTime + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
+					y: data[i]
+				});
+			return [{
+				values: values,
+				key: key,
+				area: true
+			}];
+		}
+		return [];
 	}
 	var timeFormat;
 	switch (interval) {
@@ -66,12 +72,39 @@ function UpdateAllCharts() {
 	});
 })(jQuery);
 
-function changeScopeWithStoreId(i, requestType, stid) {
-	storeId = stid;
-	changeScope(i, requestType);
-}
-
-function updateDwellTimeGraph() {
+function changeScopeWithStoreId(sc, stid) {
+	switch (sc) {
+	case 0:
+		$("#scope").text("Past Day");
+		interval = 1;
+		numberOfDataInGraph = 24;
+		break;
+	case 1:
+		$("#scope").text("Past 7 Days");
+		interval = 24;
+		numberOfDataInGraph = 7;
+		break;
+	case 2:
+		$("#scope").text("Past Month");
+		interval = 24;
+		numberOfDataInGraph = 30;
+		break;
+	case 3:
+		$("#scope").text("Past 3 Months");
+		interval = 720;
+		numberOfDataInGraph = 3;
+		break;
+	case 4:
+		$("#scope").text("Past Year");
+		interval = 720;
+		numberOfDataInGraph = 12;
+		break;
+	default:
+		interval = -1;
+	break;
+	}
+	scope = sc;
+	var storeId = stid;
 	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 	$.ajax({
 		type : "get",
@@ -115,10 +148,10 @@ function updateDwellTimeGraph() {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			valFromDB1 = new Array();
+			var averageDwellTime = new Array();
 			for ( var prop in json)
-				valFromDB1.push(json["dataPoint" + ++i]);
-			drawGraph();
+				averageDwellTime.push(json["dataPoint" + ++i]);
+			drawGraph(averageDwellTime);
 		},
 		statusCode: {
 			501: function() {
@@ -156,7 +189,6 @@ $(document).ready(function() {
 				for (var i = 0; i < shops.length; i++)
 					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
 				$("#storeId").html(select_html);
-				storeId = -1;
 			},
 			statusCode: {
 				403: function() {
@@ -169,6 +201,6 @@ $(document).ready(function() {
 		});
 	}
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
-		changeScope(0, "average", document.getElementById("storeId").value);
+		changeScopeWithStoreId(0, document.getElementById("storeId").value);
 	});
 });

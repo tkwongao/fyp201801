@@ -1,6 +1,10 @@
+var numberOfDataInGraph = 30;
+var scope = 0;
+var interval = 1;
+var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
+//To be replaced by getting the current date
+
 var charts = [];
-var userMac;
-var storeId = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -8,25 +12,26 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-(drawPeopleCountingGraph = function($) {
+(drawLoyaltyCountingGraph = function(data) {
 	'use strict';
 	var peopleCountingChart = nv.models.lineChart();
 	charts.push(peopleCountingChart);
-	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
-		var values = [];
-		for (var i = 0; i < numberOfDataInGraph; i++)
-			values.push({
-				x: END_MILLISECOND + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
-				y: valFromDB1[i]
-			});
-		return [{
-			values: values,
-			key: key,
-			color: "#00b19d",
-			area: true
-		}];
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < numberOfDataInGraph; i++)
+				values.push({
+					x: currentTime + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
+					y: data[i]
+				});
+			return [{
+				values: values,
+				key: key,
+				area: true
+			}];
+		}
+		return [];
 	}
 	var timeFormat;
 	switch (interval) {
@@ -53,24 +58,25 @@ function UpdateAllCharts() {
 	});
 })(jQuery);
 
-(drawUserStayTimeGraph = function($) {
+(drawUserStayTimeGraph = function(data) {
 	'use strict';
 	var userStayTimeChart = nv.models.discreteBarChart();
 	charts.push(userStayTimeChart);
-	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData() {
-		var values = [];
-		for (var i = 0; i < numberOfDataInGraph; i++)
-			values.push({
-				x: END_MILLISECOND + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
-				y: valFromDB2[i]
-			});
-		return [{
-			values: values,
-			key: 'User Stay Time (seconds)',
-			color: "#00b19d"
-		}];
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < numberOfDataInGraph; i++)
+				values.push({
+					x: currentTime + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
+					y: data[i]
+				});
+			return [{
+				values: values,
+				key: 'User Stay Time (seconds)'
+			}];
+		}
+		return [];
 	}
 	var timeFormat;
 	switch (interval) {
@@ -96,15 +102,46 @@ function UpdateAllCharts() {
 	});
 })(jQuery);
 
-function changeScopeWithMac(i, requestType, macAddress, stid) {
-	userMac = macAddress;
-	storeId = stid;
-	changeScope(i, requestType);
+function changeScopeWithMac(sc, macAddress, stid) {
+	switch (sc) {
+	case 0:
+		$("#scope").text("Past Day");
+		interval = 1;
+		numberOfDataInGraph = 24;
+		break;
+	case 1:
+		$("#scope").text("Past 7 Days");
+		interval = 24;
+		numberOfDataInGraph = 7;
+		break;
+	case 2:
+		$("#scope").text("Past Month");
+		interval = 24;
+		numberOfDataInGraph = 30;
+		break;
+	case 3:
+		$("#scope").text("Past 3 Months");
+		interval = 720;
+		numberOfDataInGraph = 3;
+		break;
+	case 4:
+		$("#scope").text("Past Year");
+		interval = 720;
+		numberOfDataInGraph = 12;
+		break;
+	default:
+		interval = -1;
+	break;
+	}
+	scope = sc;
+	var userMac = macAddress;
+	var storeId = stid;
+	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 	$.ajax({
 		type : "get",
 		url : "databaseConnection",
 		data : {
-			start : currentTime - 3600000 * interval * numberOfDataInGraph,
+			start : startTime,
 			end : currentTime,
 			storeId : storeId,
 			interval : 0,
@@ -132,7 +169,7 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 		type : "get",
 		url : "databaseConnection",
 		data : {
-			start : currentTime - 3600000 * interval * numberOfDataInGraph,
+			start : startTime,
 			end : currentTime,
 			storeId : storeId,
 			interval : 0,
@@ -156,11 +193,6 @@ function changeScopeWithMac(i, requestType, macAddress, stid) {
 			}
 		}
 	});
-	updateGraph(requestType);
-}
-
-function updateLoyaltyGraph() {
-	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 	$.ajax({
 		type : "get",
 		url : "databaseConnection",
@@ -175,10 +207,10 @@ function updateLoyaltyGraph() {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			valFromDB1 = new Array();
+			var loyaltyCounting = [];
 			for ( var prop in json)
-				valFromDB1.push(json["dataPoint" + ++i]);
-			drawPeopleCountingGraph();
+				loyaltyCounting.push(json["dataPoint" + ++i]);
+			drawLoyaltyCountingGraph(loyaltyCounting);
 		},
 		statusCode: {
 			501: function() {
@@ -203,10 +235,10 @@ function updateLoyaltyGraph() {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			valFromDB2 = new Array();
+			var userStayTime = [];
 			for ( var prop in json)
-				valFromDB2.push(json["dataPoint" + ++i]);
-			drawUserStayTimeGraph();
+				userStayTime.push(json["dataPoint" + ++i]);
+			drawUserStayTimeGraph(userStayTime);
 		},
 		statusCode: {
 			501: function() {
@@ -218,6 +250,7 @@ function updateLoyaltyGraph() {
 		}
 	});
 }
+
 $(document).ready(function() {
 	$("#date").html(new Intl.DateTimeFormat(
 			"en-HK", {
@@ -243,7 +276,6 @@ $(document).ready(function() {
 				for (var i = 0; i < shops.length; i++)
 					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
 				$("#storeId").html(select_html);
-				storeId = -1;
 			},
 			statusCode: {
 				403: function() {
@@ -255,6 +287,5 @@ $(document).ready(function() {
 			}
 		});
 	}
-	$.when(ajaxGettingStores("base_1")).done(function(a1) {
-	});
+	ajaxGettingStores("base_1");
 });

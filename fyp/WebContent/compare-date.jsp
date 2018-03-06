@@ -60,9 +60,11 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2
+						Project<!--object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object--></a>
+							height="80"></object-->
+					</a>
 				</div>
 			</div>
 
@@ -419,17 +421,7 @@
 									</ul>
 								</div>
 
-								<h4 class="text-center no-margin">
-									<script>
-										document.write(new Intl.DateTimeFormat(
-												"en-HK", {
-													weekday : "long",
-													year : "numeric",
-													day : "numeric",
-													month : "long"
-												}).format(new Date()));
-									</script>
-								</h4>
+								<h4 class="text-center no-margin" id="date"></h4>
 							</div>
 						</div>
 					</div>
@@ -439,14 +431,12 @@
 							<div class="card-box">
 								<div id="searchPanel" class="row in m-b-20">
 									<div class="col-lg-6">
-										<div class="calendar-picker form-control" id="startDate"
-											value="0">
+										<div class="calendar-picker form-control" start="0" end="0">
 											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
 									</div>
 									<div class="col-lg-6">
-										<div class="calendar-picker form-control" id="endDate"
-											value="0">
+										<div class="calendar-picker form-control" start="0" end="0">
 											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
 									</div>
@@ -911,12 +901,9 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
-
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/js/fypCompareDate.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -926,6 +913,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
+	<script src="EEK/assets/js/fypCompareDate.js"></script>
 </body>
 </html>
