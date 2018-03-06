@@ -362,7 +362,10 @@
 
 				<div class="clearfix"></div>
 			</div>
-
+			
+			<div class="user-detail", align = "center">
+					<h5><font color = "red">Test</font></h5>
+			</div>
 			<!--<div class="user-detail">
 				<div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
