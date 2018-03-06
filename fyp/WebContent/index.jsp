@@ -363,7 +363,7 @@
 				<div class="clearfix"></div>
 			</div>
 
-			<div class="user-detail">
+			<!--<div class="user-detail">
 				<div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
@@ -387,7 +387,7 @@
 					</ul>
 
 				</div>
-			</div>
+			</div> -->
 		</div>
 		<!-- Left Sidebar End -->
 
