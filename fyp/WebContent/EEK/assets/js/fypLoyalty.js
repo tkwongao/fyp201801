@@ -1,4 +1,4 @@
-var numberOfDataInGraph = 30;
+var numberOfDataInGraph = undefined;
 var scope = 0;
 var interval = 1;
 var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
@@ -151,7 +151,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var loyalty = new Array();
+			var loyalty = [];
 			for ( var prop in json)
 				loyalty.push(json["dataPoint" + ++i]);
 			$("#loyalty").text(loyalty[0]);
@@ -179,7 +179,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var userDwellTime = new Array();
+			var userDwellTime = [];
 			for ( var prop in json)
 				userDwellTime.push(json["dataPoint" + ++i]);
 			$("#userDwellTime").text(userDwellTime[0]);
@@ -266,7 +266,7 @@ $(document).ready(function() {
 			data : { mallName: mallName },
 			traditional: true,
 			success : function(json) {
-				var shops = new Array();
+				var shops = [];
 				for ( var prop in json)
 					shops.push({ id: json[prop], name: prop });
 				shops.sort(function (a, b) {

@@ -1,4 +1,4 @@
-var numberOfDataInGraph = 30;
+var numberOfDataInGraph = undefined;
 var scope = 0;
 var interval = 1;
 var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
@@ -120,10 +120,10 @@ function changeScopeWithStoreId(sc, stid) {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var avgDwellTime = new Array();
+			var averageDwellTime = [];
 			for ( var prop in json)
-				avgDwellTime.push(json["dataPoint" + ++i]);
-			$(".averageDwellTime").text(avgDwellTime[0]);
+				averageDwellTime.push(json["dataPoint" + ++i]);
+			$(".averageDwellTime").text(averageDwellTime[0]);
 		},
 		statusCode: {
 			501: function() {
@@ -148,7 +148,7 @@ function changeScopeWithStoreId(sc, stid) {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var averageDwellTime = new Array();
+			var averageDwellTime = [];
 			for ( var prop in json)
 				averageDwellTime.push(json["dataPoint" + ++i]);
 			drawGraph(averageDwellTime);
@@ -179,7 +179,7 @@ $(document).ready(function() {
 			data : { mallName: mallName },
 			traditional: true,
 			success : function(json) {
-				var shops = new Array();
+				var shops = [];
 				for ( var prop in json)
 					shops.push({ id: json[prop], name: prop });
 				shops.sort(function (a, b) {

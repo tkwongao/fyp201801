@@ -1,4 +1,4 @@
-var numberOfDataInGraph = 30;
+var numberOfDataInGraph = undefined;
 var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 //To be replaced by getting the current date
 
@@ -203,7 +203,7 @@ $(document).ready(function() {
 			data : { mallName: mallName },
 			traditional: true,
 			success : function(json) {
-				shops = new Array();
+				shops = [];
 				for ( var prop in json)
 					shops.push({ id: json[prop], name: prop });
 				shops.sort(function (a, b) {
@@ -222,7 +222,7 @@ $(document).ready(function() {
 	}
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
 		var interval = 24;
-		var numberOfDataInGraph = 30;
+		numberOfDataInGraph = 30;
 		var scope = 2;
 		var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
@@ -247,7 +247,7 @@ $(document).ready(function() {
 				traditional: true,
 				success : function(json) {
 					var i = 0;
-					var totalVisitorCount = new Array();
+					var totalVisitorCount = [];
 					for ( var prop in json)
 						totalVisitorCount.push(json["dataPoint" + ++i]);
 					$(".totalVisitorCount").text(totalVisitorCount[0]);
@@ -277,7 +277,7 @@ $(document).ready(function() {
 				traditional: true,
 				success : function(json) {
 					var i = 0;
-					var totalAverageDwellTime = new Array();
+					var totalAverageDwellTime = [];
 					for ( var prop in json)
 						totalAverageDwellTime.push(json["dataPoint" + ++i]);
 					$(".totalAverageDwellTime").text(totalAverageDwellTime[0]);
@@ -308,7 +308,7 @@ $(document).ready(function() {
 				success : function(json) {
 					var i = 0;
 					var sum = 0;
-					var peopleCounting = new Array();
+					var peopleCounting = [];
 					for ( var prop in json) {
 						var thisDataPoint = json["dataPoint" + ++i] 
 						peopleCounting.push(thisDataPoint);
@@ -344,7 +344,7 @@ $(document).ready(function() {
 			success : function(json) {
 				var i = 0;
 				var sum = 0;
-				var averageDwellTime = new Array();
+				var averageDwellTime = [];
 				for ( var prop in json) {
 					var thisDataPoint = json["dataPoint" + ++i] 
 					averageDwellTime.push(thisDataPoint);
@@ -378,7 +378,7 @@ $(document).ready(function() {
 			traditional: true,
 			success : function(json) {
 				var i = 0;
-				var averageDwellTimeDistribution = new Array();
+				var averageDwellTimeDistribution = [];
 				for ( var prop in json)
 					averageDwellTimeDistribution.push(json["dataPoint" + ++i]);
 				drawAverageDwellTimeDistributionGraph(averageDwellTimeDistribution);
@@ -392,8 +392,8 @@ $(document).ready(function() {
 				}
 			}
 		});
-		var ajaxs = new Array();
-		var peopleCountingForEachShopResults = new Array();
+		var ajaxs = [];
+		var peopleCountingForEachShopResults = [];
 		for (var i = 0; i < shops.length; i++) {
 			var anAjax;
 			(function() {
@@ -412,7 +412,7 @@ $(document).ready(function() {
 					traditional: true,
 					success : function(json) {
 						var j = 0;
-						var thisStoreCount = new Array();
+						var thisStoreCount = [];
 						for ( var prop in json)
 							thisStoreCount.push(json["dataPoint" + ++j]);
 						//$("#s" + (k + 1) + "scount").text(thisStoreCount[0]);
@@ -449,8 +449,8 @@ $(document).ready(function() {
 			}
 			$("#scr").text(restStoresCount);
 			peopleCountingForEachShopResultsSorted = peopleCountingForEachShopResultsSorted.slice(0, numberOfPopularStores);
-			var peopleCountForTop5ShopResults = new Array();
-			var ajaxs = new Array();
+			var peopleCountForTop5ShopResults = [];
+			var ajaxs = [];
 			for (var i = 0; i < peopleCountingForEachShopResultsSorted.length; i++) {
 				var anAjax;
 				(function() {
@@ -470,7 +470,7 @@ $(document).ready(function() {
 						success : function(json) {
 							var j = 0;
 							var sum = 0;
-							peopleCountForTop5ShopResults[k] = new Array();
+							peopleCountForTop5ShopResults[k] = [];
 							for ( var prop in json)
 								peopleCountForTop5ShopResults[k].push(json["dataPoint" + ++j]);
 						},

@@ -541,34 +541,6 @@
 												<div class="numberOfVisitChart">
 													<svg style="height: 400px;"></svg>
 												</div>
-
-												<div class="text-left m-t-20"
-													style="border-top: 1px solid grey;">
-													<div class="btn-group">
-														<button type="button"
-															class="btn btn-outline no-padding m-t-10"
-															data-toggle="dropdown" aria-expanded="false">
-															Past Day <span class="caret"></span>
-														</button>
-														<ul class="dropdown-menu" role="menu">
-															<li><a
-																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-																	Day</a></li>
-															<li><a
-																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-																	7 Days</a></li>
-															<li><a
-																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-																	Month</a></li>
-															<li><a
-																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-																	3 Month</a></li>
-															<li><a
-																href="javascript:changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-																	Year</a></li>
-														</ul>
-													</div>
-												</div>
 											</div>
 										</div>
 									</div>
