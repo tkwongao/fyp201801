@@ -363,21 +363,18 @@
 				<div class="clearfix"></div>
 			</div>
 			
-			<div class="user-detail", align = "center">
-					<h5><font color = "red">Test</font></h5>
-			</div>
-			<!--<div class="user-detail">
-				<div class="dropup">
+			<div class="user-detail">
+				<!--div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
 						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
-						class="img-circle"> <span class="user-info-span">
-							<h5 class="m-t-0 m-b-0">Hugo Mar</h5>
-							<p class="text-muted m-b-0">
+						class="img-circle"--> <span class="user-info-span">
+							<h5>Test</h5>
+							<!--p class="text-muted m-b-0">
 								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-							</p>
+							</p-->
 					</span>
-					</a>
+					<!--/a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void(0)"><i
 								class="md md-face-unlock"></i> Profile</a></li>
@@ -389,8 +386,8 @@
 								class="md md-settings-power"></i> Logout</a></li>
 					</ul>
 
-				</div>
-			</div> -->
+				</div-->
+			</div>
 		</div>
 		<!-- Left Sidebar End -->
 
