@@ -1,4 +1,3 @@
-var numberOfDataInGraph = undefined;
 var scope = 0;
 var interval = 1;
 var startTime = 0, endTime = 0;
@@ -74,17 +73,14 @@ function changeScopeWithStoreId(sc, stid) {
 	case 0:
 		$("#scope").text("Hourly Data");
 		interval = 1;
-		numberOfDataInGraph = 24;
 		break;
 	case 1:
 		$("#scope").text("Daily Data");
 		interval = 24;
-		numberOfDataInGraph = 7;
 		break;
 	case 2:
 		$("#scope").text("Monthly Data");
 		interval = 720;
-		numberOfDataInGraph = 30;
 		break;
 	default:
 		interval = -1;
