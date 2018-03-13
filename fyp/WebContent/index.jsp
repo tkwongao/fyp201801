@@ -12,7 +12,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard</title>
+<title>GCH2 Project</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
@@ -364,17 +364,17 @@
 			</div>
 
 			<div class="user-detail">
-				<div class="dropup">
+				<!--div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
 						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
-						class="img-circle"> <span class="user-info-span">
-							<h5 class="m-t-0 m-b-0">Hugo Mar</h5>
-							<p class="text-muted m-b-0">
+						class="img-circle"-->
+				<span class="user-info-span">
+					<h5>Test</h5> <!--p class="text-muted m-b-0">
 								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-							</p>
-					</span>
-					</a>
+							</p-->
+				</span>
+				<!--/a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void(0)"><i
 								class="md md-face-unlock"></i> Profile</a></li>
@@ -386,7 +386,7 @@
 								class="md md-settings-power"></i> Logout</a></li>
 					</ul>
 
-				</div>
+				</div-->
 			</div>
 		</div>
 		<!-- Left Sidebar End -->
@@ -542,37 +542,29 @@
 
 							<div class="col-sm-6 col-lg-6">
 								<div class="card-box">
-
-									<div class="clearfix">
-										<h4 class="m-t-0 header-title">
-											<b>Shopper Count</b>
+									<div class="widget-chart text-center">
+										<h4 class="m-t-0 m-b-20 header-title">
+											<b>People Count for the Top 5 Shops</b>
 										</h4>
-										<span class="m-t-10 dropcap text-primary totalVisitorCount"></span>
-									</div>
-
-									<div class="clearfix">
-										<h4 class="m-t-40 header-title">
-											<b>People Count for Each Shop</b>
-										</h4>
-										<div class="peopleCountForEachShopChart">
+										<div class="peopleCountForTop5ShopChart">
 											<svg style="height: 300px;"></svg>
 										</div>
 									</div>
 
 									<div class="clearfix">
 										<h4 class="m-t-10 header-title">
-											<b>Shop List</b>
+											<b>Top 5 Stores</b>
 										</h4>
 										<table class="table">
 											<thead>
 												<tr>
-													<td>Shop
+													<td>Store
 													</th>
 													<td align="right">Visitors
 													</th>
 												</tr>
 											</thead>
-											<tbody id="popularShops">
+											<tbody id="popularStores">
 											</tbody>
 										</table>
 									</div>
@@ -853,8 +845,6 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
-
 	<!-- Counter Up  -->
 	<script src="plugins/waypoints/lib/jquery.waypoints.js"></script>
 	<script src="plugins/counterup/jquery.counterup.min.js"></script>
@@ -866,7 +856,11 @@
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/js/fypIndex.js"></script>
+
+	<script src="plugins/moment/moment.js"></script>
+	<script
+		src="plugins/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+	<script src="plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 	<!-- skycons -->
 	<script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>
@@ -882,6 +876,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
+	<script src="EEK/assets/js/fypIndex.js"></script>
 </body>
 </html>

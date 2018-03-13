@@ -13,7 +13,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard</title>
+<title>User Loyalty Analysis</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
@@ -60,9 +60,11 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2
+						Project<!--object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object--></a>
+							height="80"></object-->
+					</a>
 				</div>
 			</div>
 
@@ -364,17 +366,17 @@
 			</div>
 
 			<div class="user-detail">
-				<div class="dropup">
+				<!--div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
 						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
-						class="img-circle"> <span class="user-info-span">
-							<h5 class="m-t-0 m-b-0">Hugo Mar</h5>
-							<p class="text-muted m-b-0">
+						class="img-circle"-->
+				<span class="user-info-span">
+					<h5>Test</h5> <!--p class="text-muted m-b-0">
 								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-							</p>
-					</span>
-					</a>
+							</p-->
+				</span>
+				<!--/a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void(0)"><i
 								class="md md-face-unlock"></i> Profile</a></li>
@@ -386,7 +388,7 @@
 								class="md md-settings-power"></i> Logout</a></li>
 					</ul>
 
-				</div>
+				</div-->
 			</div>
 		</div>
 		<!-- Left Sidebar End -->
@@ -418,8 +420,7 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-								<h4 class="text-center no-margin" id="date">
-								</h4>
+								<h4 class="text-center no-margin" id="date"></h4>
 							</div>
 						</div>
 					</div>
@@ -428,8 +429,11 @@
 						User MAC Address: <input type="text" id="macAddress"
 							value="B4EF3992723A"> Store: <select id="storeId">
 						</select>
+						<div class="calendar-picker form-control" start="0" end="0">
+							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
+						</div>
 						<button type="button"
-							onclick="changeScopeWithMac(scope, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
+							onclick="changeScopeWithMac(scope, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
 					</div>
 
 					<!-- <div class="row">
@@ -509,24 +513,18 @@
 										<button type="button"
 											class="btn btn-outline no-padding m-t-10"
 											data-toggle="dropdown" aria-expanded="false">
-											<span id="scope">Past Day</span> <span class="caret"></span>
+											<span id="scope">Hourly Data</span> <span class="caret"></span>
 										</button>
 										<ul class="dropdown-menu" role="menu">
 											<li><a
-												href="javascript:changeScopeWithMac(0, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Day</a></li>
+												href="javascript:changeScopeWithMac(0, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Hourly
+													Data</a></li>
 											<li><a
-												href="javascript:changeScopeWithMac(1, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													7 Days</a></li>
+												href="javascript:changeScopeWithMac(1, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Daily
+													Data</a></li>
 											<li><a
-												href="javascript:changeScopeWithMac(2, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Month</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(3, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													3 Month</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(4, &quot;loyalty&quot;, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Past
-													Year</a></li>
+												href="javascript:changeScopeWithMac(2, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Monthly
+													Data</a></li>
 										</ul>
 									</div>
 								</div>
@@ -851,13 +849,9 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-	<!-- Global Variables -->
-	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
-
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/js/fypLoyalty.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -867,6 +861,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
+	<script src="EEK/assets/js/fypLoyalty.js"></script>
 </body>
 </html>
