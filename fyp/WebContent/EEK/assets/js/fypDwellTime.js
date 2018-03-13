@@ -1,5 +1,7 @@
+var scope = 0;
+var interval = 1;
+var startTime = 0, endTime = 0;
 var charts = [];
-var storeId = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -7,27 +9,27 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-(drawGraph = function($) {
-	'use strict';
+function drawGraph(data) {
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
 	var barChart_Second = nv.models.multiBarChart();
 	charts.push(barChart_Second);
-	const END_MILLISECOND = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
-		var values = [];
-		for (var i = 0; i < numberOfDataInGraph; i++)
-			values.push({
-				x: END_MILLISECOND + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
-				y: valFromDB1[i]
-			});
-		return [{
-			values: values,
-			key: key,
-			color: "#00b19d",
-			area: true
-		}];
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < data.length; i++)
+				values.push({
+					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
+					y: data[i]
+				});
+			return [{
+				values: values,
+				key: key,
+				area: true
+			}];
+		}
+		return [];
 	}
 	var timeFormat;
 	switch (interval) {
@@ -64,21 +66,34 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(barChart_Second.update);
 		return barChart_Second;
 	});
-})(jQuery);
-
-function changeScopeWithStoreId(i, requestType, stid) {
-	storeId = stid;
-	changeScope(i, requestType);
 }
 
-function updateDwellTimeGraph() {
-	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
+function changeScopeWithStoreId(sc, stid) {
+	switch (sc) {
+	case 0:
+		$("#scope").text("Hourly Data");
+		interval = 1;
+		break;
+	case 1:
+		$("#scope").text("Daily Data");
+		interval = 24;
+		break;
+	case 2:
+		$("#scope").text("Monthly Data");
+		interval = 720;
+		break;
+	default:
+		interval = -1;
+	break;
+	}
+	scope = sc;
+	var storeId = stid;
 	$.ajax({
 		type : "get",
 		url : "databaseConnection",
 		data : {
 			start : startTime,
-			end : currentTime,
+			end : endTime,
 			storeId : storeId,
 			interval : 0,
 			userMac : 0,
@@ -87,10 +102,10 @@ function updateDwellTimeGraph() {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var avgDwellTime = new Array();
+			var averageDwellTime = [];
 			for ( var prop in json)
-				avgDwellTime.push(json["dataPoint" + ++i]);
-			$(".averageDwellTime").text(avgDwellTime[0]);
+				averageDwellTime.push(json["dataPoint" + ++i]);
+			$(".averageDwellTime").text(averageDwellTime[0]);
 		},
 		statusCode: {
 			501: function() {
@@ -106,7 +121,7 @@ function updateDwellTimeGraph() {
 		url : "databaseConnection",
 		data : {
 			start : startTime,
-			end : currentTime,
+			end : endTime,
 			storeId : storeId,
 			interval : interval,
 			userMac : 0,
@@ -115,14 +130,43 @@ function updateDwellTimeGraph() {
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			valFromDB1 = new Array();
+			var averageDwellTime = [];
 			for ( var prop in json)
-				valFromDB1.push(json["dataPoint" + ++i]);
-			drawGraph();
+				averageDwellTime.push(json["dataPoint" + ++i]);
+			drawGraph(averageDwellTime);
 		},
 		statusCode: {
 			501: function() {
 				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
+		}
+	});
+}
+
+function ajaxGettingStores(mallName) {
+	return $.ajax({
+		type : "get",
+		url : "prepareStores",
+		data : { mallName: mallName },
+		traditional: true,
+		success : function(json) {
+			var shops = [];
+			for ( var prop in json)
+				shops.push({ id: json[prop], name: prop });
+			shops.sort(function (a, b) {
+				return a.name.localeCompare( b.name );
+			});
+			var select_html = "<option value=\"-1\" selected>All Stores</option>";
+			for (var i = 0; i < shops.length; i++)
+				select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
+			$("#storeId").html(select_html);
+		},
+		statusCode: {
+			403: function() {
+				window.location.href = "EEK/pages-403.html";
 			},
 			500: function() {
 				window.location.href = "EEK/pages-500.html";
@@ -132,43 +176,42 @@ function updateDwellTimeGraph() {
 }
 
 $(document).ready(function() {
-	$("#date").html(new Intl.DateTimeFormat(
-			"en-HK", {
-				weekday : "long",
-				year : "numeric",
-				day : "numeric",
-				month : "long"
-			}).format(new Date()));
-	function ajaxGettingStores(mallName) {
-		return $.ajax({
-			type : "get",
-			url : "prepareStores",
-			data : { mallName: mallName },
-			traditional: true,
-			success : function(json) {
-				var shops = new Array();
-				for ( var prop in json)
-					shops.push({ id: json[prop], name: prop });
-				shops.sort(function (a, b) {
-					return a.name.localeCompare( b.name );
-				});
-				var select_html = "<option value=\"-1\" selected>All Stores</option>";
-				for (var i = 0; i < shops.length; i++)
-					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
-				$("#storeId").html(select_html);
-				storeId = -1;
+	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	drawGraph([]);
+	// Till the latest available data; to be replaced by getting the current date
+	const endOfYesterday = moment().startOf('day'), startDate = moment("23 October 2017, 00:00", "D MMMM YYYY, HH:mm"), endDate = moment("23 October 2017, 22:00", "D MMMM YYYY, HH:mm");
+	var calendar_pickers = $('div.calendar-picker');
+	calendar_pickers.each(function(index) {
+		var self = $(this);
+		function date_cb(start, end) {
+			self.children('span').html(start.format('D MMMM YYYY, HH:mm') + " to " + end.format('D MMMM YYYY, HH:mm'));
+			self.attr('start', start);
+			self.attr('end', end);
+			startTime = Number($(calendar_pickers[index]).attr('start'));
+			endTime = Number($(calendar_pickers[index]).attr('end'));
+		};
+		date_cb(startDate, endDate);
+		$(this).daterangepicker({
+			"locale": {
+				"format": "D MMMM YYYY, HH:mm",
 			},
-			statusCode: {
-				403: function() {
-					window.location.href = "EEK/pages-403.html";
-				},
-				500: function() {
-					window.location.href = "EEK/pages-500.html";
-				}
-			}
-		});
-	}
+			"ranges": {
+				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
+				'Last Week': [endOfYesterday.clone().subtract(7, 'days'), endOfYesterday],
+				'Last 30 Days': [endOfYesterday.clone().subtract(30, 'days'), endOfYesterday],
+				'Last 3 Months': [endOfYesterday.clone().subtract(3, 'month').startOf('month'), endOfYesterday.clone().startOf('month')],
+				'Last 12 Months': [endOfYesterday.clone().subtract(12, 'month').startOf('month'), endOfYesterday.clone().startOf('month')]
+			},
+			timePicker: true,
+			timePicker24Hour: true,
+			startDate: startDate,
+			endDate: endDate,
+			minDate: '1 January 2015',
+			maxDate: 'now',
+			timePickerIncrement: 30
+		}, date_cb);
+	});
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
-		changeScope(0, "average", document.getElementById("storeId").value);
+		changeScopeWithStoreId(0, document.getElementById("storeId").value);
 	});
 });

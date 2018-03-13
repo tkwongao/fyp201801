@@ -60,9 +60,11 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2 Project<!--object
+					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2
+						Project<!--object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
-							height="80"></object--></a>
+							height="80"></object-->
+					</a>
 				</div>
 			</div>
 
@@ -356,17 +358,17 @@
 			</div>
 
 			<div class="user-detail">
-				<div class="dropup">
+				<!--div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
 						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
-						class="img-circle"> <span class="user-info-span">
-							<h5 class="m-t-0 m-b-0">Hugo Mar</h5>
-							<p class="text-muted m-b-0">
+						class="img-circle"--> <span class="user-info-span">
+							<h5>Test</h5>
+							<!--p class="text-muted m-b-0">
 								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
-							</p>
+							</p-->
 					</span>
-					</a>
+					<!--/a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void(0)"><i
 								class="md md-face-unlock"></i> Profile</a></li>
@@ -378,7 +380,7 @@
 								class="md md-settings-power"></i> Logout</a></li>
 					</ul>
 
-				</div>
+				</div-->
 			</div>
 		</div>
 		<!-- Left Sidebar End -->
@@ -410,16 +412,18 @@
 										<li><a href="javascript:void(0);">The Base</a></li>
 									</ul>
 								</div>
-								<h4 class="text-center no-margin" id="date">
-								</h4>
+								<h4 class="text-center no-margin" id="date"></h4>
 							</div>
 						</div>
 					</div>
 
 					<div>
 						Store: <select id="storeId"
-							onchange="changeScopeWithStoreId(scope, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value)">
+							onchange="changeScopeWithStoreId(scope, document.getElementById(&quot;storeId&quot;).value)">
 						</select>
+						<div class="calendar-picker form-control" start="0" end="0">
+							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
+						</div>
 					</div>
 
 					<div class="row">
@@ -514,24 +518,18 @@
 											<button type="button"
 												class="btn btn-outline no-padding m-t-10"
 												data-toggle="dropdown" aria-expanded="false">
-												<span id="scope">Past Day</span> <span class="caret"></span>
+												<span id="scope">Hourly Data</span> <span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu" role="menu">
 												<li><a
-													href="javascript:changeScopeWithStoreId(0, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-														Day</a></li>
+													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Hourly
+														Data</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(1, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-														7 Days</a></li>
+													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Daily
+														Data</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(2, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-														Month</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(3, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-														3 Month</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(4, &quot;average&quot;, document.getElementById(&quot;storeId&quot;).value);">Past
-														Year</a></li>
+													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Monthly
+														Data</a></li>
 											</ul>
 										</div>
 									</div>
@@ -855,13 +853,9 @@
 	<script src="EEK/assets/js/jquery.scrollTo.min.js"></script>
 	<script src="plugins/switchery/switchery.min.js"></script>
 
-
-	<script src="EEK/assets/js/fypGlobalVariables.js"></script>
-
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
-	<script src="EEK/assets/js/fypDwellTime.js"></script>
 
 	<script src="plugins/moment/moment.js"></script>
 	<script
@@ -871,6 +865,6 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
-	<script src="EEK/assets/js/fypConnectForBackend.js"></script>
+	<script src="EEK/assets/js/fypDwellTime.js"></script>
 </body>
 </html>
