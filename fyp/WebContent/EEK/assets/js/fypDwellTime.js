@@ -1,9 +1,7 @@
 var numberOfDataInGraph = undefined;
 var scope = 0;
 var interval = 1;
-var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
-//To be replaced by getting the current date
-
+var startTime = 0, endTime = 0;
 var charts = [];
 
 function UpdateAllCharts() {
@@ -12,8 +10,7 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-(drawGraph = function(data) {
-	'use strict';
+function drawGraph(data) {
 	var lineChart_Second = nv.models.lineChart();
 	charts.push(lineChart_Second);
 	var barChart_Second = nv.models.multiBarChart();
@@ -22,9 +19,9 @@ function UpdateAllCharts() {
 	function getData(key) {
 		if (Array.isArray(data)) {
 			var values = [];
-			for (var i = 0; i < numberOfDataInGraph; i++)
+			for (var i = 0; i < data.length; i++)
 				values.push({
-					x: currentTime + MILLISECONDS_PER_INTERVAL * (i - numberOfDataInGraph),
+					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
 					y: data[i]
 				});
 			return [{
@@ -70,34 +67,24 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(barChart_Second.update);
 		return barChart_Second;
 	});
-})(jQuery);
+}
 
 function changeScopeWithStoreId(sc, stid) {
 	switch (sc) {
 	case 0:
-		$("#scope").text("Past Day");
+		$("#scope").text("Hourly Data");
 		interval = 1;
 		numberOfDataInGraph = 24;
 		break;
 	case 1:
-		$("#scope").text("Past 7 Days");
+		$("#scope").text("Daily Data");
 		interval = 24;
 		numberOfDataInGraph = 7;
 		break;
 	case 2:
-		$("#scope").text("Past Month");
-		interval = 24;
+		$("#scope").text("Monthly Data");
+		interval = 720;
 		numberOfDataInGraph = 30;
-		break;
-	case 3:
-		$("#scope").text("Past 3 Months");
-		interval = 720;
-		numberOfDataInGraph = 3;
-		break;
-	case 4:
-		$("#scope").text("Past Year");
-		interval = 720;
-		numberOfDataInGraph = 12;
 		break;
 	default:
 		interval = -1;
@@ -105,13 +92,12 @@ function changeScopeWithStoreId(sc, stid) {
 	}
 	scope = sc;
 	var storeId = stid;
-	var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 	$.ajax({
 		type : "get",
 		url : "databaseConnection",
 		data : {
 			start : startTime,
-			end : currentTime,
+			end : endTime,
 			storeId : storeId,
 			interval : 0,
 			userMac : 0,
@@ -139,7 +125,7 @@ function changeScopeWithStoreId(sc, stid) {
 		url : "databaseConnection",
 		data : {
 			start : startTime,
-			end : currentTime,
+			end : endTime,
 			storeId : storeId,
 			interval : interval,
 			userMac : 0,
@@ -164,42 +150,71 @@ function changeScopeWithStoreId(sc, stid) {
 	});
 }
 
-$(document).ready(function() {
-	$("#date").html(new Intl.DateTimeFormat(
-			"en-HK", {
-				weekday : "long",
-				year : "numeric",
-				day : "numeric",
-				month : "long"
-			}).format(new Date()));
-	function ajaxGettingStores(mallName) {
-		return $.ajax({
-			type : "get",
-			url : "prepareStores",
-			data : { mallName: mallName },
-			traditional: true,
-			success : function(json) {
-				var shops = [];
-				for ( var prop in json)
-					shops.push({ id: json[prop], name: prop });
-				shops.sort(function (a, b) {
-					return a.name.localeCompare( b.name );
-				});
-				var select_html = "<option value=\"-1\" selected>All Stores</option>";
-				for (var i = 0; i < shops.length; i++)
-					select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
-				$("#storeId").html(select_html);
+function ajaxGettingStores(mallName) {
+	return $.ajax({
+		type : "get",
+		url : "prepareStores",
+		data : { mallName: mallName },
+		traditional: true,
+		success : function(json) {
+			var shops = [];
+			for ( var prop in json)
+				shops.push({ id: json[prop], name: prop });
+			shops.sort(function (a, b) {
+				return a.name.localeCompare( b.name );
+			});
+			var select_html = "<option value=\"-1\" selected>All Stores</option>";
+			for (var i = 0; i < shops.length; i++)
+				select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
+			$("#storeId").html(select_html);
+		},
+		statusCode: {
+			403: function() {
+				window.location.href = "EEK/pages-403.html";
 			},
-			statusCode: {
-				403: function() {
-					window.location.href = "EEK/pages-403.html";
-				},
-				500: function() {
-					window.location.href = "EEK/pages-500.html";
-				}
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
 			}
-		});
-	}
+		}
+	});
+}
+
+$(document).ready(function() {
+	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	drawGraph([]);
+	// Till the latest available data; to be replaced by getting the current date
+	const endOfYesterday = moment().startOf('day'), startDate = moment("23 October 2017, 00:00", "D MMMM YYYY, HH:mm"), endDate = moment("23 October 2017, 22:00", "D MMMM YYYY, HH:mm");
+	var calendar_pickers = $('div.calendar-picker');
+	calendar_pickers.each(function(index) {
+		var self = $(this);
+		function date_cb(start, end) {
+			self.children('span').html(start.format('D MMMM YYYY, HH:mm') + " to " + end.format('D MMMM YYYY, HH:mm'));
+			self.attr('start', start);
+			self.attr('end', end);
+			startTime = Number($(calendar_pickers[index]).attr('start'));
+			endTime = Number($(calendar_pickers[index]).attr('end'));
+		};
+		date_cb(startDate, endDate);
+		$(this).daterangepicker({
+			"locale": {
+				"format": "D MMMM YYYY, HH:mm",
+			},
+			"ranges": {
+				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
+				'Last Week': [endOfYesterday.clone().subtract(7, 'days'), endOfYesterday],
+				'Last 30 Days': [endOfYesterday.clone().subtract(30, 'days'), endOfYesterday],
+				'Last 3 Months': [endOfYesterday.clone().subtract(3, 'month').startOf('month'), endOfYesterday.clone().startOf('month')],
+				'Last 12 Months': [endOfYesterday.clone().subtract(12, 'month').startOf('month'), endOfYesterday.clone().startOf('month')]
+			},
+			timePicker: true,
+			timePicker24Hour: true,
+			startDate: startDate,
+			endDate: endDate,
+			minDate: '1 January 2015',
+			maxDate: 'now',
+			timePickerIncrement: 30
+		}, date_cb);
+	});
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
 		changeScopeWithStoreId(0, document.getElementById("storeId").value);
 	});

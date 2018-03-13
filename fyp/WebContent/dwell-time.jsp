@@ -421,6 +421,9 @@
 						Store: <select id="storeId"
 							onchange="changeScopeWithStoreId(scope, document.getElementById(&quot;storeId&quot;).value)">
 						</select>
+						<div class="calendar-picker form-control" start="0" end="0">
+							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
+						</div>
 					</div>
 
 					<div class="row">
@@ -515,24 +518,18 @@
 											<button type="button"
 												class="btn btn-outline no-padding m-t-10"
 												data-toggle="dropdown" aria-expanded="false">
-												<span id="scope">Past Day</span> <span class="caret"></span>
+												<span id="scope">Hourly Data</span> <span class="caret"></span>
 											</button>
 											<ul class="dropdown-menu" role="menu">
 												<li><a
-													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Past
-														Day</a></li>
+													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Hourly
+														Data</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Past
-														7 Days</a></li>
+													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Daily
+														Data</a></li>
 												<li><a
-													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Past
-														Month</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(3, document.getElementById(&quot;storeId&quot;).value);">Past
-														3 Month</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(4, document.getElementById(&quot;storeId&quot;).value);">Past
-														Year</a></li>
+													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Monthly
+														Data</a></li>
 											</ul>
 										</div>
 									</div>

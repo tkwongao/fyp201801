@@ -1,27 +1,108 @@
-var numberOfDataInGraph = undefined;
 var interval = 1;
+var startTimes = [0, 0], endTimes = [0, 0];
+var charts = [];
+
+function UpdateAllCharts() {
+	for (var i in charts)
+		if (charts[i].update)
+			charts[i].update();
+}
+
+function drawPeopleCountingGraph(data) {
+	var peopleCountingChart = nv.models.lineChart();
+	charts.push(peopleCountingChart);
+	const MILLISECONDS_IN_A_DAY = 86400000;
+	function getPeopleCountingData() {
+		var datum = [];
+		if (Array.isArray(data)) {
+			var colors = ["#00b19d", "#ef5350"];
+			for (var i = 0; i < data.length; i++) {
+				var values = [];
+				for (var j = data[i].length - 1; j >= 0; j--)
+					values.push({
+						x: data[i].length - j,
+						y: data[i][j]
+					});
+				datum.push({
+					values: values,
+					key: 'Number of Visit for the month before ' + new Intl.DateTimeFormat(
+							"en-HK", {
+								weekday : "long",
+								year : "numeric",
+								day : "numeric",
+								month : "long"
+							}).format(new Date(endTimes[i])),
+							color: colors[i],
+							area: true
+				});
+			}
+		}
+		return datum;
+	}
+	nv.addGraph(function() {
+		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true);
+		peopleCountingChart.xAxis.axisLabel('Days before the compared date').rotateLabels(-45).scale(1).tickFormat(function (d) {
+			return d;
+		});
+		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
+		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(peopleCountingChart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(peopleCountingChart.update);
+		return peopleCountingChart;
+	});
+}
+
+function drawAverageDwellTimeGraph(data) {
+	var averageDwellTimeChart = nv.models.multiBarChart();
+	charts.push(averageDwellTimeChart);
+	const MILLISECONDS_IN_A_DAY = 86400000;
+	function getAverageDwellTimeData() {
+		var datum = [];
+		if (Array.isArray(data)) {
+			for (var i = 0; i < data.length; i++) {
+				var values = [];
+				for (var j = data[i].length - 1; j >= 0; j--)
+					values.push({
+						x: data[i].length - j,
+						y: data[i][j]
+					});
+				datum.push({
+					values: values,
+					key: 'Average Dwell Time (seconds) for the month before ' + new Intl.DateTimeFormat(
+							"en-HK", {
+								weekday : "long",
+								year : "numeric",
+								day : "numeric",
+								month : "long"
+							}).format(new Date(endTimes[i]))
+				});
+			}
+		}
+		return datum;
+	}
+	nv.addGraph(function() {
+		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80}).stacked(false).showControls(false);
+		averageDwellTimeChart.xAxis.axisLabel('Days before the compared date').rotateLabels(-45).scale(1).tickFormat(function (d) {
+			return d;
+		});
+		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
+		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeChart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(averageDwellTimeChart.update);
+		return averageDwellTimeChart;
+	});
+}
 
 function changeScope(sc) {
 	switch (sc) {
 	case 0:
 		interval = 1;
-		numberOfDataInGraph = 24;
 		break;
 	case 1:
 		interval = 24;
-		numberOfDataInGraph = 7;
 		break;
 	case 2:
-		interval = 24;
-		numberOfDataInGraph = 30;
-		break;
-	case 3:
 		interval = 720;
-		numberOfDataInGraph = 3;
-		break;
-	case 4:
-		interval = 720;
-		numberOfDataInGraph = 12;
 		break;
 	default:
 		interval = -1;
@@ -167,113 +248,13 @@ function changeScope(sc) {
 	}
 }
 
-var startTimes = [0, 0], endTimes = [0, 0];
-var charts = [];
-
-function UpdateAllCharts() {
-	for (var i in charts)
-		if (charts[i].update)
-			charts[i].update();
-}
-
-(drawPeopleCountingGraph = function(data) {
-	'use strict';
-	var peopleCountingChart = nv.models.lineChart();
-	charts.push(peopleCountingChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
-	function getPeopleCountingData() {
-		var datum = [];
-		if (Array.isArray(data)) {
-			var colors = ["#00b19d", "#ef5350"];
-			for (var i = 0; i < data.length; i++) {
-				var values = [];
-				for (var j = numberOfDataInGraph - 1; j >= 0; j--)
-					values.push({
-						x: numberOfDataInGraph - j,
-						y: data[i][j]
-					});
-				datum.push({
-					values: values,
-					key: 'Number of Visit for the month before ' + new Intl.DateTimeFormat(
-							"en-HK", {
-								weekday : "long",
-								year : "numeric",
-								day : "numeric",
-								month : "long"
-							}).format(new Date(endTimes[i])),
-							color: colors[i],
-							area: true
-				});
-			}
-		}
-		return datum;
-	}
-	nv.addGraph(function() {
-		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true);
-		peopleCountingChart.xAxis.axisLabel('Days before the compared date').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d;
-		});
-		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
-		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(peopleCountingChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(peopleCountingChart.update);
-		return peopleCountingChart;
-	});
-})(jQuery);
-
-(drawAverageDwellTimeGraph = function(data) {
-	'use strict';
-	var averageDwellTimeChart = nv.models.multiBarChart();
-	charts.push(averageDwellTimeChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
-	function getAverageDwellTimeData() {
-		var datum = [];
-		if (Array.isArray(data)) {
-			for (var i = 0; i < data.length; i++) {
-				var values = [];
-				for (var j = numberOfDataInGraph - 1; j >= 0; j--)
-					values.push({
-						x: numberOfDataInGraph - j,
-						y: data[i][j]
-					});
-				datum.push({
-					values: values,
-					key: 'Average Dwell Time (seconds) for the month before ' + new Intl.DateTimeFormat(
-							"en-HK", {
-								weekday : "long",
-								year : "numeric",
-								day : "numeric",
-								month : "long"
-							}).format(new Date(endTimes[i]))
-				});
-			}
-		}
-		return datum;
-	}
-	nv.addGraph(function() {
-		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
-		averageDwellTimeChart.xAxis.axisLabel('Days before the compared date').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d;
-		});
-		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
-		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(averageDwellTimeChart.update);
-		return averageDwellTimeChart;
-	});
-})(jQuery);
-
 $( document ).ready(function() {
-	$("#date").html(new Intl.DateTimeFormat(
-			"en-HK", {
-				weekday : "long",
-				year : "numeric",
-				day : "numeric",
-				month : "long"
-			}).format(new Date()));
+	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	drawPeopleCountingGraph([]);
+	drawAverageDwellTimeGraph([]);
+	// Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017; to be replaced by getting the current date
 	const endOfYesterday = moment().startOf('day'), startDate = moment("23 September 2017", "D MMMM YYYY"), endDate = moment("23 October 2017", "D MMMM YYYY");
 	var calendar_pickers = $('div.calendar-picker');
-	calendar_pickers.children('span').html('Date and Time');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
 		function date_cb(start, end) {
@@ -314,7 +295,7 @@ $( document ).ready(function() {
 	$('div#searchPanel').on('hidden.bs.collapse', function (event) {
 		button.text('Revise Search');
 		button.prop('disabled', false);
-		changeScope(2);
+		changeScope(1);
 	})
 	$('button[data-target="#searchPanel"]').click(function(event) {	
 		$('div#searchPanel').collapse('toggle');

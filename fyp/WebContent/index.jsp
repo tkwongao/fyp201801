@@ -12,7 +12,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard</title>
+<title>GCH2 Project</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
@@ -362,19 +362,19 @@
 
 				<div class="clearfix"></div>
 			</div>
-			
+
 			<div class="user-detail">
 				<!--div class="dropup">
 					<a href="" class="dropdown-toggle profile" data-toggle="dropdown"
 						aria-expanded="true"> <img
 						src="EEK/assets/images/users/avatar-2.jpg" alt="user-img"
-						class="img-circle"--> <span class="user-info-span">
-							<h5>Test</h5>
-							<!--p class="text-muted m-b-0">
+						class="img-circle"-->
+				<span class="user-info-span">
+					<h5>Test</h5> <!--p class="text-muted m-b-0">
 								<small><i class="fa fa-circle text-success"></i> <span>Online</span></small>
 							</p-->
-					</span>
-					<!--/a>
+				</span>
+				<!--/a>
 					<ul class="dropdown-menu">
 						<li><a href="javascript:void(0)"><i
 								class="md md-face-unlock"></i> Profile</a></li>
@@ -856,6 +856,11 @@
 	<!-- Nvd3 js -->
 	<script src="plugins/d3/d3.min.js"></script>
 	<script src="plugins/nvd3/build/nv.d3.min.js"></script>
+
+	<script src="plugins/moment/moment.js"></script>
+	<script
+		src="plugins/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+	<script src="plugins/bootstrap-daterangepicker/daterangepicker.js"></script>
 
 	<!-- skycons -->
 	<script src="plugins/skyicons/skycons.min.js" type="text/javascript"></script>

@@ -1,7 +1,5 @@
-var numberOfDataInGraph = undefined;
-var currentTime = 1508688000000; // Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017
-//To be replaced by getting the current date
-
+//Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017; to be replaced by getting the current date
+const startTime = moment("23 September 2017", "D MMMM YYYY").valueOf(), endTime = moment("23 October 2017", "D MMMM YYYY").valueOf();
 var charts = [];
 var shops = [];
 var dwellTimeThresholds = [60, 120, 300, 600, 1200, 1800];
@@ -12,8 +10,7 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-(drawPeopleCountingGraph = function(data, avg) {
-	'use strict';
+function drawPeopleCountingGraph(data, avg) {
 	var peopleCountingChart = nv.models.lineChart();
 	charts.push(peopleCountingChart);
 	const MILLISECONDS_IN_A_DAY = 86400000;
@@ -21,9 +18,9 @@ function UpdateAllCharts() {
 		var datum = [];
 		if (Array.isArray(data)) {
 			var values = [];
-			for (var i = 0; i < numberOfDataInGraph; i++)
+			for (var i = 0; i < data.length; i++)
 				values.push({
-					x: currentTime + MILLISECONDS_IN_A_DAY * (i - numberOfDataInGraph),
+					x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
 					y: data[i]
 				});
 			datum.push({
@@ -35,12 +32,12 @@ function UpdateAllCharts() {
 			if (!isNaN(avg * 1))
 				datum.push({
 					values: function() {
-						var arr = new Array(numberOfDataInGraph);
-						for (var i = 0; i < numberOfDataInGraph; i++)
-							arr[i] = {
-								x: currentTime + MILLISECONDS_IN_A_DAY * (i - numberOfDataInGraph),
+						var arr = [];
+						for (var i = 0; i < data.length; i++)
+							arr.push({
+								x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
 								y: avg
-						};
+						});
 						return arr;
 					}(),
 					key: 'Monthly Average Number of Visit',
@@ -61,19 +58,18 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(peopleCountingChart.update);
 		return peopleCountingChart;
 	});
-})(jQuery);
+}
 
-(drawAverageDwellTimeGraph = function(data) {
-	'use strict';
+function drawAverageDwellTimeGraph(data) {
 	var averageDwellTimeChart = nv.models.multiBarChart();
 	charts.push(averageDwellTimeChart);
 	const MILLISECONDS_IN_A_DAY = 86400000;
 	function getAverageDwellTimeData() {
 		if (Array.isArray(data)) {
 			var values = [];
-			for (var i = 0; i < numberOfDataInGraph; i++)
+			for (var i = 0; i < data.length; i++)
 				values.push({
-					x: currentTime + MILLISECONDS_IN_A_DAY * (i - numberOfDataInGraph),
+					x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
 					y: data[i]
 				});
 			return [{
@@ -94,10 +90,9 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(averageDwellTimeChart.update);
 		return averageDwellTimeChart;
 	});
-})(jQuery);
+}
 
-(drawAverageDwellTimeDistributionGraph = function(data) {
-	'use strict';
+function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
 	charts.push(averageDwellTimeDistributionChart);
 	const MILLISECONDS_IN_A_DAY = 86400000;
@@ -113,9 +108,9 @@ function UpdateAllCharts() {
 				else
 					key = "Between " + (dwellTimeThresholds[i - 1] / 60) + " and " + (dwellTimeThresholds[i] / 60) + " minutes";
 				var values = [];
-				for (var j = 0; j < numberOfDataInGraph; j++)
+				for (var j = 0; j < data.length / (dwellTimeThresholds.length + 1); j++)
 					values.push({
-						x: currentTime + MILLISECONDS_IN_A_DAY * (j - numberOfDataInGraph),
+						x: endTime + MILLISECONDS_IN_A_DAY * (j - data.length / (dwellTimeThresholds.length + 1)),
 						y: data[j * (dwellTimeThresholds.length + 1) + i]
 					});
 				datum.push({
@@ -136,10 +131,9 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(averageDwellTimeDistributionChart.update);
 		return averageDwellTimeDistributionChart;
 	});
-})(jQuery);
+}
 
-(drawPeopleCountForTop5ShopGraph = function(data, peopleCountingForEachShopResultsSorted) {
-	'use strict';
+function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsSorted) {
 	var peopleCountForTop5ShopChart = nv.models.stackedAreaChart();
 	charts.push(peopleCountForTop5ShopChart);
 	const MILLISECONDS_IN_A_DAY = 86400000;
@@ -148,9 +142,9 @@ function UpdateAllCharts() {
 		if (Array.isArray(data))
 			for (var i = 0; i < data.length; i++) {
 				var values = [];
-				for (var j = 0; j < numberOfDataInGraph; j++)
+				for (var j = 0; j < data[i].length; j++)
 					values.push({
-						x: currentTime + MILLISECONDS_IN_A_DAY * (j - numberOfDataInGraph),
+						x: endTime + MILLISECONDS_IN_A_DAY * (j - data[i].length),
 						y: data[i][j]
 					});
 				datum.push({
@@ -171,9 +165,9 @@ function UpdateAllCharts() {
 		nv.utils.windowResize(peopleCountForTop5ShopChart.update);
 		return peopleCountForTop5ShopChart;
 	});
-})(jQuery);
+}
 
-//BEGIN SVG WEATHER ICON
+/* BEGIN SVG WEATHER ICON
 if (typeof Skycons !== 'undefined') {
 	var icons = new Skycons({
 		"color" : "#3bafda"
@@ -186,16 +180,14 @@ if (typeof Skycons !== 'undefined') {
 	for (i = list.length; i--;)
 		icons.set(list[i], list[i]);
 	icons.play();
-};
+}; */
 
 $(document).ready(function() {
-	$("#date").html(new Intl.DateTimeFormat(
-			"en-HK", {
-				weekday : "long",
-				year : "numeric",
-				day : "numeric",
-				month : "long"
-			}).format(new Date()));
+	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	drawPeopleCountingGraph([]);
+	drawAverageDwellTimeGraph([]);
+	drawAverageDwellTimeDistributionGraph([]);
+	drawPeopleCountForTop5ShopGraph([], []);
 	function ajaxGettingStores(mallName) {
 		return $.ajax({
 			type : "get",
@@ -222,9 +214,6 @@ $(document).ready(function() {
 	}
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
 		var interval = 24;
-		numberOfDataInGraph = 30;
-		var scope = 2;
-		var startTime = currentTime - 3600000 * interval * numberOfDataInGraph;
 		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
 			$('.counter').counterUp({
 				delay : 100,
@@ -238,7 +227,7 @@ $(document).ready(function() {
 				url : "databaseConnection",
 				data : {
 					start : startTime,
-					end : currentTime,
+					end : endTime,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -268,7 +257,7 @@ $(document).ready(function() {
 				url : "databaseConnection",
 				data : {
 					start : startTime,
-					end : currentTime,
+					end : endTime,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -298,7 +287,7 @@ $(document).ready(function() {
 				url : "databaseConnection",
 				data : {
 					start : startTime,
-					end : currentTime,
+					end : endTime,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -334,7 +323,7 @@ $(document).ready(function() {
 			url : "databaseConnection",
 			data : {
 				start : startTime,
-				end : currentTime,
+				end : endTime,
 				storeId : -1,
 				interval : interval,
 				userMac : 0,
@@ -368,7 +357,7 @@ $(document).ready(function() {
 			url : "databaseConnection",
 			data : {
 				start : startTime,
-				end : currentTime,
+				end : endTime,
 				storeId : -1,
 				interval : interval,
 				userMac : 0,
@@ -403,7 +392,7 @@ $(document).ready(function() {
 					url : "databaseConnection",
 					data : {
 						start : startTime,
-						end : currentTime,
+						end : endTime,
 						storeId : shops[i].id,
 						interval : 0,
 						userMac : 0,
@@ -460,7 +449,7 @@ $(document).ready(function() {
 						url : "databaseConnection",
 						data : {
 							start : startTime,
-							end : currentTime,
+							end : endTime,
 							storeId : shops[peopleCountingForEachShopResultsSorted[i].id].id,
 							interval : interval,
 							userMac : 0,
