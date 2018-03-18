@@ -10,6 +10,7 @@ import java.util.OptionalInt;
 
 public class MallAndStoreAnalysis {
 	static final int WHOLE_MALL = -1;
+	private final String mallId;
 	private final int storeId;
 	private final Connection connection;
 
@@ -17,11 +18,18 @@ public class MallAndStoreAnalysis {
 	 * @param storeId
 	 * @param connection
 	 */
-	MallAndStoreAnalysis(int storeId, Connection connection) {
+	MallAndStoreAnalysis(String mallId, int storeId, Connection connection) {
 		if (Objects.requireNonNull(connection, "connection must not be null") != DatabaseConnection.getConnection())
 			Objects.requireNonNull(connection = null, "Unauthorized connection is being used");
-		this.storeId = storeId;
-		this.connection = connection;
+		switch (mallId) {
+		case "base_1":
+			this.mallId = mallId;
+			this.storeId = storeId;
+			this.connection = connection;
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported Mall!");
+		}
 	}
 
 	/**
@@ -35,7 +43,7 @@ public class MallAndStoreAnalysis {
 	Integer[] visitorCount(final long[] period, final int numberOfIntervals) {
 		try {
 			String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
-					storeIdFilter = (storeId == WHOLE_MALL) ? "" : "AND storeid = ? ",
+					storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ? ",
 							sql = "SELECT width_bucket(startts, ?, ?, ?), count(DISTINCT(did)) FROM " + dbName
 							+ " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "GROUP BY width_bucket;";
 			PreparedStatement ps = connection.prepareStatement(sql);
@@ -46,6 +54,8 @@ public class MallAndStoreAnalysis {
 			ps.setLong(5, period[1]);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
+			else
+				ps.setString(6, mallId);
 			Integer[] value = new Integer[numberOfIntervals];
 			Arrays.fill(value, 0);
 			ResultSet rs = ps.executeQuery();
@@ -68,7 +78,7 @@ public class MallAndStoreAnalysis {
 	Double[] averageEnterToLeaveTime(final long[] period, final int numberOfIntervals) {
 		try {
 			String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
-					storeIdFilter = (storeId == WHOLE_MALL) ? "" : "AND storeid = ? ",
+					storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ? ",
 							sql = "SELECT width_bucket(startts, ?, ?, ?), avg(endts - startts) FROM " + dbName
 							+ " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "GROUP BY width_bucket;";
 			PreparedStatement ps = connection.prepareStatement(sql);
@@ -79,6 +89,8 @@ public class MallAndStoreAnalysis {
 			ps.setLong(5, period[1]);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
+			else
+				ps.setString(6, mallId);
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, (double) 0);
 			ResultSet rs = ps.executeQuery();
@@ -117,7 +129,7 @@ public class MallAndStoreAnalysis {
 					"                     width_bucket((endts - startts), arr.array) AS dwell_time_distribution,\n" + 
 					"                     min(endts - startts), max(endts - startts), count(DISTINCT (did))\n" + 
 					"                   FROM " + ((storeId == WHOLE_MALL) ? "site_results" : "store_results") + ", arr\n" + 
-					"                   WHERE startts BETWEEN ? AND ? " + ((storeId == WHOLE_MALL) ? "" : "AND storeid = ? ") + "\n" +
+					"                   WHERE startts BETWEEN ? AND ? " + ((storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ? ") + "\n" +
 					"                   GROUP BY width_bucket, dwell_time_distribution)\n" + 
 					"SELECT\n" + 
 					"  width_bucket,\n" + 
@@ -134,6 +146,8 @@ public class MallAndStoreAnalysis {
 			ps.setLong(5, period[1]);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
+			else
+				ps.setString(6, mallId);
 			Integer[] value = new Integer[numberOfIntervals * (thresholdsMsArr.length + 1)];
 			Arrays.fill(value, 0);
 			ResultSet rs = ps.executeQuery();
@@ -160,14 +174,16 @@ public class MallAndStoreAnalysis {
 			if (numberOfIntervals != 1)
 				throw new IllegalArgumentException("Trend for the ratio of frequent user is not yet supported.");
 			String sql = "SELECT cast(freq.count AS DOUBLE PRECISION) /"
-					+ "((SELECT count(DISTINCT (did)) FROM site_results WHERE startts BETWEEN ? AND ?) - freq.count) AS ratio FROM"
+					+ "((SELECT count(DISTINCT (did)) FROM site_results WHERE startts BETWEEN ? AND ? AND buildingid = ?) - freq.count) AS ratio FROM"
 					+ "(SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM site_results "
-					+ "WHERE startts BETWEEN ? AND ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
+					+ "WHERE startts BETWEEN ? AND ? AND buildingid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
 			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
-			ps.setLong(3, period[0]);
-			ps.setLong(4, period[1]);
+			ps.setString(3, mallId);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			ps.setString(6, mallId);
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, (double) 0);
 			ResultSet rs = ps.executeQuery();

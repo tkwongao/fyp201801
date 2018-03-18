@@ -94,6 +94,7 @@ function changeScopeWithStoreId(sc, stid) {
 		data : {
 			start : startTime,
 			end : endTime,
+			mallId: area,
 			storeId : storeId,
 			interval : 0,
 			userMac : 0,
@@ -122,6 +123,7 @@ function changeScopeWithStoreId(sc, stid) {
 		data : {
 			start : startTime,
 			end : endTime,
+			mallId: area,
 			storeId : storeId,
 			interval : interval,
 			userMac : 0,
@@ -178,6 +180,10 @@ function ajaxGettingStores(mallName) {
 $(document).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
 	drawGraph([]);
+	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
+		changeArea("base_1");
+	else
+		changeArea(localStorage.getItem("area_id"));
 	// Till the latest available data; to be replaced by getting the current date
 	const endOfYesterday = moment().startOf('day'), startDate = moment("23 October 2017, 00:00", "D MMMM YYYY, HH:mm"), endDate = moment("23 October 2017, 22:00", "D MMMM YYYY, HH:mm");
 	var calendar_pickers = $('div.calendar-picker');

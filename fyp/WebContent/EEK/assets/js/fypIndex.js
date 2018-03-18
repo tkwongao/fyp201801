@@ -182,37 +182,42 @@ if (typeof Skycons !== 'undefined') {
 	icons.play();
 }; */
 
+function ajaxGettingStores(mallName) {
+	return $.ajax({
+		type : "get",
+		url : "prepareStores",
+		data : { mallName: mallName },
+		traditional: true,
+		success : function(json) {
+			shops = [];
+			for ( var prop in json)
+				shops.push({ id: json[prop], name: prop });
+			shops.sort(function (a, b) {
+				return a.name.localeCompare( b.name );
+			});
+		},
+		statusCode: {
+			403: function() {
+				window.location.href = "EEK/pages-403.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
+		}
+	});
+}
+
 $(document).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	drawAverageDwellTimeDistributionGraph([]);
 	drawPeopleCountForTop5ShopGraph([], []);
-	function ajaxGettingStores(mallName) {
-		return $.ajax({
-			type : "get",
-			url : "prepareStores",
-			data : { mallName: mallName },
-			traditional: true,
-			success : function(json) {
-				shops = [];
-				for ( var prop in json)
-					shops.push({ id: json[prop], name: prop });
-				shops.sort(function (a, b) {
-					return a.name.localeCompare( b.name );
-				});
-			},
-			statusCode: {
-				403: function() {
-					window.location.href = "EEK/pages-403.html";
-				},
-				500: function() {
-					window.location.href = "EEK/pages-500.html";
-				}
-			}
-		});
-	}
-	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
+		changeArea("base_1");
+	else
+		changeArea(localStorage.getItem("area_id"));
+	$.when(ajaxGettingStores(area)).done(function(a1) {
 		var interval = 24;
 		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
 			$('.counter').counterUp({
@@ -228,6 +233,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
+					mallId: area,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -258,6 +264,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
+					mallId: area,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -288,6 +295,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
+					mallId: area,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -324,6 +332,7 @@ $(document).ready(function() {
 			data : {
 				start : startTime,
 				end : endTime,
+				mallId: area,
 				storeId : -1,
 				interval : interval,
 				userMac : 0,
@@ -358,6 +367,7 @@ $(document).ready(function() {
 			data : {
 				start : startTime,
 				end : endTime,
+				mallId: area,
 				storeId : -1,
 				interval : interval,
 				userMac : 0,
@@ -393,6 +403,7 @@ $(document).ready(function() {
 					data : {
 						start : startTime,
 						end : endTime,
+						mallId: area,
 						storeId : shops[i].id,
 						interval : 0,
 						userMac : 0,
@@ -450,6 +461,7 @@ $(document).ready(function() {
 						data : {
 							start : startTime,
 							end : endTime,
+							mallId: area,
 							storeId : shops[peopleCountingForEachShopResultsSorted[i].id].id,
 							interval : interval,
 							userMac : 0,

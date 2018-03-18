@@ -24,7 +24,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	private HashMap<String, Number> dataMap = null;
 	private int interval, storeId;
 	private long start, end;
-	private String type = null, userMac = null;
+	private String mallId = null, type = null, userMac = null;
 	private int[] dwellTimeThresholds = null;
 
 	@SuppressWarnings("finally")
@@ -100,11 +100,11 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		Connection connection = Objects.requireNonNull(DatabaseConnection.getConnection(), "Failed to connect to the database server");
 		long[] period = Objects.requireNonNull(Utilities.timeToPeriod(startTime, endTime), "Invalid start or end time");
 		if (type.equals("user") || type.equals("loyalty")) {
-			UserAnalysis ua = new UserAnalysis(connection, Long.parseLong(userMac.replaceAll(":", ""), 16));
+			UserAnalysis ua = new UserAnalysis(mallId, connection, Long.parseLong(userMac.replaceAll(":", ""), 16));
 			return (type.equals("user")) ? ua.userStayTime(period, numberOfIntervals, storeId) : ua.loyaltyCheck(period, numberOfIntervals);
 		}
 		else {
-			MallAndStoreAnalysis msa = new MallAndStoreAnalysis(storeId, connection);
+			MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, connection);
 			switch (type) {
 			case "count":
 				return msa.visitorCount(period, numberOfIntervals);
@@ -155,6 +155,11 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	public long getEnd() {
 		return end;
 	}
+	
+	@JSON(serialize = false)
+	public String getMallId() {
+		return mallId;
+	}
 
 	@JSON(serialize = false)
 	public String getUserMac() {
@@ -195,6 +200,10 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 
 	public void setEnd(long end) {
 		this.end = end;
+	}
+	
+	public void setMallId(String mallId) {
+		this.mallId = mallId;
 	}
 
 	public void setUserMac(String userMac) {

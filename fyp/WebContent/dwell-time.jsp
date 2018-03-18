@@ -409,7 +409,8 @@
 									<ul class="dropdown-menu" role="menu">
 										<!--li><a href="javascript:void(0);">K11</a></li-->
 										<!--li><a href="javascript:void(0);">HKUST</a></li-->
-										<li><a href="javascript:void(0);">The Base</a></li>
+										<li><a href="javascript:changeArea(&quot;base_1&quot;);">The
+												Base</a></li>
 									</ul>
 								</div>
 								<h4 class="text-center no-margin" id="date"></h4>
@@ -865,6 +866,7 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
 	<script src="EEK/assets/js/fypDwellTime.js"></script>
 </body>
 </html>

@@ -415,7 +415,8 @@
 									<ul class="dropdown-menu" role="menu">
 										<!--li><a href="javascript:void(0);">K11</a></li-->
 										<!--li><a href="javascript:void(0);">HKUST</a></li-->
-										<li><a href="javascript:void(0);">The Base</a></li>
+										<li><a href="javascript:changeArea(&quot;base_1&quot;);">The
+												Base</a></li>
 									</ul>
 								</div>
 
@@ -558,10 +559,8 @@
 										<table class="table">
 											<thead>
 												<tr>
-													<td>Store
-													</th>
-													<td align="right">Visitors
-													</th>
+													<th>Store</th>
+													<th align="right">Visitors</th>
 												</tr>
 											</thead>
 											<tbody id="popularStores">
@@ -876,6 +875,7 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
 	<script src="EEK/assets/js/fypIndex.js"></script>
 </body>
 </html>

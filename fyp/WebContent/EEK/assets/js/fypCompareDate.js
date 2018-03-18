@@ -123,6 +123,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -151,6 +152,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : 0,
 					userMac : 0,
@@ -179,6 +181,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -215,6 +218,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -252,6 +256,10 @@ $( document ).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
+	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
+		changeArea("base_1");
+	else
+		changeArea(localStorage.getItem("area_id"));
 	// Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017; to be replaced by getting the current date
 	const endOfYesterday = moment().startOf('day'), startDate = moment("23 September 2017", "D MMMM YYYY"), endDate = moment("23 October 2017", "D MMMM YYYY");
 	var calendar_pickers = $('div.calendar-picker');
