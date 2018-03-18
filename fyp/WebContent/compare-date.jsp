@@ -204,7 +204,7 @@
 								<!--li><a href="compare-location.html">Compare Location</a></li-->
 								<li><a href="compare-date.jsp">Compare Date</a></li>
 								<!--li><a href="traffic.html">Traffic</a></li-->
-								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 

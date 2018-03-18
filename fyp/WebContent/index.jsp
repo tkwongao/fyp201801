@@ -203,7 +203,7 @@
 										Location</a></li-->
 								<li><a href="compare-date.jsp">Compare Date</a></li>
 								<!--li><a href="EEK/traffic.html">Traffic</a></li-->
-								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 
@@ -462,7 +462,7 @@
 								<div class="card-box">
 									<h4 class="m-t-0 m-b-20 header-title">
 										<div class="text-center">
-											<b>People Count</b>
+											<b>Number of Visitors</b>
 										</div>
 									</h4>
 

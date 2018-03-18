@@ -204,7 +204,7 @@
 								<!--li><a href="compare-location.html">Compare Location</a></li-->
 								<li><a href="compare-date.jsp">Compare Date</a></li>
 								<!--li><a href="traffic.html">Traffic</a></li-->
-								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 
@@ -428,6 +428,104 @@
 					</div>
 
 					<div class="row">
+
+						<div class="col-lg-6">
+							<div class="card-box">
+								<div class="widget-chart text-center">
+									<ul class="list-inline">
+										<li>
+											<h4 class="text-muted m-t-20">Number of Visitors</h4>
+											<h3 class="m-b-0 totalVisitorCount"></h3>
+										</li>
+										<!-- 	<li>
+												<h4 class="text-muted m-t-20">People Count</h4>
+												<h3 class="m-b-0">1000</h3>
+											</li> -->
+										<li>
+												<h4 class="text-muted m-t-20">Ratio of Frequent Users</h4>
+												
+												<h3 class="m-b-0 freq"></h3>
+										</li>
+
+										<li>
+												<h4 class="text-muted m-t-20">Bounce Rate</h4>
+												<h3 class="m-b-0 bounce"></h3>
+										</li>
+									</ul>
+
+									<div class="numberOfVisitChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+
+									<div class="text-left m-t-20"
+										style="border-top: 1px solid grey;">
+										<div class="btn-group">
+											<button type="button"
+												class="btn btn-outline no-padding m-t-10"
+												data-toggle="dropdown" aria-expanded="false">
+												<span id="scope">Hourly Data</span> <span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a
+													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Hourly
+														Data</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Daily
+														Data</a></li>
+												<li><a
+													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Monthly
+														Data</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-lg-6">
+							<div class="card-box">
+
+								<div class="clearfix">
+									<h4 class="m-t-0 header-title">
+										<b>Average Dwell Time (seconds)</b>
+									</h4>
+									<span class="m-t-10 dropcap text-primary averageDwellTime">0</span>
+								</div>
+
+								<div class="clearfix">
+									<div class="averageDwellTimeChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+								</div>
+								<!-- 
+									<div class="clearfix">
+										<h4 class="m-t-10 header-title"><b>Top Shop List</b></h4>
+										<table class="table">
+											<thead>
+												<tr>
+													<td>Top Shop</th>
+													<td align="right">Visitors</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Nike</td>
+													<td align="right">300</td>
+												</tr>
+												<tr>
+													<td>Apple</td>
+													<td align="right">200</td>
+												</tr>
+												<tr>
+													<td>Samsung</td>
+													<td align="right">100</td>
+												</tr>
+											</tbody>
+										</table>
+									</div> -->
+							</div>
+						</div>
+						
 						<!-- <div class="col-sm-6 col-lg-6">
 								<div class="card-box">
 									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
@@ -483,107 +581,6 @@
 									
 								</div>
 							</div> -->
-
-						<div class="col-lg-8">
-							<div class="card-box">
-								<div class="widget-chart text-center">
-									<ul class="list-inline">
-										<!-- 	<li>
-												<h4 class="text-muted m-t-20">People Count</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li> -->
-										<li>
-											<h4 class="text-muted m-t-20">Average Dwell Time
-												(seconds)</h4>
-											<h3 class="m-b-0 averageDwellTime"></h3>
-										</li>
-										<!-- 	<li>
-												<h4 class="text-muted m-t-20">Number of Visit</h4>
-												
-												<h3 class="m-b-0">965</h3>
-											</li> -->
-
-										<!-- <li>
-												<h4 class="text-muted m-t-20">Retention Rate</h4>
-												<h3 class="m-b-0">965</h3>
-											</li> -->
-									</ul>
-
-									<div class="line-chart-second">
-										<svg style="height: 400px;"></svg>
-									</div>
-
-									<div class="text-left m-t-20"
-										style="border-top: 1px solid grey;">
-										<div class="btn-group">
-											<button type="button"
-												class="btn btn-outline no-padding m-t-10"
-												data-toggle="dropdown" aria-expanded="false">
-												<span id="scope">Hourly Data</span> <span class="caret"></span>
-											</button>
-											<ul class="dropdown-menu" role="menu">
-												<li><a
-													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Hourly
-														Data</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Daily
-														Data</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Monthly
-														Data</a></li>
-											</ul>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-
-						<div class="col-lg-4">
-							<div class="card-box">
-
-								<div class="clearfix">
-									<h4 class="m-t-0 header-title">
-										<b>Average Dwell Time (seconds)</b>
-									</h4>
-									<span class="m-t-10 dropcap text-primary averageDwellTime">0</span>
-								</div>
-
-								<div class="clearfix">
-									<h4 class="m-t-40 header-title">
-										<b>Average Dwell Time (seconds)</b>
-									</h4>
-									<div class="bar-chart-second">
-										<svg style="height: 220px;"></svg>
-									</div>
-								</div>
-								<!-- 
-									<div class="clearfix">
-										<h4 class="m-t-10 header-title"><b>Top Shop List</b></h4>
-										<table class="table">
-											<thead>
-												<tr>
-													<td>Top Shop</th>
-													<td align="right">Visitors</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Nike</td>
-													<td align="right">300</td>
-												</tr>
-												<tr>
-													<td>Apple</td>
-													<td align="right">200</td>
-												</tr>
-												<tr>
-													<td>Samsung</td>
-													<td align="right">100</td>
-												</tr>
-											</tbody>
-										</table>
-									</div> -->
-							</div>
-						</div>
 					</div>
 
 
@@ -867,6 +864,6 @@
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
 	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
-	<script src="EEK/assets/js/fypDwellTime.js"></script>
+	<script src="EEK/assets/js/fypStoreLevelAnalysis.js"></script>
 </body>
 </html>

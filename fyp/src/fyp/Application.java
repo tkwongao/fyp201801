@@ -115,7 +115,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			case "freq":
 				return msa.freqRatio(period, numberOfIntervals);
 			case "bounce":
-				return msa.bounceRate(period, numberOfIntervals, 0.75);
+				return msa.bounceRate(period, numberOfIntervals, 0.6/*0.75*/); // For debugging purpose change to 0.6
 			default:
 				throw new IllegalArgumentException("Request type is invalid: " + type);
 			}
