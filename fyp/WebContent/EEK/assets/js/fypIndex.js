@@ -37,7 +37,7 @@ function drawPeopleCountingGraph(data, avg) {
 							arr.push({
 								x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
 								y: avg
-						});
+							});
 						return arr;
 					}(),
 					key: 'Monthly Average Number of Visit',
@@ -182,39 +182,44 @@ if (typeof Skycons !== 'undefined') {
 	icons.play();
 }; */
 
+function ajaxGettingStores(mallName) {
+	return $.ajax({
+		type : "get",
+		url : "prepareStores",
+		data : { mallName: mallName },
+		traditional: true,
+		success : function(json) {
+			shops = [];
+			for ( var prop in json)
+				shops.push({ id: json[prop], name: prop });
+			shops.sort(function (a, b) {
+				return a.name.localeCompare( b.name );
+			});
+		},
+		statusCode: {
+			403: function() {
+				window.location.href = "EEK/pages-403.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
+			}
+		}
+	});
+}
+
 $(document).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	drawAverageDwellTimeDistributionGraph([]);
 	drawPeopleCountForTop5ShopGraph([], []);
-	function ajaxGettingStores(mallName) {
-		return $.ajax({
-			type : "get",
-			url : "prepareStores",
-			data : { mallName: mallName },
-			traditional: true,
-			success : function(json) {
-				shops = [];
-				for ( var prop in json)
-					shops.push({ id: json[prop], name: prop });
-				shops.sort(function (a, b) {
-					return a.name.localeCompare( b.name );
-				});
-			},
-			statusCode: {
-				403: function() {
-					window.location.href = "EEK/pages-403.html";
-				},
-				500: function() {
-					window.location.href = "EEK/pages-500.html";
-				}
-			}
-		});
-	}
-	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
+		changeArea("base_1");
+	else
+		changeArea(localStorage.getItem("area_id"));
+	$.when(ajaxGettingStores(area)).done(function(a1) {
 		var interval = 24;
-		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
+		$.when(ajax1(), ajax2()).done(function(a1, a2) {
 			$('.counter').counterUp({
 				delay : 100,
 				time : 1200
@@ -228,18 +233,31 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
+					mallId: area,
 					storeId : -1,
-					interval : 0,
+					interval : interval,
 					userMac : 0,
 					type : "count"
 				},
 				traditional: true,
 				success : function(json) {
 					var i = 0;
-					var totalVisitorCount = [];
-					for ( var prop in json)
-						totalVisitorCount.push(json["dataPoint" + ++i]);
-					$(".totalVisitorCount").text(totalVisitorCount[0]);
+					var sum = 0;
+					var numberOfVisitors = [];
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1) {
+							numberOfVisitors.push(thisDataPoint);
+							sum += thisDataPoint;
+						}
+						else
+							$(".totalVisitorCount").text(thisDataPoint);
+					}
+					const averageDailyVisitors = sum / numberOfVisitors.length;
+					$(".dailyVisitors").text(averageDailyVisitors);
+					$("#todayVisitors").text(numberOfVisitors[numberOfVisitors.length - 1]);
+					$("#yesterdayVisitors").text(numberOfVisitors[numberOfVisitors.length - 2]);
+					drawPeopleCountingGraph(numberOfVisitors, averageDailyVisitors);
 				},
 				statusCode: {
 					501: function() {
@@ -258,55 +276,26 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
+					mallId: area,
 					storeId : -1,
-					interval : 0,
+					interval : interval,
 					userMac : 0,
 					type : "average"
 				},
 				traditional: true,
 				success : function(json) {
 					var i = 0;
-					var totalAverageDwellTime = [];
-					for ( var prop in json)
-						totalAverageDwellTime.push(json["dataPoint" + ++i]);
-					$(".totalAverageDwellTime").text(totalAverageDwellTime[0]);
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "EEK/pages-501.html";
-					},
-					500: function() {
-						window.location.href = "EEK/pages-500.html";
-					}
-				}
-			});
-		}
-		function ajax3() {
-			return $.ajax({
-				type : "get",
-				url : "databaseConnection",
-				data : {
-					start : startTime,
-					end : endTime,
-					storeId : -1,
-					interval : interval,
-					userMac : 0,
-					type : "count"
-				},
-				traditional: true,
-				success : function(json) {
-					var i = 0;
-					var sum = 0;
-					var peopleCounting = [];
+					var averageDwellTime = [];
 					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + ++i] 
-						peopleCounting.push(thisDataPoint);
-						sum += thisDataPoint;
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1)
+							averageDwellTime.push(thisDataPoint);
+						else
+							$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
 					}
-					$(".dailyVisitors").text(sum / peopleCounting.length);
-					$("#todayVisitors").text(peopleCounting[peopleCounting.length - 1]);
-					$("#yesterdayVisitors").text(peopleCounting[peopleCounting.length - 2]);
-					drawPeopleCountingGraph(peopleCounting, sum / peopleCounting.length);
+					$("#todayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 1].toFixed(2));
+					$("#yesterdayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 2].toFixed(2));
+					drawAverageDwellTimeGraph(averageDwellTime);
 				},
 				statusCode: {
 					501: function() {
@@ -324,40 +313,7 @@ $(document).ready(function() {
 			data : {
 				start : startTime,
 				end : endTime,
-				storeId : -1,
-				interval : interval,
-				userMac : 0,
-				type : "average"
-			},
-			traditional: true,
-			success : function(json) {
-				var i = 0;
-				var sum = 0;
-				var averageDwellTime = [];
-				for ( var prop in json) {
-					var thisDataPoint = json["dataPoint" + ++i] 
-					averageDwellTime.push(thisDataPoint);
-					sum += thisDataPoint;
-				}
-				$("#todayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 1]);
-				$("#yesterdayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 2]);
-				drawAverageDwellTimeGraph(averageDwellTime);
-			},
-			statusCode: {
-				501: function() {
-					window.location.href = "EEK/pages-501.html";
-				},
-				500: function() {
-					window.location.href = "EEK/pages-500.html";
-				}
-			}
-		});
-		$.ajax({
-			type : "get",
-			url : "databaseConnection",
-			data : {
-				start : startTime,
-				end : endTime,
+				mallId: area,
 				storeId : -1,
 				interval : interval,
 				userMac : 0,
@@ -368,8 +324,11 @@ $(document).ready(function() {
 			success : function(json) {
 				var i = 0;
 				var averageDwellTimeDistribution = [];
-				for ( var prop in json)
-					averageDwellTimeDistribution.push(json["dataPoint" + ++i]);
+				for ( var prop in json) {
+					if (i > dwellTimeThresholds.length)
+						averageDwellTimeDistribution.push(json["dataPoint" + i]);
+					i++;
+				}
 				drawAverageDwellTimeDistributionGraph(averageDwellTimeDistribution);
 			},
 			statusCode: {
@@ -393,6 +352,7 @@ $(document).ready(function() {
 					data : {
 						start : startTime,
 						end : endTime,
+						mallId: area,
 						storeId : shops[i].id,
 						interval : 0,
 						userMac : 0,
@@ -404,7 +364,6 @@ $(document).ready(function() {
 						var thisStoreCount = [];
 						for ( var prop in json)
 							thisStoreCount.push(json["dataPoint" + ++j]);
-						//$("#s" + (k + 1) + "scount").text(thisStoreCount[0]);
 						peopleCountingForEachShopResults[k] = {"id": k, "count": thisStoreCount[0]};
 					},
 					statusCode: {
@@ -450,6 +409,7 @@ $(document).ready(function() {
 						data : {
 							start : startTime,
 							end : endTime,
+							mallId: area,
 							storeId : shops[peopleCountingForEachShopResultsSorted[i].id].id,
 							interval : interval,
 							userMac : 0,
@@ -460,8 +420,11 @@ $(document).ready(function() {
 							var j = 0;
 							var sum = 0;
 							peopleCountForTop5ShopResults[k] = [];
-							for ( var prop in json)
-								peopleCountForTop5ShopResults[k].push(json["dataPoint" + ++j]);
+							for ( var prop in json) {
+								var thisDataPoint = json["dataPoint" + j++];
+								if (j !== 1)
+									peopleCountForTop5ShopResults[k].push(thisDataPoint);
+							}
 						},
 						statusCode: {
 							501: function() {

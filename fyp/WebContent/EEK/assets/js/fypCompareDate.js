@@ -112,7 +112,7 @@ function changeScope(sc) {
 	for (var i = 0; i < valFromDB1.length; i++)
 		valFromDB1[i] = [];
 	var valFromDB2 = new Array(2);
-	for (var i = 0; i < valFromDB1.length; i++)
+	for (var i = 0; i < valFromDB2.length; i++)
 		valFromDB2[i] = [];
 	for (var i = 0; i < 2; i++) {
 		(function() {
@@ -123,62 +123,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
-					storeId : -1,
-					interval : 0,
-					userMac : 0,
-					type : "count"
-				},
-				traditional: true,
-				success : function(json) {
-					var j = 0;
-					var totalVisitorCount = new Array();
-					for ( var prop in json)
-						totalVisitorCount.push(json["dataPoint" + ++j]);
-					$(".totalVisitorCount").text(totalVisitorCount[0]);
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "EEK/pages-501.html";
-					},
-					500: function() {
-						window.location.href = "EEK/pages-500.html";
-					}
-				}
-			});
-			$.ajax({
-				type : "get",
-				url : "databaseConnection",
-				data : {
-					start : startTimes[i],
-					end : endTimes[i],
-					storeId : -1,
-					interval : 0,
-					userMac : 0,
-					type : "average"
-				},
-				traditional: true,
-				success : function(json) {
-					var j = 0;
-					var totalAverageDwellTime = new Array();
-					for ( var prop in json)
-						totalAverageDwellTime.push(json["dataPoint" + ++j]);
-					$(".totalAverageDwellTime").text(totalAverageDwellTime[0]);
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "EEK/pages-501.html";
-					},
-					500: function() {
-						window.location.href = "EEK/pages-500.html";
-					}
-				}
-			});
-			$.ajax({
-				type : "get",
-				url : "databaseConnection",
-				data : {
-					start : startTimes[i],
-					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -188,16 +133,20 @@ function changeScope(sc) {
 				success : function(json) {
 					var j = 0;
 					var sum = 0;
-					var peopleCounting = new Array();
+					var numberOfVisitors = new Array();
 					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + ++j];
-						peopleCounting.push(thisDataPoint);
-						sum += thisDataPoint;
+						var thisDataPoint = json["dataPoint" + j++];
+						if (j !== 1) {
+							numberOfVisitors.push(thisDataPoint);
+							sum += thisDataPoint;
+						}
+						else
+							$(".totalVisitorCount").text(thisDataPoint);
 					}
-					valFromDB1[k] = peopleCounting;
-					$(".dailyVisitors").text(sum / peopleCounting.length);
-					$("#todayVisitors").text(peopleCounting[peopleCounting.length - 1]);
-					$("#yesterdayVisitors").text(peopleCounting[peopleCounting.length - 2]);
+					valFromDB1[k] = numberOfVisitors;
+					$(".dailyVisitors").text(sum / numberOfVisitors.length);
+					$("#todayVisitors").text(numberOfVisitors[numberOfVisitors.length - 1]);
+					$("#yesterdayVisitors").text(numberOfVisitors[numberOfVisitors.length - 2]);
 					drawPeopleCountingGraph(valFromDB1);
 				},
 				statusCode: {
@@ -215,6 +164,7 @@ function changeScope(sc) {
 				data : {
 					start : startTimes[i],
 					end : endTimes[i],
+					mallId: area,
 					storeId : -1,
 					interval : interval,
 					userMac : 0,
@@ -226,9 +176,11 @@ function changeScope(sc) {
 					var sum = 0;
 					var averageDwellTime = new Array();
 					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + ++j];
-						averageDwellTime.push(thisDataPoint);
-						sum += thisDataPoint;
+						var thisDataPoint = json["dataPoint" + j++];
+						if (j !== 1)
+							averageDwellTime.push(thisDataPoint);
+						else
+							$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
 					}
 					valFromDB2[k] = averageDwellTime;
 					$("#todayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 1]);
@@ -252,6 +204,10 @@ $( document ).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
+	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
+		changeArea("base_1");
+	else
+		changeArea(localStorage.getItem("area_id"));
 	// Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017; to be replaced by getting the current date
 	const endOfYesterday = moment().startOf('day'), startDate = moment("23 September 2017", "D MMMM YYYY"), endDate = moment("23 October 2017", "D MMMM YYYY");
 	var calendar_pickers = $('div.calendar-picker');

@@ -204,7 +204,7 @@
 								<!--li><a href="compare-location.html">Compare Location</a></li-->
 								<li><a href="compare-date.jsp">Compare Date</a></li>
 								<!--li><a href="traffic.html">Traffic</a></li-->
-								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 
@@ -417,7 +417,8 @@
 									<ul class="dropdown-menu" role="menu">
 										<!--li><a href="javascript:void(0);">K11</a></li-->
 										<!--li><a href="javascript:void(0);">HKUST</a></li-->
-										<li><a href="javascript:void(0);">The Base</a></li>
+										<li><a href="javascript:changeArea(&quot;base_1&quot;);">The
+												Base</a></li>
 									</ul>
 								</div>
 
@@ -884,7 +885,8 @@
 
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
-
+	
+	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
 	<script src="EEK/assets/js/fypCompareDate.js"></script>
 </body>
 </html>

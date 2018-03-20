@@ -22,9 +22,72 @@ function getTimeFormat(interval) {
 	}
 }
 
-function drawLoyaltyCountingGraph(data) {
-	var peopleCountingChart = nv.models.lineChart();
-	charts.push(peopleCountingChart);
+function drawPeopleCountingGraph(data, avg) {
+	var chart = nv.models.lineChart();
+	charts.push(chart);
+	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
+	function getPeopleCountingData() {
+		var datum = [];
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < data.length; i++)
+				values.push({
+					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
+					y: data[i]
+				});
+			datum.push({
+				values: values,
+				key: 'Number of Visit',
+				//color: "#00b19d",
+				area: true
+			});
+			if (!isNaN(avg * 1)) {
+				var a;
+				switch (interval) {
+				case 1:
+					a = "hour";
+					break;
+				case 24:
+					a = "day";
+					break;
+				case 720:
+					a = "month";
+					break;
+				}
+				datum.push({
+					values: function() {
+						var arr = [];
+						for (var i = 0; i < data.length; i++)
+							arr.push({
+								x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
+								y: avg
+							});
+						return arr;
+					}(),
+					key: 'Average Number of Visit per ' + a,
+					color: "#000000",
+					area: false
+				});
+			}
+		}
+		return datum;
+	}
+	nv.addGraph(function() {
+		chart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
+		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+			return d3.time.format(getTimeFormat(interval))(new Date(d));
+		});
+		chart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
+		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(chart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(chart.update);
+		return chart;
+	});
+}
+
+function drawAverageDwellTimeGraph(data) {
+	var chart = nv.models.multiBarChart();
+	charts.push(chart);
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
 		if (Array.isArray(data)) {
@@ -43,84 +106,19 @@ function drawLoyaltyCountingGraph(data) {
 		return [];
 	}
 	nv.addGraph(function() {
-		peopleCountingChart.forceY([0, 1]).margin({"bottom": 120}).useInteractiveGuideline(true).xScale(d3.time.scale());
-		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+		chart.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
+		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format(getTimeFormat(interval))(new Date(d));
 		});
-		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
-		d3.select('.userLoyaltyCheckChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Number of Visit')).transition().duration(500).call(peopleCountingChart);
+		chart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
+		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(peopleCountingChart.update);
-		return peopleCountingChart;
+		nv.utils.windowResize(chart.update);
+		return chart;
 	});
 }
 
-function drawUserStayTimeGraph(data) {
-	var userStayTimeChart = nv.models.multiBarChart();
-	charts.push(userStayTimeChart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
-	function getData() {
-		if (Array.isArray(data)) {
-			var values = [];
-			for (var i = 0; i < data.length; i++)
-				values.push({
-					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
-					y: data[i]
-				});
-			return [{
-				values: values,
-				key: 'User Stay Time (seconds)'
-			}];
-		}
-		return [];
-	}
-	nv.addGraph(function() {
-		userStayTimeChart.forceY([0, 1]).margin({"bottom": 120}).stacked(false).showControls(false);
-		userStayTimeChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
-		});
-		userStayTimeChart.yAxis.axisLabel('User Stay Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
-		d3.select('.userStayTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData()).transition().duration(500).call(userStayTimeChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(userStayTimeChart.update);
-		return userStayTimeChart;
-	});
-}
-
-function drawNumberOfStoresGraph(data) {
-	var numberOfStoresChart = nv.models.multiBarChart();
-	charts.push(numberOfStoresChart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
-	function getData(key) {
-		if (Array.isArray(data)) {
-			var values = [];
-			for (var i = 0; i < data.length; i++)
-				values.push({
-					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
-					y: data[i]
-				});
-			return [{
-				values: values,
-				key: key,
-				area: true
-			}];
-		}
-		return [];
-	}
-	nv.addGraph(function() {
-		numberOfStoresChart.forceY([0, 1]).margin({"bottom": 120}).stacked(false).showControls(false);
-		numberOfStoresChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
-		});
-		numberOfStoresChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
-		d3.select('.numOfStoresVisitedChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Number of Stores Visited')).transition().duration(500).call(numberOfStoresChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(numberOfStoresChart.update);
-		return numberOfStoresChart;
-	});
-}
-
-function changeScopeWithMac(sc, macAddress, stid) {
+function changeScopeWithStoreId(sc, stid) {
 	switch (sc) {
 	case 0:
 		$("#scope").text("Hourly Data");
@@ -139,7 +137,6 @@ function changeScopeWithMac(sc, macAddress, stid) {
 	break;
 	}
 	scope = sc;
-	var userMac = macAddress;
 	var storeId = stid;
 	$.ajax({
 		type : "get",
@@ -150,21 +147,24 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : interval,
-			userMac : userMac,
-			type : "loyalty"
+			userMac : 0,
+			type : "count"
 		},
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var loyaltyCounting = [];
+			var sum = 0;
+			var numberOfVisitors = [];
 			for ( var prop in json) {
 				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					loyaltyCounting.push(thisDataPoint);
+				if (i !== 1) {
+					numberOfVisitors.push(thisDataPoint);
+					sum += thisDataPoint;
+				}
 				else
-					$("#loyalty").text(thisDataPoint);
+					$(".totalVisitorCount").text(thisDataPoint);
 			}
-			drawLoyaltyCountingGraph(loyaltyCounting);
+			drawPeopleCountingGraph(numberOfVisitors, sum / numberOfVisitors.length);
 		},
 		statusCode: {
 			501: function() {
@@ -184,23 +184,21 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : interval,
-			userMac : userMac,
-			type : "numOfStore"
+			userMac : 0,
+			type : "average"
 		},
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var numOfStores = [];
+			var averageDwellTime = [];
 			for ( var prop in json) {
 				var thisDataPoint = json["dataPoint" + i++];
-				if (thisDataPoint === 0.5)
-					thisDataPoint = NaN;
 				if (i !== 1)
-					numOfStores.push(thisDataPoint);
+					averageDwellTime.push(thisDataPoint);
 				else
-					$("#numberOfStoresVisited").text(thisDataPoint);
+					$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
 			}
-			drawNumberOfStoresGraph(numOfStores);
+			drawAverageDwellTimeGraph(averageDwellTime);
 		},
 		statusCode: {
 			501: function() {
@@ -219,22 +217,46 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			end : endTime,
 			mallId: area,
 			storeId : storeId,
-			interval : interval,
-			userMac : userMac,
-			type : "user"
+			interval : 0,
+			userMac : 0,
+			type : "freq"
 		},
 		traditional: true,
 		success : function(json) {
 			var i = 0;
-			var userStayTime = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					userStayTime.push(thisDataPoint);
-				else
-					$("#userDwellTime").text(thisDataPoint);
+			var freqRatio = [];
+			for ( var prop in json)
+				freqRatio.push(json["dataPoint" + ++i]);
+			$(".freq").text(freqRatio[0].toFixed(2) + "%");
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "EEK/pages-501.html";
+			},
+			500: function() {
+				window.location.href = "EEK/pages-500.html";
 			}
-			drawUserStayTimeGraph(userStayTime);
+		}
+	});
+	$.ajax({
+		type : "get",
+		url : "databaseConnection",
+		data : {
+			start : startTime,
+			end : endTime,
+			mallId: area,
+			storeId : storeId,
+			interval : 0,
+			userMac : 0,
+			type : "bounce"
+		},
+		traditional: true,
+		success : function(json) {
+			var i = 0;
+			var bounceRate = [];
+			for ( var prop in json)
+				bounceRate.push(json["dataPoint" + ++i]);
+			$(".bounce").text(bounceRate[0].toFixed(2) + "%");
 		},
 		statusCode: {
 			501: function() {
@@ -260,7 +282,7 @@ function ajaxGettingStores(mallName) {
 			shops.sort(function (a, b) {
 				return a.name.localeCompare( b.name );
 			});
-			var select_html = "<option value=\"-1\" selected>All Stores</option>";
+			var select_html = "";
 			for (var i = 0; i < shops.length; i++)
 				select_html += "<option value=\"" + shops[i].id + "\">" + shops[i].name + "</option>";
 			$("#storeId").html(select_html);
@@ -278,9 +300,8 @@ function ajaxGettingStores(mallName) {
 
 $(document).ready(function() {
 	$("#date").html(moment().format("dddd, D MMMM YYYY"));
-	drawLoyaltyCountingGraph([]);
-	drawUserStayTimeGraph([]);
-	drawNumberOfStoresGraph([]);
+	drawPeopleCountingGraph([]);
+	drawAverageDwellTimeGraph([]);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
 		changeArea("base_1");
 	else
@@ -318,5 +339,7 @@ $(document).ready(function() {
 			timePickerIncrement: 30
 		}, date_cb);
 	});
-	ajaxGettingStores("base_1");
+	$.when(ajaxGettingStores("base_1")).done(function(a1) {
+		changeScopeWithStoreId(0, document.getElementById("storeId").value);
+	});
 });

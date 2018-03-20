@@ -204,7 +204,7 @@
 								<!--li><a href="compare-location.html">Compare Location</a></li-->
 								<li><a href="compare-date.jsp">Compare Date</a></li>
 								<!--li><a href="traffic.html">Traffic</a></li-->
-								<li><a href="dwell-time.jsp">Dwell Time</a></li>
+								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
 								<li><a href="loyalty.jsp">Loyalty</a></li>
 							</ul></li>
 
@@ -417,7 +417,8 @@
 									<ul class="dropdown-menu" role="menu">
 										<!--li><a href="javascript:void(0);">K11</a></li-->
 										<!--li><a href="javascript:void(0);">HKUST</a></li-->
-										<li><a href="javascript:void(0);">The Base</a></li>
+										<li><a href="javascript:changeArea(&quot;base_1&quot;);">The
+												Base</a></li>
 									</ul>
 								</div>
 								<h4 class="text-center no-margin" id="date"></h4>
@@ -436,102 +437,112 @@
 							onclick="changeScopeWithMac(scope, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
 					</div>
 
-					<!-- <div class="row">
-							<div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
+					<div class="row">
+						<div class="col-sm-6 col-lg-6">
+							<div class="card-box">
+								<h4 class="m-t-0 m-b-20 header-title">
+									<div class="text-center">
+										<b>Number of Visit</b>
+									</div>
+								</h4>
 
-									<div class="widget-chart text-center">
-										<div class="line-chart">
-											<svg style="height:400px;"></svg>
-										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
+								<div class="widget-chart text-center">
+									<div class="userLoyaltyCheckChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+
+									<ul class="list-inline m-t-15">
+										<!--li>
 												<h4 class="text-muted m-t-20">Today</h4>
 												<h3 class="m-b-0">1000</h3>
 											</li>
 											<li>
 												<h4 class="text-muted m-t-20">Yesterday</h4>
 												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
-									</div>
+											</li-->
+										<li>
+											<h4 class="text-muted m-t-20">Total</h4>
+											<h3 class="m-b-0" id="loyalty">0</h3>
+										</li>
+									</ul>
 								</div>
 							</div>
+						</div>
 
-
-							<div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
-									
-									<div class="widget-chart text-center">
-										<div class="bar-chart">
-											<svg style="height:400px;"></svg>
-										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
-												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
+						<div class="col-sm-6 col-lg-6">
+							<div class="card-box">
+								<h4 class="m-t-0 m-b-20 header-title">
+									<div class="text-center">
+										<b>Total Stay Time of a User (seconds)</b>
 									</div>
-									
+								</h4>
+
+								<div class="widget-chart text-center">
+									<div class="userStayTimeChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+
+									<ul class="list-inline m-t-15">
+										<!--
+										<li>
+											<h4 class="text-muted m-t-20">Today</h4>
+											<h3 class="m-b-0">1000</h3>
+										</li>
+										<li>
+											<h4 class="text-muted m-t-20">Yesterday</h4>
+											<h3 class="m-b-0">523</h3>
+										</li>
+										-->
+										<li>
+											<h4 class="text-muted m-t-20">Total Stay Time of a User
+												(seconds)</h4>
+											<h3 class="m-b-0" id="userDwellTime">0</h3>
+										</li>
+									</ul>
 								</div>
-							</div> -->
 
-					<div class="col-lg-6">
-						<div class="card-box">
-							<div class="widget-chart text-center">
-								<ul class="list-inline">
-									<li>
-										<h4 class="text-muted m-t-20">Number of Visit</h4>
-										<h3 class="m-b-0" id="loyalty">0</h3>
-									</li>
-								</ul>
+							</div>
+						</div>
 
-								<div class="userLoyaltyCheckChart">
-									<svg style="height: 400px;"></svg>
-								</div>
+						<div class="col-lg-6">
+							<div class="card-box">
+								<div class="widget-chart text-center">
+									<ul class="list-inline">
+										<li>
+											<h4 class="text-muted m-t-20">Number of Stores Visited</h4>
+											<h3 class="m-b-0" id="numberOfStoresVisited">0</h3>
+										</li>
+									</ul>
 
-								<div class="text-left m-t-20"
-									style="border-top: 1px solid grey;">
-									<div class="btn-group">
-										<button type="button"
-											class="btn btn-outline no-padding m-t-10"
-											data-toggle="dropdown" aria-expanded="false">
-											<span id="scope">Hourly Data</span> <span class="caret"></span>
-										</button>
-										<ul class="dropdown-menu" role="menu">
-											<li><a
-												href="javascript:changeScopeWithMac(0, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Hourly
-													Data</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(1, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Daily
-													Data</a></li>
-											<li><a
-												href="javascript:changeScopeWithMac(2, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Monthly
-													Data</a></li>
-										</ul>
+									<div class="numOfStoresVisitedChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+
+									<div class="text-left m-t-20"
+										style="border-top: 1px solid grey;">
+										<div class="btn-group">
+											<button type="button"
+												class="btn btn-outline no-padding m-t-10"
+												data-toggle="dropdown" aria-expanded="false">
+												<span id="scope">Hourly Data</span> <span class="caret"></span>
+											</button>
+											<ul class="dropdown-menu" role="menu">
+												<li><a
+													href="javascript:changeScopeWithMac(0, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Hourly
+														Data</a></li>
+												<li><a
+													href="javascript:changeScopeWithMac(1, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Daily
+														Data</a></li>
+												<li><a
+													href="javascript:changeScopeWithMac(2, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value);">Monthly
+														Data</a></li>
+											</ul>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-
+						<!--
 					<div class="col-lg-6">
 						<div class="card-box">
 
@@ -539,7 +550,7 @@
 								<h4 class="m-t-0 header-title">
 									<b>Total Stay Time of a User (seconds)</b>
 								</h4>
-								<span class="m-t-10 dropcap text-primary" id="userDwellTime">0</span>
+								<span class="m-t-10 dropcap text-primary" id="userDwellTime"></span>
 							</div>
 
 							<div class="clearfix">
@@ -577,255 +588,257 @@
 												</tr>
 											</tbody>
 										</table>
-									</div> -->
-						</div>
+									</div>
 					</div>
 				</div>
+				-->
+					</div>
 
 
+
+				</div>
+				<!-- end container -->
 
 			</div>
-			<!-- end container -->
+			<!-- end content -->
+
+
+
+			<!-- FOOTER -->
+			<footer class="footer text-right"> 2018 © HKUST. </footer>
+			<!-- End FOOTER -->
 
 		</div>
-		<!-- end content -->
+		<!-- ============================================================== -->
+		<!-- End Right content here -->
+		<!-- ============================================================== -->
 
 
-
-		<!-- FOOTER -->
-		<footer class="footer text-right"> 2018 © HKUST. </footer>
-		<!-- End FOOTER -->
-
-	</div>
-	<!-- ============================================================== -->
-	<!-- End Right content here -->
-	<!-- ============================================================== -->
-
-
-	<!-- Right Sidebar -->
-	<div class="side-bar right-bar">
-		<div class="nicescroll">
-			<ul class="nav nav-tabs tabs">
-				<li class="active tab"><a href="#home-2" data-toggle="tab"
-					aria-expanded="false"> <span class="visible-xs"><i
-							class="fa fa-home"></i></span> <span class="hidden-xs">Activity</span>
-				</a></li>
-				<li class="tab"><a href="#profile-2" data-toggle="tab"
-					aria-expanded="false"> <span class="visible-xs"><i
-							class="fa fa-user"></i></span> <span class="hidden-xs">Chat</span>
-				</a></li>
-				<li class="tab"><a href="#messages-2" data-toggle="tab"
-					aria-expanded="true"> <span class="visible-xs"><i
-							class="fa fa-envelope-o"></i></span> <span class="hidden-xs">Settings</span>
-				</a></li>
-			</ul>
-			<div class="tab-content">
-				<div class="tab-pane fade in active" id="home-2">
-					<div class="timeline-2">
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">5 minutes ago</small>
-								<p>
-									<strong><a href="javascript:void(0);"
-										class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong>
-								</p>
+		<!-- Right Sidebar -->
+		<div class="side-bar right-bar">
+			<div class="nicescroll">
+				<ul class="nav nav-tabs tabs">
+					<li class="active tab"><a href="#home-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-home"></i></span> <span class="hidden-xs">Activity</span>
+					</a></li>
+					<li class="tab"><a href="#profile-2" data-toggle="tab"
+						aria-expanded="false"> <span class="visible-xs"><i
+								class="fa fa-user"></i></span> <span class="hidden-xs">Chat</span>
+					</a></li>
+					<li class="tab"><a href="#messages-2" data-toggle="tab"
+						aria-expanded="true"> <span class="visible-xs"><i
+								class="fa fa-envelope-o"></i></span> <span class="hidden-xs">Settings</span>
+					</a></li>
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="home-2">
+						<div class="timeline-2">
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 minutes ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong> Uploaded a photo <strong>"DSC000586.jpg"</strong>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">30 minutes ago</small>
-								<p>
-									<a href="" class="text-info">Lorem</a> commented your post.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">30 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">59 minutes ago</small>
-								<p>
-									<a href="" class="text-info">Jessi</a> attended a meeting with<a
-										href="javascript:void(0);" class="text-success">John Doe</a>.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">59 minutes ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">1 hour ago</small>
-								<p>
-									<strong><a href="javascript:void(0);"
-										class="text-info">John Doe</a></strong>Uploaded 2 new photos
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">1 hour ago</small>
+									<p>
+										<strong><a href="javascript:void(0);"
+											class="text-info">John Doe</a></strong>Uploaded 2 new photos
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">3 hours ago</small>
-								<p>
-									<a href="" class="text-info">Lorem</a> commented your post.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">3 hours ago</small>
+									<p>
+										<a href="" class="text-info">Lorem</a> commented your post.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
-						</div>
 
-						<div class="time-item">
-							<div class="item-info">
-								<small class="text-muted">5 hours ago</small>
-								<p>
-									<a href="" class="text-info">Jessi</a> attended a meeting with<a
-										href="javascript:void(0);" class="text-success">John Doe</a>.
-								</p>
-								<p>
-									<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
-										elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
-								</p>
+							<div class="time-item">
+								<div class="item-info">
+									<small class="text-muted">5 hours ago</small>
+									<p>
+										<a href="" class="text-info">Jessi</a> attended a meeting with<a
+											href="javascript:void(0);" class="text-success">John Doe</a>.
+									</p>
+									<p>
+										<em>"Lorem ipsum dolor sit amet, consectetur adipiscing
+											elit. Aliquam laoreet tellus ut tincidunt euismod. "</em>
+									</p>
+								</div>
 							</div>
 						</div>
 					</div>
-				</div>
 
 
 
-				<div class="tab-pane fade" id="profile-2">
-					<div class="contact-list nicescroll">
-						<ul class="list-group contacts-list">
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-1.jpg" alt="">
-									</div> <span class="name">Chadengle</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-2.jpg" alt="">
-									</div> <span class="name">Tomaslau</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-3.jpg" alt="">
-									</div> <span class="name">Stillnotdavid</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-4.jpg" alt="">
-									</div> <span class="name">Kurafire</span> <i
-									class="fa fa-circle online"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-5.jpg" alt="">
-									</div> <span class="name">Shahedk</span> <i class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-6.jpg" alt="">
-									</div> <span class="name">Adhamdannaway</span> <i
-									class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-7.jpg" alt="">
-									</div> <span class="name">Ok</span> <i class="fa fa-circle away"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-8.jpg" alt="">
-									</div> <span class="name">Arashasghari</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-9.jpg" alt="">
-									</div> <span class="name">Joshaustin</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-							<li class="list-group-item"><a href="javascript:void(0);">
-									<div class="avatar">
-										<img src="EEK/assets/images/users/avatar-10.jpg" alt="">
-									</div> <span class="name">Sortino</span> <i
-									class="fa fa-circle offline"></i>
-							</a> <span class="clearfix"></span></li>
-						</ul>
-					</div>
-				</div>
-
-
-
-				<div class="tab-pane fade" id="messages-2">
-
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Notifications</h5>
-							<p class="text-muted m-b-0">
-								<small>Do you need them?</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
+					<div class="tab-pane fade" id="profile-2">
+						<div class="contact-list nicescroll">
+							<ul class="list-group contacts-list">
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-1.jpg" alt="">
+										</div> <span class="name">Chadengle</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-2.jpg" alt="">
+										</div> <span class="name">Tomaslau</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-3.jpg" alt="">
+										</div> <span class="name">Stillnotdavid</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-4.jpg" alt="">
+										</div> <span class="name">Kurafire</span> <i
+										class="fa fa-circle online"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-5.jpg" alt="">
+										</div> <span class="name">Shahedk</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-6.jpg" alt="">
+										</div> <span class="name">Adhamdannaway</span> <i
+										class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-7.jpg" alt="">
+										</div> <span class="name">Ok</span> <i class="fa fa-circle away"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-8.jpg" alt="">
+										</div> <span class="name">Arashasghari</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-9.jpg" alt="">
+										</div> <span class="name">Joshaustin</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+								<li class="list-group-item"><a href="javascript:void(0);">
+										<div class="avatar">
+											<img src="EEK/assets/images/users/avatar-10.jpg" alt="">
+										</div> <span class="name">Sortino</span> <i
+										class="fa fa-circle offline"></i>
+								</a> <span class="clearfix"></span></li>
+							</ul>
 						</div>
 					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">API Access</h5>
-							<p class="m-b-0 text-muted">
-								<small>Enable/Disable access</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Auto Updates</h5>
-							<p class="m-b-0 text-muted">
-								<small>Keep up to date</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
 
-					<div class="row m-t-20">
-						<div class="col-xs-8">
-							<h5 class="m-0">Online Status</h5>
-							<p class="m-b-0 text-muted">
-								<small>Show your status to all</small>
-							</p>
-						</div>
-						<div class="col-xs-4 text-right">
-							<input type="checkbox" checked data-plugin="switchery"
-								data-color="#3bafda" data-size="small" />
-						</div>
-					</div>
+					<div class="tab-pane fade" id="messages-2">
 
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Notifications</h5>
+								<p class="text-muted m-b-0">
+									<small>Do you need them?</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">API Access</h5>
+								<p class="m-b-0 text-muted">
+									<small>Enable/Disable access</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Auto Updates</h5>
+								<p class="m-b-0 text-muted">
+									<small>Keep up to date</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+						<div class="row m-t-20">
+							<div class="col-xs-8">
+								<h5 class="m-0">Online Status</h5>
+								<p class="m-b-0 text-muted">
+									<small>Show your status to all</small>
+								</p>
+							</div>
+							<div class="col-xs-4 text-right">
+								<input type="checkbox" checked data-plugin="switchery"
+									data-color="#3bafda" data-size="small" />
+							</div>
+						</div>
+
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-	<!-- /Right-bar -->
+		<!-- /Right-bar -->
 
 	</div>
 	<!-- END wrapper -->
@@ -861,6 +874,7 @@
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
 
+	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
 	<script src="EEK/assets/js/fypLoyalty.js"></script>
 </body>
 </html>
