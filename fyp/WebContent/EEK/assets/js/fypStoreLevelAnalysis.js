@@ -147,8 +147,8 @@ function changeScopeWithStoreId(sc, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : interval,
-			userMac : 0,
-			type : "count"
+			type : "count",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
@@ -184,8 +184,8 @@ function changeScopeWithStoreId(sc, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : interval,
-			userMac : 0,
-			type : "average"
+			type : "average",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
@@ -218,8 +218,8 @@ function changeScopeWithStoreId(sc, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : 0,
-			userMac : 0,
-			type : "freq"
+			type : "freq",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
@@ -247,8 +247,8 @@ function changeScopeWithStoreId(sc, stid) {
 			mallId: area,
 			storeId : storeId,
 			interval : 0,
-			userMac : 0,
-			type : "bounce"
+			type : "bounce",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {

@@ -4,16 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseConnection {
-	private static final Connection connection = connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
+import org.postgresql.Driver;
 
-	private DatabaseConnection() {}
+class DatabaseConnection implements AutoCloseable {
+	private final Connection connection;
 
-	/**
-	 * 
-	 * @return
-	 */
-	public static Connection getConnection() {
+	DatabaseConnection() throws SQLException {
+		connection = connect("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456");
+	}
+
+	public final Connection getConnection() {
 		return connection;
 	}
 
@@ -23,17 +23,18 @@ public class DatabaseConnection {
 	 * @param user The user name to access the database
 	 * @param password The database password
 	 * @return 
+	 * @throws ClassNotFoundException 
+	 * @throws SQLException 
 	 */
-	private static Connection connect(String url, String user, String password) {
-		try {
-			Class.forName("org.postgresql.Driver");
-			Connection c = DriverManager.getConnection(url, user, password);
-			c.setAutoCommit(false);
-			System.out.println("Connected to the PostgreSQL server successfully.");
-			return c;
-		} catch (ClassNotFoundException | SQLException e ) {
-			e.printStackTrace();
-			return null;
-		}
+	private static final Connection connect(String url, String user, String password) throws SQLException {
+		DriverManager.registerDriver(new Driver());
+		Connection c = DriverManager.getConnection(url, user, password);
+		c.setAutoCommit(false);
+		return c;
+	}
+
+	@Override
+	public final void close() throws SQLException {
+		connection.close();
 	}
 }

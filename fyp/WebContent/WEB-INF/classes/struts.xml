@@ -7,14 +7,11 @@
 	<package name="fyp" extends="struts-default, json-default">
 		<action name="databaseConnection" class="fyp.Application"
 			method="execute">
-			<result name="Unknownerror" type="json"></result>
-			<result name="error" type="json"></result>
 			<result name="success" type="json">
 				<param name="root">dataMap</param>
 			</result>
 		</action>
 		<action name="prepareStores" class="fyp.ApplicationContext" method="execute">
-			<result name="error" type="json"></result>
 			<result name="success" type="json">
 				<param name="root">dataMap</param>
 			</result>

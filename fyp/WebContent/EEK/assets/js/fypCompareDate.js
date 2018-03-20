@@ -126,8 +126,8 @@ function changeScope(sc) {
 					mallId: area,
 					storeId : -1,
 					interval : interval,
-					userMac : 0,
-					type : "count"
+					type : "count",
+					lengthOfMovingAverage: 1
 				},
 				traditional: true,
 				success : function(json) {
@@ -167,8 +167,8 @@ function changeScope(sc) {
 					mallId: area,
 					storeId : -1,
 					interval : interval,
-					userMac : 0,
-					type : "average"
+					type : "average",
+					lengthOfMovingAverage: 1
 				},
 				traditional: true,
 				success : function(json) {

@@ -10,7 +10,7 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
-function drawPeopleCountingGraph(data, avg) {
+function drawPeopleCountingGraph(data, ma, avg) {
 	var peopleCountingChart = nv.models.lineChart();
 	charts.push(peopleCountingChart);
 	const MILLISECONDS_IN_A_DAY = 86400000;
@@ -26,9 +26,21 @@ function drawPeopleCountingGraph(data, avg) {
 			datum.push({
 				values: values,
 				key: 'Number of Visit',
-				//color: "#00b19d",
 				area: true
 			});
+			if (Array.isArray(ma)) {
+				var values = [];
+				for (var i = 0; i < ma.length; i++)
+					values.push({
+						x: endTime + MILLISECONDS_IN_A_DAY * (i - ma.length),
+						y: ma[i]
+					});
+				datum.push({
+					values: values,
+					key: 'Weekly Moving Average of Number of Visit',
+					color: "#999999"
+				});
+			}
 			if (!isNaN(avg * 1))
 				datum.push({
 					values: function() {
@@ -41,8 +53,7 @@ function drawPeopleCountingGraph(data, avg) {
 						return arr;
 					}(),
 					key: 'Monthly Average Number of Visit',
-					color: "#000000",
-					area: false
+					color: "#000000"
 				});
 		}
 		return datum;
@@ -52,7 +63,7 @@ function drawPeopleCountingGraph(data, avg) {
 		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return d3.time.format('%d %b %Y')(new Date(d));
 		});
-		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
+		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(peopleCountingChart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(peopleCountingChart.update);
@@ -219,13 +230,15 @@ $(document).ready(function() {
 		changeArea(localStorage.getItem("area_id"));
 	$.when(ajaxGettingStores(area)).done(function(a1) {
 		var interval = 24;
-		$.when(ajax1(), ajax2()).done(function(a1, a2) {
+		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
 			$('.counter').counterUp({
 				delay : 100,
 				time : 1200
 			});
+			drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA7, averageDailyVisitors);
 			$('.circliful-chart').circliful();
 		});
+		var numberOfVisitors = [], numberOfVisitorsMA7 = [], averageDailyVisitors = 0;
 		function ajax1() {
 			return $.ajax({
 				type : "get",
@@ -236,14 +249,13 @@ $(document).ready(function() {
 					mallId: area,
 					storeId : -1,
 					interval : interval,
-					userMac : 0,
-					type : "count"
+					type : "count",
+					lengthOfMovingAverage: 1
 				},
 				traditional: true,
 				success : function(json) {
 					var i = 0;
 					var sum = 0;
-					var numberOfVisitors = [];
 					for ( var prop in json) {
 						var thisDataPoint = json["dataPoint" + i++];
 						if (i !== 1) {
@@ -253,11 +265,10 @@ $(document).ready(function() {
 						else
 							$(".totalVisitorCount").text(thisDataPoint);
 					}
-					const averageDailyVisitors = sum / numberOfVisitors.length;
-					$(".dailyVisitors").text(averageDailyVisitors);
+					averageDailyVisitors = sum / numberOfVisitors.length;
+					$(".dailyVisitors").text(averageDailyVisitors.toFixed(2));
 					$("#todayVisitors").text(numberOfVisitors[numberOfVisitors.length - 1]);
 					$("#yesterdayVisitors").text(numberOfVisitors[numberOfVisitors.length - 2]);
-					drawPeopleCountingGraph(numberOfVisitors, averageDailyVisitors);
 				},
 				statusCode: {
 					501: function() {
@@ -279,8 +290,40 @@ $(document).ready(function() {
 					mallId: area,
 					storeId : -1,
 					interval : interval,
-					userMac : 0,
-					type : "average"
+					type : "count",
+					lengthOfMovingAverage: 7
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0;
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1)
+							numberOfVisitorsMA7.push(thisDataPoint);
+					}
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "EEK/pages-501.html";
+					},
+					500: function() {
+						window.location.href = "EEK/pages-500.html";
+					}
+				}
+			});
+		}
+		function ajax3() {
+			return $.ajax({
+				type : "get",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : -1,
+					interval : interval,
+					type : "average",
+					lengthOfMovingAverage: 1
 				},
 				traditional: true,
 				success : function(json) {
@@ -316,8 +359,8 @@ $(document).ready(function() {
 				mallId: area,
 				storeId : -1,
 				interval : interval,
-				userMac : 0,
 				type : "avgTimeDistribution",
+				lengthOfMovingAverage: 1,
 				dwellTimeThresholds: dwellTimeThresholds
 			},
 			traditional: true,
@@ -355,8 +398,8 @@ $(document).ready(function() {
 						mallId: area,
 						storeId : shops[i].id,
 						interval : 0,
-						userMac : 0,
-						type : "count"
+						type : "count",
+						lengthOfMovingAverage: 1
 					},
 					traditional: true,
 					success : function(json) {
@@ -412,8 +455,8 @@ $(document).ready(function() {
 							mallId: area,
 							storeId : shops[peopleCountingForEachShopResultsSorted[i].id].id,
 							interval : interval,
-							userMac : 0,
-							type : "count"
+							type : "count",
+							lengthOfMovingAverage: 1
 						},
 						traditional: true,
 						success : function(json) {

@@ -428,7 +428,7 @@
 					<div>
 						<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
 						User MAC Address: <input type="text" id="macAddress"
-							value="B4EF3992723A"> Store: <select id="storeId">
+							value="ACFDCE97A05E"> Store: <select id="storeId">
 						</select>
 						<div class="calendar-picker form-control" start="0" end="0">
 							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
