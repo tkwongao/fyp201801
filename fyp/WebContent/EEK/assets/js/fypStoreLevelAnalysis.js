@@ -9,6 +9,19 @@ function UpdateAllCharts() {
 			charts[i].update();
 }
 
+function getTimeFormat(interval) {
+	switch (interval) {
+	case 1:
+		return '%d %b, %H:00';
+	case 24:
+		return '%d %b %Y';
+	case 720:
+		return '%b %Y';
+	default:
+		return undefined;
+	}
+}
+
 function drawPeopleCountingGraph(data, avg) {
 	var chart = nv.models.lineChart();
 	charts.push(chart);
@@ -48,7 +61,7 @@ function drawPeopleCountingGraph(data, avg) {
 							arr.push({
 								x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
 								y: avg
-						});
+							});
 						return arr;
 					}(),
 					key: 'Average Number of Visit per ' + a,
@@ -59,22 +72,10 @@ function drawPeopleCountingGraph(data, avg) {
 		}
 		return datum;
 	}
-	var timeFormat;
-	switch (interval) {
-	case 1:
-		timeFormat = '%d %b, %H:00';
-		break;
-	case 24:
-		timeFormat = '%d %b %Y';
-		break;
-	case 720:
-		timeFormat = '%b %Y';
-		break;
-	}
 	nv.addGraph(function() {
 		chart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(timeFormat)(new Date(d));
+			return d3.time.format(getTimeFormat(interval))(new Date(d));
 		});
 		chart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(chart);
@@ -104,22 +105,10 @@ function drawAverageDwellTimeGraph(data) {
 		}
 		return [];
 	}
-	var timeFormat;
-	switch (interval) {
-	case 1:
-		timeFormat = '%d %b, %H:00';
-		break;
-	case 24:
-		timeFormat = '%d %b %Y';
-		break;
-	case 720:
-		timeFormat = '%b %Y';
-		break;
-	}
 	nv.addGraph(function() {
 		chart.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(timeFormat)(new Date(d));
+			return d3.time.format(getTimeFormat(interval))(new Date(d));
 		});
 		chart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
 		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
@@ -157,64 +146,6 @@ function changeScopeWithStoreId(sc, stid) {
 			end : endTime,
 			mallId: area,
 			storeId : storeId,
-			interval : 0,
-			userMac : 0,
-			type : "count"
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var totalVisitorCount = [];
-			for ( var prop in json)
-				totalVisitorCount.push(json["dataPoint" + ++i]);
-			$(".totalVisitorCount").text(totalVisitorCount[0]);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "EEK/pages-501.html";
-			},
-			500: function() {
-				window.location.href = "EEK/pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : 0,
-			userMac : 0,
-			type : "average"
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var averageDwellTime = [];
-			for ( var prop in json)
-				averageDwellTime.push(json["dataPoint" + ++i]);
-			$(".averageDwellTime").text(averageDwellTime[0].toFixed(2));
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "EEK/pages-501.html";
-			},
-			500: function() {
-				window.location.href = "EEK/pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
 			interval : interval,
 			userMac : 0,
 			type : "count"
@@ -225,9 +156,13 @@ function changeScopeWithStoreId(sc, stid) {
 			var sum = 0;
 			var numberOfVisitors = [];
 			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + ++i] 
-				numberOfVisitors.push(thisDataPoint);
-				sum += thisDataPoint;
+				var thisDataPoint = json["dataPoint" + i++];
+				if (i !== 1) {
+					numberOfVisitors.push(thisDataPoint);
+					sum += thisDataPoint;
+				}
+				else
+					$(".totalVisitorCount").text(thisDataPoint);
 			}
 			drawPeopleCountingGraph(numberOfVisitors, sum / numberOfVisitors.length);
 		},
@@ -256,8 +191,13 @@ function changeScopeWithStoreId(sc, stid) {
 		success : function(json) {
 			var i = 0;
 			var averageDwellTime = [];
-			for ( var prop in json)
-				averageDwellTime.push(json["dataPoint" + ++i]);
+			for ( var prop in json) {
+				var thisDataPoint = json["dataPoint" + i++];
+				if (i !== 1)
+					averageDwellTime.push(thisDataPoint);
+				else
+					$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
+			}
 			drawAverageDwellTimeGraph(averageDwellTime);
 		},
 		statusCode: {

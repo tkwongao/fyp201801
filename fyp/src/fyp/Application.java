@@ -61,14 +61,21 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 				numberOfIntervals = 1;
 			}
 			dataMap = new HashMap<String, Number>();
-			Number[] value = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals);
+			Number[] value = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, 1);
 			for (int i = 0; i < value.length; i++) {
 				if (value[i].doubleValue() < 0)
 					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + (i + 1), value[i]);
+				dataMap.put("dataPoint" + i, value[i]);
+			}
+			int prefixLength = value.length;
+			value = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals);
+			for (int i = 0; i < value.length; i++) {
+				if (value[i].doubleValue() < 0)
+					throw new IllegalStateException("An error occurred during database access.");
+				dataMap.put("dataPoint" + (i + prefixLength), value[i]);
 			}
 			if (isLastIntervalIncomplete) {
-				int nextI = value.length + 1;
+				int nextI = value.length + prefixLength;
 				value = makeDatabaseRequest(endTimeForCompleteIntervals, endTime, 1);
 				if (value[0].doubleValue() < 0)
 					throw new IllegalStateException("An error occurred during database access.");
@@ -99,11 +106,22 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, int numberOfIntervals) {
 		Connection connection = Objects.requireNonNull(DatabaseConnection.getConnection(), "Failed to connect to the database server");
 		long[] period = Objects.requireNonNull(Utilities.timeToPeriod(startTime, endTime), "Invalid start or end time");
-		if (type.equals("user") || type.equals("loyalty")) {
-			UserAnalysis ua = new UserAnalysis(mallId, connection, Long.parseLong(userMac.replaceAll(":", ""), 16));
-			return (type.equals("user")) ? ua.userStayTime(period, numberOfIntervals, storeId) : ua.loyaltyCheck(period, numberOfIntervals);
-		}
-		else {
+		switch (type) {
+		case "user":
+		case "loyalty":
+		case "numofstore":
+			UserAnalysis ua = new UserAnalysis(mallId, storeId, connection, Long.parseLong(userMac.replaceAll(":", ""), 16));
+			switch (type) {
+			case "user":
+				return ua.userStayTime(period, numberOfIntervals);
+			case "loyalty":
+				return ua.loyaltyCheck(period, numberOfIntervals);
+			case "numofstore":
+				return ua.numberOfStoresVisited(period, numberOfIntervals);
+			default:
+				throw new AssertionError("makeDatabaseRequest() type switch");
+			}
+		default:
 			MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, connection);
 			switch (type) {
 			case "count":
@@ -155,7 +173,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	public long getEnd() {
 		return end;
 	}
-	
+
 	@JSON(serialize = false)
 	public String getMallId() {
 		return mallId;
@@ -201,7 +219,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	public void setEnd(long end) {
 		this.end = end;
 	}
-	
+
 	public void setMallId(String mallId) {
 		this.mallId = mallId;
 	}

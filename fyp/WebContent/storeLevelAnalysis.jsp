@@ -489,7 +489,7 @@
 									<h4 class="m-t-0 header-title">
 										<b>Average Dwell Time (seconds)</b>
 									</h4>
-									<span class="m-t-10 dropcap text-primary averageDwellTime">0</span>
+									<span class="m-t-10 dropcap text-primary totalAverageDwellTime">0</span>
 								</div>
 
 								<div class="clearfix">
