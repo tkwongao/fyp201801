@@ -29,7 +29,7 @@ function drawPeopleCountingGraph(data, ma, avg) {
 				area: true
 			});
 			if (Array.isArray(ma)) {
-				var values = [];
+				values = [];
 				for (var i = 0; i < ma.length; i++)
 					values.push({
 						x: endTime + MILLISECONDS_IN_A_DAY * (i - ma.length),

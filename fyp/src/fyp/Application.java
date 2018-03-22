@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -159,13 +160,15 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			}
 			if (lengthOfMovingAverage == 1)
 				return value;
-			double firstMovingAverage = 0;
+			double firstMovingSum = 0;
 			for (short i = 0; i < lengthOfMovingAverage; i++)
-				firstMovingAverage += value[i].doubleValue();
+				firstMovingSum += value[i].doubleValue();
 			Double[] movingAverage = new Double[numberOfIntervals];
-			movingAverage[0] = firstMovingAverage / lengthOfMovingAverage;
+			movingAverage[0] = firstMovingSum;
 			for (short i = 0; i < movingAverage.length - 1; i++)
-				movingAverage[i + 1] = movingAverage[i] + (value[i + lengthOfMovingAverage].doubleValue() - movingAverage[i]) / lengthOfMovingAverage;
+				movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
+			for (short i = 0; i < movingAverage.length; i++)
+				movingAverage[i] /= lengthOfMovingAverage;
 			return movingAverage;
 		}
 	}

@@ -22,12 +22,24 @@ function getTimeFormat(interval) {
 	}
 }
 
-function drawPeopleCountingGraph(data, avg) {
+function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	var chart = nv.models.lineChart();
 	charts.push(chart);
 	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getPeopleCountingData() {
 		var datum = [];
+		var a;
+		switch (interval) {
+		case 1:
+			a = "hour";
+			break;
+		case 24:
+			a = "day";
+			break;
+		case 720:
+			a = "month";
+			break;
+		}
 		if (Array.isArray(data)) {
 			var values = [];
 			for (var i = 0; i < data.length; i++)
@@ -38,22 +50,29 @@ function drawPeopleCountingGraph(data, avg) {
 			datum.push({
 				values: values,
 				key: 'Number of Visit',
-				//color: "#00b19d",
 				area: true
 			});
-			if (!isNaN(avg * 1)) {
-				var a;
-				switch (interval) {
-				case 1:
-					a = "hour";
-					break;
+			if (Array.isArray(ma)) {
+				var maIntervalStr = maInterval + " " + a;
+				switch (maInterval * interval) {
 				case 24:
-					a = "day";
-					break;
-				case 720:
-					a = "month";
-					break;
+					maIntervalStr = "Daily";
+				case 168:
+					maIntervalStr = "Weekly";
 				}
+				values = [];
+				for (var i = 0; i < ma.length; i++)
+					values.push({
+						x: endTime + MILLISECONDS_PER_INTERVAL * (i - ma.length),
+						y: ma[i]
+					});
+				datum.push({
+					values: values,
+					key: maIntervalStr + ' Moving Average of Number of Visit',
+					color: "#999999"
+				});
+			}
+			if (!isNaN(avg * 1)) {
 				datum.push({
 					values: function() {
 						var arr = [];
@@ -138,43 +157,80 @@ function changeScopeWithStoreId(sc, stid) {
 	}
 	scope = sc;
 	var storeId = stid;
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			type : "count",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var sum = 0;
-			var numberOfVisitors = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1) {
-					numberOfVisitors.push(thisDataPoint);
-					sum += thisDataPoint;
-				}
-				else
-					$(".totalVisitorCount").text(thisDataPoint);
-			}
-			drawPeopleCountingGraph(numberOfVisitors, sum / numberOfVisitors.length);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "EEK/pages-501.html";
-			},
-			500: function() {
-				window.location.href = "EEK/pages-500.html";
-			}
-		}
+	var numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = 5, averageVisitors = 0;
+	$.when(ajax1(), ajax2()).done(function(a1, a2) {
+		drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA, maInterval, averageVisitors);
 	});
+	function ajax1() {
+		return $.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : interval,
+				type : "count",
+				lengthOfMovingAverage: 1
+			},
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				var sum = 0;
+				for ( var prop in json) {
+					var thisDataPoint = json["dataPoint" + i++];
+					if (i !== 1) {
+						numberOfVisitors.push(thisDataPoint);
+						sum += thisDataPoint;
+					}
+					else
+						$(".totalVisitorCount").text(thisDataPoint);
+				}
+				averageVisitors = sum / numberOfVisitors.length;
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			}
+		});
+	}
+	function ajax2() {
+		return $.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : interval,
+				type : "count",
+				lengthOfMovingAverage: maInterval
+			},
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				for ( var prop in json) {
+					var thisDataPoint = json["dataPoint" + i++];
+					if (i !== 1)
+						numberOfVisitorsMA.push(thisDataPoint);
+				}
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "EEK/pages-501.html";
+				},
+				500: function() {
+					window.location.href = "EEK/pages-500.html";
+				}
+			}
+		});
+	}
 	$.ajax({
 		type : "get",
 		url : "databaseConnection",
