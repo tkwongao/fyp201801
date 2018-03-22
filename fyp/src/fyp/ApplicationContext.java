@@ -1,9 +1,12 @@
 package fyp;
 
 import java.io.IOException;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,31 +26,28 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 	private String mallName = null;
 
 	@Override
-	public String execute() {
-		try {
-			switch (mallName) {
-			case "base_1":
-				try {
-					String sql = "SELECT id, name FROM stores WHERE areaid = ?";
-					PreparedStatement ps = DatabaseConnection.getConnection().prepareStatement(sql);
-					ps.setString(1, mallName);
-					ResultSet rs = ps.executeQuery();
-					dataMap = new HashMap<String, Number>();
-					while (rs.next())
-						dataMap.put(rs.getString("name"), rs.getInt("id"));
-				} catch (SQLException e) {
-					e.printStackTrace();
-					response.sendError(500);
-					return ERROR;
-				}
-				break;
-			default:
-				new IllegalArgumentException("Unsupported Mall!").printStackTrace();
-				response.sendError(403);
-				return ERROR;
+	public String execute() throws IOException, SQLException {
+		switch (mallName) {
+		case "base_1":
+			String sql = "SELECT id, name FROM stores WHERE areaid = ?";
+			try (PreparedStatement ps = new DatabaseConnection().getConnection().prepareStatement(sql)) {
+				ps.setString(1, mallName);
+				ResultSet rs = ps.executeQuery();
+				dataMap = new HashMap<String, Number>();
+				while (rs.next())
+					dataMap.put(rs.getString("name"), rs.getInt("id"));
+			} catch (SQLException e) {
+				response.sendError(500);
+				throw new IllegalStateException("An error occurred during database access.", e);
+			} finally {
+				Enumeration<Driver> drivers = DriverManager.getDrivers();
+				while (drivers.hasMoreElements())
+					DriverManager.deregisterDriver(drivers.nextElement());
 			}
-		} catch (IOException e) {
-			return ERROR;
+			break;
+		default:
+			response.sendError(403);
+			throw new IllegalArgumentException("Unsupported Mall: " + mallName);
 		}
 		return SUCCESS;
 	}
@@ -57,8 +57,13 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 		return request;
 	}
 
+	@JSON(serialize = false) 
+	public HttpServletResponse getServletResponse() {
+		return response;
+	}
+
 	public HashMap<String, Number> getDataMap() {  
-		return dataMap;  
+		return dataMap;
 	}
 
 	@JSON(serialize = false) 

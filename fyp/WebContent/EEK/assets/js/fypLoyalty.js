@@ -151,7 +151,8 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			storeId : storeId,
 			interval : interval,
 			userMac : userMac,
-			type : "loyalty"
+			type : "loyalty",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
@@ -185,7 +186,8 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			storeId : storeId,
 			interval : interval,
 			userMac : userMac,
-			type : "numOfStore"
+			type : "numOfStore",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
@@ -193,13 +195,16 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			var numOfStores = [];
 			for ( var prop in json) {
 				var thisDataPoint = json["dataPoint" + i++];
-				if (thisDataPoint === 0.5)
-					thisDataPoint = NaN;
 				if (i !== 1)
 					numOfStores.push(thisDataPoint);
 				else
-					$("#numberOfStoresVisited").text(thisDataPoint);
+					$("#numberOfStoresVisited").text((thisDataPoint === 0.5) ? "Not Applicable" : thisDataPoint);
 			}
+			for (i = 0; i < numOfStores.length; i++)
+				if (numOfStores[i] === 0.5) {
+					numOfStores = [];
+					break;
+				}
 			drawNumberOfStoresGraph(numOfStores);
 		},
 		statusCode: {
@@ -221,7 +226,8 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			storeId : storeId,
 			interval : interval,
 			userMac : userMac,
-			type : "user"
+			type : "user",
+			lengthOfMovingAverage: 1
 		},
 		traditional: true,
 		success : function(json) {
