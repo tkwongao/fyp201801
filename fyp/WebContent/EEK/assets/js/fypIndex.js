@@ -2,7 +2,7 @@
 const startTime = moment("23 September 2017", "D MMMM YYYY").valueOf(), endTime = moment("23 October 2017", "D MMMM YYYY").valueOf();
 var charts = [];
 var shops = [];
-var dwellTimeThresholds = [60, 120, 300, 600, 1200, 1800];
+var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
 
 function UpdateAllCharts() {
 	for (var i in charts)
