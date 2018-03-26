@@ -151,10 +151,10 @@ function changeScope(sc) {
 				},
 				statusCode: {
 					501: function() {
-						window.location.href = "EEK/pages-501.html";
+						window.location.href = "pages-501.html";
 					},
 					500: function() {
-						window.location.href = "EEK/pages-500.html";
+						window.location.href = "pages-500.html";
 					}
 				},
 			});
@@ -189,10 +189,10 @@ function changeScope(sc) {
 				},
 				statusCode: {
 					501: function() {
-						window.location.href = "EEK/pages-501.html";
+						window.location.href = "pages-501.html";
 					},
 					500: function() {
-						window.location.href = "EEK/pages-500.html";
+						window.location.href = "pages-500.html";
 					}
 				},
 			});

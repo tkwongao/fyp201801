@@ -169,10 +169,10 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		},
 		statusCode: {
 			501: function() {
-				window.location.href = "EEK/pages-501.html";
+				window.location.href = "pages-501.html";
 			},
 			500: function() {
-				window.location.href = "EEK/pages-500.html";
+				window.location.href = "pages-500.html";
 			}
 		}
 	});
@@ -209,10 +209,10 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		},
 		statusCode: {
 			501: function() {
-				window.location.href = "EEK/pages-501.html";
+				window.location.href = "pages-501.html";
 			},
 			500: function() {
-				window.location.href = "EEK/pages-500.html";
+				window.location.href = "pages-500.html";
 			}
 		}
 	});
@@ -244,10 +244,10 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		},
 		statusCode: {
 			501: function() {
-				window.location.href = "EEK/pages-501.html";
+				window.location.href = "pages-501.html";
 			},
 			500: function() {
-				window.location.href = "EEK/pages-500.html";
+				window.location.href = "pages-500.html";
 			}
 		}
 	});
@@ -273,10 +273,10 @@ function ajaxGettingStores(mallName) {
 		},
 		statusCode: {
 			403: function() {
-				window.location.href = "EEK/pages-403.html";
+				window.location.href = "pages-403.html";
 			},
 			500: function() {
-				window.location.href = "EEK/pages-500.html";
+				window.location.href = "pages-500.html";
 			}
 		}
 	});
