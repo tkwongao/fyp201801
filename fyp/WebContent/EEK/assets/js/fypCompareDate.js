@@ -201,20 +201,20 @@ function changeScope(sc) {
 }
 
 $( document ).ready(function() {
-	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	$("#date").html(moment().utcOffset('+0800').format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
 		changeArea("base_1");
 	else
 		changeArea(localStorage.getItem("area_id"));
-	// Till the last complete day (Hong Kong Time) in the current database, Sunday 22 Oct 2017; to be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("23 September 2017", "D MMMM YYYY"), endDate = moment("23 October 2017", "D MMMM YYYY");
+	// To be replaced by getting the current date
+	const endOfYesterday = moment().startOf('day'), startDate = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ"), endDate = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
 		function date_cb(start, end) {
-			self.children('span').html(start.format('D MMMM YYYY, HH:mm') + " to " + end.format('D MMMM YYYY, HH:mm'));
+			self.children('span').html(start.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm') + " to " + end.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm'));
 			self.attr('start', start);
 			self.attr('end', end);
 			startTimes[index] = Number($(calendar_pickers[index]).attr('start'));

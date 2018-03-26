@@ -12,11 +12,11 @@ function UpdateAllCharts() {
 function getTimeFormat(interval) {
 	switch (interval) {
 	case 1:
-		return '%d %b, %H:00';
+		return 'DD MMM, HH:00';
 	case 24:
-		return '%d %b %Y';
+		return 'DD MMM YYYY';
 	case 720:
-		return '%b %Y';
+		return 'MMM YYYY';
 	default:
 		return undefined;
 	}
@@ -94,7 +94,7 @@ function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	nv.addGraph(function() {
 		chart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
 		chart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(chart);
@@ -127,7 +127,7 @@ function drawAverageDwellTimeGraph(data) {
 	nv.addGraph(function() {
 		chart.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
 		chart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
 		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
@@ -355,20 +355,21 @@ function ajaxGettingStores(mallName) {
 }
 
 $(document).ready(function() {
-	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
 		changeArea("base_1");
 	else
 		changeArea(localStorage.getItem("area_id"));
-	// Till the latest available data; to be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("23 October 2017, 00:00", "D MMMM YYYY, HH:mm"), endDate = moment("23 October 2017, 22:00", "D MMMM YYYY, HH:mm");
+	// To be replaced by getting the current date
+	const endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = moment("27 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ"),
+	endDate = moment("28 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
 		function date_cb(start, end) {
-			self.children('span').html(start.format('D MMMM YYYY, HH:mm') + " to " + end.format('D MMMM YYYY, HH:mm'));
+			self.children('span').html(start.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm') + " to " + end.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm'));
 			self.attr('start', start);
 			self.attr('end', end);
 			startTime = Number($(calendar_pickers[index]).attr('start'));

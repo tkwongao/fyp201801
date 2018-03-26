@@ -12,11 +12,11 @@ function UpdateAllCharts() {
 function getTimeFormat(interval) {
 	switch (interval) {
 	case 1:
-		return '%d %b, %H:00';
+		return 'DD MMM, HH:00';
 	case 24:
-		return '%d %b %Y';
+		return 'DD MMM YYYY';
 	case 720:
-		return '%b %Y';
+		return 'MMM YYYY';
 	default:
 		return undefined;
 	}
@@ -45,7 +45,7 @@ function drawLoyaltyCountingGraph(data) {
 	nv.addGraph(function() {
 		peopleCountingChart.forceY([0, 1]).margin({"bottom": 120}).useInteractiveGuideline(true).xScale(d3.time.scale());
 		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
 		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
 		d3.select('.userLoyaltyCheckChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Number of Visit')).transition().duration(500).call(peopleCountingChart);
@@ -77,7 +77,7 @@ function drawUserStayTimeGraph(data) {
 	nv.addGraph(function() {
 		userStayTimeChart.forceY([0, 1]).margin({"bottom": 120}).stacked(false).showControls(false);
 		userStayTimeChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
 		userStayTimeChart.yAxis.axisLabel('User Stay Time (seconds)').scale(1).tickFormat(d3.format('.2f'));
 		d3.select('.userStayTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData()).transition().duration(500).call(userStayTimeChart);
@@ -110,7 +110,7 @@ function drawNumberOfStoresGraph(data) {
 	nv.addGraph(function() {
 		numberOfStoresChart.forceY([0, 1]).margin({"bottom": 120}).stacked(false).showControls(false);
 		numberOfStoresChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return d3.time.format(getTimeFormat(interval))(new Date(d));
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
 		numberOfStoresChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
 		d3.select('.numOfStoresVisitedChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Number of Stores Visited')).transition().duration(500).call(numberOfStoresChart);
@@ -283,7 +283,7 @@ function ajaxGettingStores(mallName) {
 }
 
 $(document).ready(function() {
-	$("#date").html(moment().format("dddd, D MMMM YYYY"));
+	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawLoyaltyCountingGraph([]);
 	drawUserStayTimeGraph([]);
 	drawNumberOfStoresGraph([]);
@@ -291,13 +291,14 @@ $(document).ready(function() {
 		changeArea("base_1");
 	else
 		changeArea(localStorage.getItem("area_id"));
-	// Till the latest available data; to be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("23 October 2017, 00:00", "D MMMM YYYY, HH:mm"), endDate = moment("23 October 2017, 22:00", "D MMMM YYYY, HH:mm");
+	// To be replaced by getting the current date
+	const endOfYesterday = moment().startOf('day'), startDate = moment("27 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ"),
+	endDate = moment("28 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
 		function date_cb(start, end) {
-			self.children('span').html(start.format('D MMMM YYYY, HH:mm') + " to " + end.format('D MMMM YYYY, HH:mm'));
+			self.children('span').html(start.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm') + " to " + end.utcOffset(serverTimeZone).format('D MMMM YYYY, HH:mm'));
 			self.attr('start', start);
 			self.attr('end', end);
 			startTime = Number($(calendar_pickers[index]).attr('start'));
