@@ -68,7 +68,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 				numberOfIntervals = 1;
 			}
 			if (lengthOfMovingAverage > 1)
-				startTime.minus(lengthOfMovingAverage - 1, internalInterval);
+				startTime = startTime.minus(lengthOfMovingAverage - 1, internalInterval);
 			if (startTime.isBefore(PAST)) // The system was not there such early...... this means invalid data
 				throw new IllegalArgumentException("Start time too early: " + start);
 			if (!startTime.isBefore(endTime) || !startTime.isBefore(endTimeForCompleteIntervals) || endTimeForCompleteIntervals.isAfter(endTime))
@@ -128,6 +128,8 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					return ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
 				case "numofstore":
 					return ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
+				case "oui":
+					return null;
 				default:
 					throw new AssertionError("makeDatabaseRequest() type switch");
 				}
