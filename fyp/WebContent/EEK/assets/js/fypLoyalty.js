@@ -147,7 +147,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		$.ajax({
 			type: "get",
 			url: "oui",
-			data: { userMacs: [userMac] },
+			data: { userMac: userMac },
 			traditional: true,
 			success: function(json) {
 				var text = "";
