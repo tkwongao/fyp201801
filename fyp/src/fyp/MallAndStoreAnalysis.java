@@ -186,22 +186,20 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			throw new IllegalArgumentException("Trend for the ratio of frequent user is not yet supported.");
 		if (lengthOfMovingAverage != 1)
 			throw new IllegalArgumentException("The moving average for the ratio of frequent user is not yet supported.");
-		String sql = "SELECT cast(freq.count AS DOUBLE PRECISION) /"
-				+ "((SELECT count(DISTINCT (did)) FROM site_results WHERE startts BETWEEN ? AND ? AND buildingid = ?) - freq.count) AS ratio FROM"
-				+ "(SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM site_results "
-				+ "WHERE startts BETWEEN ? AND ? AND buildingid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
+		String sql = "SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM site_results "
+				+ "WHERE startts BETWEEN ? AND ? AND buildingid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
 			ps.setString(3, mallId);
-			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
-			ps.setString(6, mallId);
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, 0.0);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				value[0] = rs.getDouble("ratio");
+			while (rs.next()) {
+				Double ratio = rs.getDouble("count") * 100.0 / visitorCount(period, numberOfIntervals, lengthOfMovingAverage)[0];
+				if (!ratio.isNaN() && !ratio.isInfinite())
+					value[0] = ratio;
+			}
 			return value;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);
@@ -223,22 +221,20 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			throw new IllegalArgumentException("The moving average for the ratio of frequent user is not yet supported.");
 		if (storeId == WHOLE_MALL)
 			return totalFreqRatio(period, numberOfIntervals, lengthOfMovingAverage);
-		String sql = "SELECT cast(freq.count AS DOUBLE PRECISION) /"
-				+ "((SELECT count(DISTINCT (did)) FROM store_results WHERE startts BETWEEN ? AND ? AND storeid = ?) - freq.count) AS ratio FROM"
-				+ "(SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM store_results "
-				+ "WHERE startts BETWEEN ? AND ? AND storeid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers) AS freq";
+		String sql = "SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM store_results "
+				+ "WHERE startts BETWEEN ? AND ? AND storeid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
 			ps.setInt(3, storeId);
-			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
-			ps.setInt(6, storeId);
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, 0.0);
 			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				value[0] = rs.getDouble("ratio");
+			while (rs.next()) {
+				Double ratio = rs.getInt("count") * 100.0 / visitorCount(period, numberOfIntervals, lengthOfMovingAverage)[0];
+				if (!ratio.isNaN() && !ratio.isInfinite())
+					value[0] = ratio;
+			}
 			return value;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);

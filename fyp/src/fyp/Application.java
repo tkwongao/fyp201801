@@ -68,7 +68,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 				numberOfIntervals = 1;
 			}
 			if (lengthOfMovingAverage > 1)
-				startTime.minus(lengthOfMovingAverage - 1, internalInterval);
+				startTime = startTime.minus(lengthOfMovingAverage - 1, internalInterval);
 			if (startTime.isBefore(PAST)) // The system was not there such early...... this means invalid data
 				throw new IllegalArgumentException("Start time too early: " + start);
 			if (!startTime.isBefore(endTime) || !startTime.isBefore(endTimeForCompleteIntervals) || endTimeForCompleteIntervals.isAfter(endTime))
@@ -120,7 +120,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		case "user":
 		case "loyalty":
 		case "numofstore":
-			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", ""), 16))) {
+			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16))) {
 				switch (type) {
 				case "user":
 					return ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
