@@ -422,15 +422,17 @@
 						</div>
 					</div>
 					<div>
-						<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
-						User MAC Address: <input type="text" id="macAddress"
-							value="ACFDCE97A05E"> Store: <select id="storeId">
-						</select>
-						<div class="calendar-picker form-control" start="0" end="0">
-							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
-						</div>
-						<button type="button"
-							onclick="changeScopeWithMac(scope, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)">Submit</button>
+						<form action="javascript:changeScopeWithMac(scope, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)" method="post">
+							<!-- The MAC address in value is simply just picking a frequent user. It is not to be appeared in the final version. -->
+							User MAC Address: <input type="text" id="macAddress"
+								pattern="^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$" value="ACFDCE97A05E">
+							Store: <select id="storeId">
+							</select> OUI: <span id="oui"></span>
+							<div class="calendar-picker form-control" start="0" end="0">
+								<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
+							</div>
+							<button type="submit">Submit</button>
+						</form>
 					</div>
 
 					<div class="row">

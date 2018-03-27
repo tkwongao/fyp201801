@@ -120,7 +120,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		case "user":
 		case "loyalty":
 		case "numofstore":
-			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", ""), 16))) {
+			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16))) {
 				switch (type) {
 				case "user":
 					return ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
@@ -128,8 +128,6 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					return ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
 				case "numofstore":
 					return ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
-				case "oui":
-					return null;
 				default:
 					throw new AssertionError("makeDatabaseRequest() type switch");
 				}

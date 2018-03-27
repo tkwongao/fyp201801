@@ -139,118 +139,143 @@ function changeScopeWithMac(sc, macAddress, stid) {
 	break;
 	}
 	scope = sc;
-	var userMac = macAddress;
 	var storeId = stid;
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			userMac : userMac,
-			type : "loyalty",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var loyaltyCounting = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					loyaltyCounting.push(thisDataPoint);
-				else
-					$("#loyalty").text(thisDataPoint);
-			}
-			drawLoyaltyCountingGraph(loyaltyCounting);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
-			},
-			500: function() {
-				window.location.href = "pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			userMac : userMac,
-			type : "numOfStore",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var numOfStores = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					numOfStores.push(thisDataPoint);
-				else
-					$("#numberOfStoresVisited").text((thisDataPoint === 0.5) ? "Not Applicable" : thisDataPoint);
-			}
-			for (i = 0; i < numOfStores.length; i++)
-				if (numOfStores[i] === 0.5) {
-					numOfStores = [];
-					break;
+	if (!macAddress.match(/^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$/g))
+		alert("Please enter a valid MAC address");
+	else {
+		var userMac = macAddress;
+		$.ajax({
+			type: "get",
+			url: "oui",
+			data: { userMacs: [userMac] },
+			traditional: true,
+			success: function(json) {
+				var text = "";
+				var i = 0;
+				for ( var prop in json) {
+					if (i++ !== 0)
+						text += " OR ";
+					text += prop;
 				}
-			drawNumberOfStoresGraph(numOfStores);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
+				$("#oui").text(text);
 			},
-			500: function() {
-				window.location.href = "pages-500.html";
+			statusCode: {
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
 			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			userMac : userMac,
-			type : "user",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var userStayTime = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					userStayTime.push(thisDataPoint);
-				else
-					$("#userDwellTime").text(thisDataPoint);
-			}
-			drawUserStayTimeGraph(userStayTime);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
+		});
+		$.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : interval,
+				userMac : userMac,
+				type : "loyalty",
+				lengthOfMovingAverage: 1
 			},
-			500: function() {
-				window.location.href = "pages-500.html";
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				var loyaltyCounting = [];
+				for ( var prop in json) {
+					var thisDataPoint = json["dataPoint" + i++];
+					if (i !== 1)
+						loyaltyCounting.push(thisDataPoint);
+					else
+						$("#loyalty").text(thisDataPoint);
+				}
+				drawLoyaltyCountingGraph(loyaltyCounting);
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "pages-501.html";
+				},
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
 			}
-		}
-	});
+		});
+		$.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : interval,
+				userMac : userMac,
+				type : "numOfStore",
+				lengthOfMovingAverage: 1
+			},
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				var numOfStores = [];
+				for ( var prop in json) {
+					var thisDataPoint = json["dataPoint" + i++];
+					if (i !== 1)
+						numOfStores.push(thisDataPoint);
+					else
+						$("#numberOfStoresVisited").text((thisDataPoint === 0.5) ? "Not Applicable" : thisDataPoint);
+				}
+				for (i = 0; i < numOfStores.length; i++)
+					if (numOfStores[i] === 0.5) {
+						numOfStores = [];
+						break;
+					}
+				drawNumberOfStoresGraph(numOfStores);
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "pages-501.html";
+				},
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
+			}
+		});
+		$.ajax({
+			type : "get",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : interval,
+				userMac : userMac,
+				type : "user",
+				lengthOfMovingAverage: 1
+			},
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				var userStayTime = [];
+				for ( var prop in json) {
+					var thisDataPoint = json["dataPoint" + i++];
+					if (i !== 1)
+						userStayTime.push(thisDataPoint);
+					else
+						$("#userDwellTime").text(thisDataPoint);
+				}
+				drawUserStayTimeGraph(userStayTime);
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "pages-501.html";
+				},
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
+			}
+		});
+	}
 }
 
 function ajaxGettingStores(mallName) {

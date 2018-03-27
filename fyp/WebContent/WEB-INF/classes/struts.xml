@@ -11,6 +11,11 @@
 				<param name="root">dataMap</param>
 			</result>
 		</action>
+		<action name="oui" class="fyp.OUIAction" method="execute">
+			<result name="success" type="json">
+				<param name="root">dataMap</param>
+			</result>
+		</action>
 		<action name="prepareStores" class="fyp.ApplicationContext" method="execute">
 			<result name="success" type="json">
 				<param name="root">dataMap</param>

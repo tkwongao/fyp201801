@@ -201,7 +201,7 @@ function changeScope(sc) {
 }
 
 $( document ).ready(function() {
-	$("#date").html(moment().utcOffset('+0800').format("dddd, D MMMM YYYY"));
+	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
