@@ -151,6 +151,8 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					return msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
 				case "bounce":
 					return msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, 0.6/*0.75*/); // For debugging purpose change to 0.6
+				case "oui":
+					return msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
 				default:
 					throw new IllegalArgumentException("Request type is invalid: " + type);
 				}

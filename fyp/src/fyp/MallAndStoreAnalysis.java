@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.OptionalInt;
 
@@ -63,6 +64,67 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 				value[rs.getShort("width_bucket") - 1] = rs.getInt("count");
 			rs.close();
 			return value;
+		} catch (SQLException e) {
+			throw new IllegalStateException("An error occurred during database access.", e);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param period
+	 * @param numberOfIntervals
+	 * @param lengthOfMovingAverage
+	 * @return
+	 */
+	Number[] ouiDistribution(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
+		String sql = "SELECT " + 
+				"  width_bucket, " + 
+				"  coalesce, " + 
+				"  count(*) " + 
+				"FROM (SELECT " + 
+				"        width_bucket, " + 
+				"        coalesce(vendor, 'Unknown') " + 
+				"      FROM oui\r\n" + 
+				"        RIGHT OUTER JOIN (SELECT " + 
+				"                            width_bucket, " + 
+				"                            upper(substring(to_hex, 1, 6)) " + 
+				"                          FROM (SELECT DISTINCT " + 
+				"                                  width_bucket(startts, ?, ?, ?), " + 
+				"                                  to_hex(did) " + 
+				"                                FROM " + dbName + 
+				"                                WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
+				"                                ORDER BY width_bucket) AS temp1) AS temp2 " + 
+				"          ON upper = mac) AS temp3 " + 
+				"GROUP BY width_bucket, coalesce " + 
+				"ORDER BY width_bucket, coalesce;";
+		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+			ps.setLong(1, period[0]);
+			ps.setLong(2, period[1]);
+			ps.setShort(3, numberOfIntervals);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			if (storeId != WHOLE_MALL)
+				ps.setInt(6, storeId);
+			else
+				ps.setString(6, mallId);
+			@SuppressWarnings("unchecked")
+			HashMap<String, Integer>[] value = new HashMap[numberOfIntervals];
+			Arrays.fill(value, new HashMap<String, Integer>());
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				value[rs.getShort("width_bucket") - 1].put(rs.getString("coalesce").trim(), rs.getInt("count"));
+			rs.close();
+			// TODO Process the value array
+			return null;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);
 		}

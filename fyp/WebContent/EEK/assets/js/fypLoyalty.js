@@ -1,4 +1,3 @@
-var scope = 0;
 var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
@@ -121,24 +120,20 @@ function drawNumberOfStoresGraph(data) {
 }
 
 function changeScopeWithMac(sc, macAddress, stid) {
-	switch (sc) {
+	switch (Number(sc)) {
 	case 0:
-		$("#scope").text("Hourly Data");
 		interval = 1;
 		break;
 	case 1:
-		$("#scope").text("Daily Data");
 		interval = 24;
 		break;
 	case 2:
-		$("#scope").text("Monthly Data");
 		interval = 720;
 		break;
 	default:
 		interval = -1;
 	break;
 	}
-	scope = sc;
 	var storeId = stid;
 	if (!macAddress.match(/^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$/g))
 		alert("Please enter a valid MAC address");
