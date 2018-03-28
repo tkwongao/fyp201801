@@ -311,9 +311,7 @@ $(document).ready(function() {
 		changeArea("base_1");
 	else
 		changeArea(localStorage.getItem("area_id"));
-	// To be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("27 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ"),
-	endDate = moment("28 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ");
+	const endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -323,6 +321,29 @@ $(document).ready(function() {
 			self.attr('end', end);
 			startTime = Number($(calendar_pickers[index]).attr('start'));
 			endTime = Number($(calendar_pickers[index]).attr('end'));
+			var hours = Math.floor(moment.duration(end.diff(start)).asHours());
+			if (hours > 168) {
+				$("#hourly").attr("disabled", "disabled");
+				$("#scope").val("1").change();
+			}
+			else
+				$("#hourly").removeAttr("disabled");
+			if (hours < 960) {
+				$("#monthly").attr("disabled", "disabled");
+				$("#scope").val("1").change();
+			}
+			else
+				$("#monthly").removeAttr("disabled");
+			if (hours < 48) {
+				$("#daily").attr("disabled", "disabled");
+				$("#scope").val("0").change();
+			}
+			else if (hours > 2016) {
+				$("#daily").attr("disabled", "disabled");
+				$("#scope").val("2").change();
+			}
+			else
+				$("#daily").removeAttr("disabled");
 		};
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
@@ -342,7 +363,7 @@ $(document).ready(function() {
 			endDate: endDate,
 			minDate: '1 January 2015',
 			maxDate: 'now',
-			timePickerIncrement: 30
+			timePickerIncrement: 60
 		}, date_cb);
 	});
 	ajaxGettingStores("base_1");

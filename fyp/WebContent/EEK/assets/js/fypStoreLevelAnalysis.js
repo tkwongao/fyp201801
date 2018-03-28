@@ -1,7 +1,8 @@
-var scope = 0;
 var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
+var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
+var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -25,7 +26,6 @@ function getTimeFormat(interval) {
 function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	var chart = nv.models.lineChart();
 	charts.push(chart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getPeopleCountingData() {
 		var datum = [];
 		var a;
@@ -107,7 +107,6 @@ function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 function drawAverageDwellTimeGraph(data) {
 	var chart = nv.models.multiBarChart();
 	charts.push(chart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
 		if (Array.isArray(data)) {
 			var values = [];
@@ -125,7 +124,7 @@ function drawAverageDwellTimeGraph(data) {
 		return [];
 	}
 	nv.addGraph(function() {
-		chart.forceY([0, 1]).margin({"bottom": 120})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
+		chart.forceY([0, 1]).margin({"bottom": 120}).stacked(false).showControls(false);
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
@@ -137,25 +136,61 @@ function drawAverageDwellTimeGraph(data) {
 	});
 }
 
+function drawAverageDwellTimeDistributionGraph(data) {
+	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
+	charts.push(averageDwellTimeDistributionChart);
+	function getAverageDwellTimeData() {
+		var datum = [];
+		if (Array.isArray(data))
+			for (var i = 0; i < dwellTimeThresholds.length + 1; i++) {
+				var key = undefined;
+				if (i == 0)
+					key = "Less than " + (dwellTimeThresholds[i] / 60) + " minutes";
+				else if (i == dwellTimeThresholds.length)
+					key = "More than " + (dwellTimeThresholds[i - 1] / 60) + " minutes";
+				else
+					key = "Between " + (dwellTimeThresholds[i - 1] / 60) + " and " + (dwellTimeThresholds[i] / 60) + " minutes";
+				var values = [];
+				for (var j = 0; j < data.length / (dwellTimeThresholds.length + 1); j++)
+					values.push({
+						x: endTime + MILLISECONDS_PER_INTERVAL * (j - data.length / (dwellTimeThresholds.length + 1)),
+						y: data[j * (dwellTimeThresholds.length + 1) + i]
+					});
+				datum.push({
+					values: values,
+					key: key
+				});
+			}
+		return datum;
+	}
+	nv.addGraph(function() {
+		averageDwellTimeDistributionChart.forceY([0, 1]).margin({"bottom": 80}).style('expand').useInteractiveGuideline(true).xScale(d3.time.scale()).showControls(false);
+		averageDwellTimeDistributionChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
+			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
+		});
+		averageDwellTimeDistributionChart.yAxis.axisLabel('Percentage').scale(100).tickFormat(d3.format('.2f'));
+		d3.select('.averageDwellTimeDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeDistributionChart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(averageDwellTimeDistributionChart.update);
+		return averageDwellTimeDistributionChart;
+	});
+}
+
 function changeScopeWithStoreId(sc, stid) {
-	switch (sc) {
+	switch (Number(sc)) {
 	case 0:
-		$("#scope").text("Hourly Data");
 		interval = 1;
 		break;
 	case 1:
-		$("#scope").text("Daily Data");
 		interval = 24;
 		break;
 	case 2:
-		$("#scope").text("Monthly Data");
 		interval = 720;
 		break;
 	default:
 		interval = -1;
 	break;
 	}
-	scope = sc;
 	var storeId = stid;
 	var numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = 5, averageVisitors = 0;
 	$.when(ajax1(), ajax2()).done(function(a1, a2) {
@@ -323,6 +358,39 @@ function changeScopeWithStoreId(sc, stid) {
 			}
 		}
 	});
+	$.ajax({
+		type : "get",
+		url : "databaseConnection",
+		data : {
+			start : startTime,
+			end : endTime,
+			mallId: area,
+			storeId : storeId,
+			interval : interval,
+			type : "avgTimeDistribution",
+			lengthOfMovingAverage: 1,
+			dwellTimeThresholds: dwellTimeThresholds
+		},
+		traditional: true,
+		success : function(json) {
+			var i = 0;
+			var averageDwellTimeDistribution = [];
+			for ( var prop in json) {
+				if (i > dwellTimeThresholds.length)
+					averageDwellTimeDistribution.push(json["dataPoint" + i]);
+				i++;
+			}
+			drawAverageDwellTimeDistributionGraph(averageDwellTimeDistribution);
+		},
+		statusCode: {
+			501: function() {
+				window.location.href = "pages-501.html";
+			},
+			500: function() {
+				window.location.href = "pages-500.html";
+			}
+		}
+	});
 }
 
 function ajaxGettingStores(mallName) {
@@ -362,9 +430,7 @@ $(document).ready(function() {
 		changeArea("base_1");
 	else
 		changeArea(localStorage.getItem("area_id"));
-	// To be replaced by getting the current date
-	const endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = moment("27 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ"),
-	endDate = moment("28 October 2017, 00:00 " + serverTimeZone, "D MMMM YYYY, HH:mm ZZ");
+	const endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -374,6 +440,29 @@ $(document).ready(function() {
 			self.attr('end', end);
 			startTime = Number($(calendar_pickers[index]).attr('start'));
 			endTime = Number($(calendar_pickers[index]).attr('end'));
+			var hours = Math.floor(moment.duration(end.diff(start)).asHours());
+			if (hours > 168) {
+				$("#hourly").attr("disabled", "disabled");
+				$("#scope").val("1").change();
+			}
+			else
+				$("#hourly").removeAttr("disabled");
+			if (hours < 960) {
+				$("#monthly").attr("disabled", "disabled");
+				$("#scope").val("1").change();
+			}
+			else
+				$("#monthly").removeAttr("disabled");
+			if (hours < 48) {
+				$("#daily").attr("disabled", "disabled");
+				$("#scope").val("0").change();
+			}
+			else if (hours > 2016) {
+				$("#daily").attr("disabled", "disabled");
+				$("#scope").val("2").change();
+			}
+			else
+				$("#daily").removeAttr("disabled");
 		};
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
@@ -393,10 +482,10 @@ $(document).ready(function() {
 			endDate: endDate,
 			minDate: '1 January 2015',
 			maxDate: 'now',
-			timePickerIncrement: 30
+			timePickerIncrement: 60
 		}, date_cb);
 	});
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
-		changeScopeWithStoreId(0, document.getElementById("storeId").value);
+		changeScopeWithStoreId(document.getElementById("scope").value, document.getElementById("storeId").value);
 	});
 });

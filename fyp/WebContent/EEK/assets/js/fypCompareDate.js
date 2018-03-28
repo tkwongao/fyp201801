@@ -240,7 +240,7 @@ $( document ).ready(function() {
 			endDate: endDate,
 			minDate: '1 January 2015',
 			maxDate: 'now',
-			timePickerIncrement: 30
+			timePickerIncrement: 60
 		}, date_cb);
 	});
 	var button = $('button[data-target="#searchPanel"]');
