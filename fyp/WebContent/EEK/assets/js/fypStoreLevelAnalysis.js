@@ -2,7 +2,6 @@ var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
 var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
-var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -27,6 +26,7 @@ function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	var chart = nv.models.lineChart();
 	charts.push(chart);
 	function getPeopleCountingData() {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 		var datum = [];
 		var a;
 		switch (interval) {
@@ -108,6 +108,7 @@ function drawAverageDwellTimeGraph(data) {
 	var chart = nv.models.multiBarChart();
 	charts.push(chart);
 	function getData(key) {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 		if (Array.isArray(data)) {
 			var values = [];
 			for (var i = 0; i < data.length; i++)
@@ -140,6 +141,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
 	charts.push(averageDwellTimeDistributionChart);
 	function getAverageDwellTimeData() {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 		var datum = [];
 		if (Array.isArray(data))
 			for (var i = 0; i < dwellTimeThresholds.length + 1; i++) {
@@ -176,7 +178,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 	});
 }
 
-function changeScopeWithStoreId(sc, stid) {
+function changeScopeWithStoreId(sc, stid, lengthOfMovingAverage, bounceSD) {
 	switch (Number(sc)) {
 	case 0:
 		interval = 1;
@@ -191,14 +193,86 @@ function changeScopeWithStoreId(sc, stid) {
 		interval = -1;
 	break;
 	}
-	var storeId = stid;
-	var numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = 5, averageVisitors = 0;
-	$.when(ajax1(), ajax2()).done(function(a1, a2) {
-		drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA, maInterval, averageVisitors);
-	});
-	function ajax1() {
-		return $.ajax({
-			type : "get",
+	if (bounceSD < 0 || bounceSD > 3)
+		alert("Please enter a valid threshold for Bounce Rate in standard derivation, between 0 and 3.");
+	else if (lengthOfMovingAverage < 2 || lengthOfMovingAverage > 127)
+		alert("Please enter a valid length of Moving Average, between 2 and 127.");
+	else {
+		var storeId = stid, numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = lengthOfMovingAverage, averageVisitors = 0;
+		$.when(ajax1(), ajax2()).done(function(a1, a2) {
+			drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA, maInterval, averageVisitors);
+		});
+		function ajax1() {
+			return $.ajax({
+				type : "post",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : storeId,
+					interval : interval,
+					type : "count",
+					lengthOfMovingAverage: 1
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0, sum = 0;
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1) {
+							numberOfVisitors.push(thisDataPoint);
+							sum += thisDataPoint;
+						}
+						else
+							$(".totalVisitorCount").text(thisDataPoint);
+					}
+					averageVisitors = sum / numberOfVisitors.length;
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "pages-501.html";
+					},
+					500: function() {
+						window.location.href = "pages-500.html";
+					}
+				}
+			});
+		}
+		function ajax2() {
+			return $.ajax({
+				type : "post",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : storeId,
+					interval : interval,
+					type : "count",
+					lengthOfMovingAverage: maInterval
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0;
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1)
+							numberOfVisitorsMA.push(thisDataPoint);
+					}
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "pages-501.html";
+					},
+					500: function() {
+						window.location.href = "pages-500.html";
+					}
+				}
+			});
+		}
+		$.ajax({
+			type : "post",
 			url : "databaseConnection",
 			data : {
 				start : startTime,
@@ -206,23 +280,21 @@ function changeScopeWithStoreId(sc, stid) {
 				mallId: area,
 				storeId : storeId,
 				interval : interval,
-				type : "count",
+				type : "average",
 				lengthOfMovingAverage: 1
 			},
 			traditional: true,
 			success : function(json) {
 				var i = 0;
-				var sum = 0;
+				var averageDwellTime = [];
 				for ( var prop in json) {
 					var thisDataPoint = json["dataPoint" + i++];
-					if (i !== 1) {
-						numberOfVisitors.push(thisDataPoint);
-						sum += thisDataPoint;
-					}
+					if (i !== 1)
+						averageDwellTime.push(thisDataPoint);
 					else
-						$(".totalVisitorCount").text(thisDataPoint);
+						$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
 				}
-				averageVisitors = sum / numberOfVisitors.length;
+				drawAverageDwellTimeGraph(averageDwellTime);
 			},
 			statusCode: {
 				501: function() {
@@ -233,10 +305,70 @@ function changeScopeWithStoreId(sc, stid) {
 				}
 			}
 		});
-	}
-	function ajax2() {
-		return $.ajax({
-			type : "get",
+		if ((endTime - startTime) <= 3 * 86400000)
+			$(".freq").text("Not Applicable");
+		else
+			$.ajax({
+				type : "post",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : storeId,
+					interval : 0,
+					type : "freq",
+					lengthOfMovingAverage: 1
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0;
+					var freqRatio = [];
+					for ( var prop in json)
+						freqRatio.push(json["dataPoint" + ++i]);
+					$(".freq").text(freqRatio[0].toFixed(2) + "%");
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "pages-501.html";
+					},
+					500: function() {
+						window.location.href = "pages-500.html";
+					}
+				}
+			});
+		$.ajax({
+			type : "post",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : 0,
+				type : "bounce",
+				lengthOfMovingAverage: 1,
+				bounceSD: bounceSD
+			},
+			traditional: true,
+			success : function(json) {
+				var i = 0;
+				var bounceRate = [];
+				for ( var prop in json)
+					bounceRate.push(json["dataPoint" + ++i]);
+				$(".bounce").text(bounceRate[0].toFixed(2) + "%");
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "pages-501.html";
+				},
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
+			}
+		});
+		$.ajax({
+			type : "post",
 			url : "databaseConnection",
 			data : {
 				start : startTime,
@@ -244,17 +376,20 @@ function changeScopeWithStoreId(sc, stid) {
 				mallId: area,
 				storeId : storeId,
 				interval : interval,
-				type : "count",
-				lengthOfMovingAverage: maInterval
+				type : "avgTimeDistribution",
+				lengthOfMovingAverage: 1,
+				dwellTimeThresholds: dwellTimeThresholds
 			},
 			traditional: true,
 			success : function(json) {
 				var i = 0;
+				var averageDwellTimeDistribution = [];
 				for ( var prop in json) {
-					var thisDataPoint = json["dataPoint" + i++];
-					if (i !== 1)
-						numberOfVisitorsMA.push(thisDataPoint);
+					if (i > dwellTimeThresholds.length)
+						averageDwellTimeDistribution.push(json["dataPoint" + i]);
+					i++;
 				}
+				drawAverageDwellTimeDistributionGraph(averageDwellTimeDistribution);
 			},
 			statusCode: {
 				501: function() {
@@ -266,136 +401,11 @@ function changeScopeWithStoreId(sc, stid) {
 			}
 		});
 	}
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			type : "average",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var averageDwellTime = [];
-			for ( var prop in json) {
-				var thisDataPoint = json["dataPoint" + i++];
-				if (i !== 1)
-					averageDwellTime.push(thisDataPoint);
-				else
-					$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
-			}
-			drawAverageDwellTimeGraph(averageDwellTime);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
-			},
-			500: function() {
-				window.location.href = "pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : 0,
-			type : "freq",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var freqRatio = [];
-			for ( var prop in json)
-				freqRatio.push(json["dataPoint" + ++i]);
-			$(".freq").text(freqRatio[0].toFixed(2) + "%");
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
-			},
-			500: function() {
-				window.location.href = "pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : 0,
-			type : "bounce",
-			lengthOfMovingAverage: 1
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var bounceRate = [];
-			for ( var prop in json)
-				bounceRate.push(json["dataPoint" + ++i]);
-			$(".bounce").text(bounceRate[0].toFixed(2) + "%");
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
-			},
-			500: function() {
-				window.location.href = "pages-500.html";
-			}
-		}
-	});
-	$.ajax({
-		type : "get",
-		url : "databaseConnection",
-		data : {
-			start : startTime,
-			end : endTime,
-			mallId: area,
-			storeId : storeId,
-			interval : interval,
-			type : "avgTimeDistribution",
-			lengthOfMovingAverage: 1,
-			dwellTimeThresholds: dwellTimeThresholds
-		},
-		traditional: true,
-		success : function(json) {
-			var i = 0;
-			var averageDwellTimeDistribution = [];
-			for ( var prop in json) {
-				if (i > dwellTimeThresholds.length)
-					averageDwellTimeDistribution.push(json["dataPoint" + i]);
-				i++;
-			}
-			drawAverageDwellTimeDistributionGraph(averageDwellTimeDistribution);
-		},
-		statusCode: {
-			501: function() {
-				window.location.href = "pages-501.html";
-			},
-			500: function() {
-				window.location.href = "pages-500.html";
-			}
-		}
-	});
 }
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({
-		type : "get",
+		type : "post",
 		url : "prepareStores",
 		data : { mallName: mallName },
 		traditional: true,
@@ -426,6 +436,7 @@ $(document).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
+	drawAverageDwellTimeDistributionGraph([]);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
 		changeArea("base_1");
 	else
@@ -486,6 +497,6 @@ $(document).ready(function() {
 		}, date_cb);
 	});
 	$.when(ajaxGettingStores("base_1")).done(function(a1) {
-		changeScopeWithStoreId(document.getElementById("scope").value, document.getElementById("storeId").value);
+		changeScopeWithStoreId(document.getElementById("scope").value, document.getElementById("storeId").value, document.getElementById("lengthOfMovingAverage").value, document.getElementById("bounceSD").value);
 	});
 });

@@ -24,12 +24,14 @@ import com.opensymphony.xwork2.ActionSupport;
 public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
 	private static final ZonedDateTime PAST = ZonedDateTime.of(2015, 1, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
+	private final byte MAX_LENGTH_OF_MOVING_AVERAGE = Byte.MAX_VALUE;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
 	private HashMap<String, Number> dataMap = null;
 	private short interval, lengthOfMovingAverage;
 	private int storeId;
 	private long start, end;
+	private double bounceSD;
 	private String mallId = null, type = null, userMac = null;
 	private int[] dwellTimeThresholds = null;
 
@@ -116,27 +118,31 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	 */
 	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) {
 		long[] period = {startTime.toInstant().toEpochMilli(), endTime.toInstant().toEpochMilli()};
+		Number[] value;
 		switch (type) {
 		case "user":
 		case "loyalty":
 		case "numofstore":
-			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16))) {
+			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16), MAX_LENGTH_OF_MOVING_AVERAGE)) {
 				switch (type) {
 				case "user":
-					return ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "loyalty":
-					return ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "numofstore":
-					return ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				default:
 					throw new AssertionError("makeDatabaseRequest() type switch");
 				}
 			} catch (SQLException e) {
 				throw new IllegalStateException("An error occurred during database access.", e);
 			}
+			break;
 		default:
-			Number[] value;
-			try (MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, (short) 0x100)) {
+			try (MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, MAX_LENGTH_OF_MOVING_AVERAGE)) {
 				switch (type) {
 				case "count":
 					value = msa.visitorCount(period, numberOfIntervals, lengthOfMovingAverage);
@@ -150,7 +156,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 				case "freq":
 					return msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
 				case "bounce":
-					return msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, 0.6/*0.75*/); // For debugging purpose change to 0.6
+					return msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
 				case "oui":
 					return msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
 				default:
@@ -159,19 +165,19 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			} catch (SQLException e) {
 				throw new IllegalStateException("An error occurred during database access.", e);
 			}
-			if (lengthOfMovingAverage == 1)
-				return value;
-			double firstMovingSum = 0;
-			for (short i = 0; i < lengthOfMovingAverage; i++)
-				firstMovingSum += value[i].doubleValue();
-			Double[] movingAverage = new Double[numberOfIntervals];
-			movingAverage[0] = firstMovingSum;
-			for (short i = 0; i < movingAverage.length - 1; i++)
-				movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
-			for (short i = 0; i < movingAverage.length; i++)
-				movingAverage[i] /= lengthOfMovingAverage;
-			return movingAverage;
 		}
+		if (lengthOfMovingAverage == 1)
+			return value;
+		double firstMovingSum = 0;
+		for (short i = 0; i < lengthOfMovingAverage; i++)
+			firstMovingSum += value[i].doubleValue();
+		Double[] movingAverage = new Double[numberOfIntervals];
+		movingAverage[0] = firstMovingSum;
+		for (short i = 0; i < movingAverage.length - 1; i++)
+			movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
+		for (short i = 0; i < movingAverage.length; i++)
+			movingAverage[i] /= lengthOfMovingAverage;
+		return movingAverage;
 	}
 
 	@JSON(serialize = false) 
@@ -233,6 +239,11 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		return dwellTimeThresholds;
 	}
 
+	@JSON(serialize = false)
+	public double getBounceSD() {
+		return bounceSD;
+	}
+
 	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
@@ -277,5 +288,9 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 
 	public void setDwellTimeThresholds(int[] dwellTimeThresholds) {
 		this.dwellTimeThresholds = dwellTimeThresholds;
+	}
+
+	public void setBounceSD(double bounceSD) {
+		this.bounceSD = bounceSD;
 	}
 }

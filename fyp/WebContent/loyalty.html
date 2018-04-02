@@ -425,7 +425,10 @@
 						<div class="col-lg-12">
 							<div class="card-box">
 								<form
-									action="javascript:changeScopeWithMac(document.getElementById(&quot;scope&quot;).value, document.getElementById(&quot;macAddress&quot;).value, document.getElementById(&quot;storeId&quot;).value)"
+									action="javascript:changeScopeWithMac(document.getElementById(&quot;scope&quot;).value,
+											document.getElementById(&quot;macAddress&quot;).value,
+											document.getElementById(&quot;storeId&quot;).value,
+											document.getElementById(&quot;lengthOfMovingAverage&quot;).value)"
 									method="post">
 									<div class="row in form-group m-b-0">
 										<div class="col-lg-6 m-b-20">
@@ -465,7 +468,15 @@
 												</select>
 											</div>
 										</div>
-										<div class="col-lg-12">
+										<div class="col-lg-6 m-b-20">
+											<div class="input-group">
+												<span class="input-group-addon">Length of Moving Average</span>
+												<input type="number" class="form-control"
+													placeholder="Length of Moving Average"
+													value="5" id="lengthOfMovingAverage" min="2" max="127" />
+											</div>
+										</div>
+										<div class="col-lg-6">
 											<button type="submit" class="btn btn-primary btn-block">Submit</button>
 										</div>
 									</div>

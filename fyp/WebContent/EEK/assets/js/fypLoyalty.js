@@ -21,11 +21,24 @@ function getTimeFormat(interval) {
 	}
 }
 
-function drawLoyaltyCountingGraph(data) {
+function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 	var peopleCountingChart = nv.models.lineChart();
 	charts.push(peopleCountingChart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
+		var datum = [];
+		var a;
+		switch (interval) {
+		case 1:
+			a = "hour";
+			break;
+		case 24:
+			a = "day";
+			break;
+		case 720:
+			a = "month";
+			break;
+		}
 		if (Array.isArray(data)) {
 			var values = [];
 			for (var i = 0; i < data.length; i++)
@@ -33,13 +46,49 @@ function drawLoyaltyCountingGraph(data) {
 					x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
 					y: data[i]
 				});
-			return [{
+			datum.push({
 				values: values,
 				key: key,
 				area: true
-			}];
+			});
+			if (Array.isArray(ma)) {
+				var maIntervalStr = maInterval + " " + a;
+				switch (maInterval * interval) {
+				case 24:
+					maIntervalStr = "Daily";
+				case 168:
+					maIntervalStr = "Weekly";
+				}
+				values = [];
+				for (var i = 0; i < ma.length; i++)
+					values.push({
+						x: endTime + MILLISECONDS_PER_INTERVAL * (i - ma.length),
+						y: ma[i]
+					});
+				datum.push({
+					values: values,
+					key: maIntervalStr + ' Moving Average of Number of Visit',
+					color: "#999999"
+				});
+			}
+			if (!isNaN(avg * 1)) {
+				datum.push({
+					values: function() {
+						var arr = [];
+						for (var i = 0; i < data.length; i++)
+							arr.push({
+								x: endTime + MILLISECONDS_PER_INTERVAL * (i - data.length),
+								y: avg
+							});
+						return arr;
+					}(),
+					key: 'Average Number of Visit per ' + a,
+					color: "#000000",
+					area: false
+				});
+			}
 		}
-		return [];
+		return datum;
 	}
 	nv.addGraph(function() {
 		peopleCountingChart.forceY([0, 1]).margin({"bottom": 120}).useInteractiveGuideline(true).xScale(d3.time.scale());
@@ -57,8 +106,8 @@ function drawLoyaltyCountingGraph(data) {
 function drawUserStayTimeGraph(data) {
 	var userStayTimeChart = nv.models.multiBarChart();
 	charts.push(userStayTimeChart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData() {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 		if (Array.isArray(data)) {
 			var values = [];
 			for (var i = 0; i < data.length; i++)
@@ -89,8 +138,8 @@ function drawUserStayTimeGraph(data) {
 function drawNumberOfStoresGraph(data) {
 	var numberOfStoresChart = nv.models.multiBarChart();
 	charts.push(numberOfStoresChart);
-	const MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 	function getData(key) {
+		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
 		if (Array.isArray(data)) {
 			var values = [];
 			for (var i = 0; i < data.length; i++)
@@ -119,7 +168,7 @@ function drawNumberOfStoresGraph(data) {
 	});
 }
 
-function changeScopeWithMac(sc, macAddress, stid) {
+function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 	switch (Number(sc)) {
 	case 0:
 		interval = 1;
@@ -134,13 +183,86 @@ function changeScopeWithMac(sc, macAddress, stid) {
 		interval = -1;
 	break;
 	}
-	var storeId = stid;
 	if (!macAddress.match(/^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$/g))
 		alert("Please enter a valid MAC address");
+	else if (lengthOfMovingAverage < 2 || lengthOfMovingAverage > 127)
+		alert("Please enter a valid length of Moving Average, between 2 and 127.");
 	else {
-		var userMac = macAddress;
+		var storeId = stid, userMac = macAddress, loyaltyCounting = [], loyaltyCountingMA = [], maInterval = lengthOfMovingAverage, averageVisitors = 0;
+		$.when(ajax1(), ajax2()).done(function(a1, a2) {
+			drawLoyaltyCountingGraph(loyaltyCounting, loyaltyCountingMA, maInterval, averageVisitors);
+		});
+		function ajax1() {
+			return $.ajax({
+				type : "post",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : storeId,
+					interval : interval,
+					userMac : userMac,
+					type : "loyalty",
+					lengthOfMovingAverage: 1
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0, sum = 0;
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1)
+							loyaltyCounting.push(thisDataPoint);
+						else
+							$("#loyalty").text(thisDataPoint);
+					}
+					averageVisitors = sum / loyaltyCounting.length;
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "pages-501.html";
+					},
+					500: function() {
+						window.location.href = "pages-500.html";
+					}
+				}
+			});
+		}
+		function ajax2() {
+			return $.ajax({
+				type : "post",
+				url : "databaseConnection",
+				data : {
+					start : startTime,
+					end : endTime,
+					mallId: area,
+					storeId : storeId,
+					interval : interval,
+					userMac : userMac,
+					type : "loyalty",
+					lengthOfMovingAverage: maInterval
+				},
+				traditional: true,
+				success : function(json) {
+					var i = 0;
+					for ( var prop in json) {
+						var thisDataPoint = json["dataPoint" + i++];
+						if (i !== 1)
+							loyaltyCountingMA.push(thisDataPoint);
+					}
+				},
+				statusCode: {
+					501: function() {
+						window.location.href = "pages-501.html";
+					},
+					500: function() {
+						window.location.href = "pages-500.html";
+					}
+				}
+			});
+		}
 		$.ajax({
-			type: "get",
+			type: "post",
 			url: "oui",
 			data: { userMac: userMac },
 			traditional: true,
@@ -161,42 +283,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			}
 		});
 		$.ajax({
-			type : "get",
-			url : "databaseConnection",
-			data : {
-				start : startTime,
-				end : endTime,
-				mallId: area,
-				storeId : storeId,
-				interval : interval,
-				userMac : userMac,
-				type : "loyalty",
-				lengthOfMovingAverage: 1
-			},
-			traditional: true,
-			success : function(json) {
-				var i = 0;
-				var loyaltyCounting = [];
-				for ( var prop in json) {
-					var thisDataPoint = json["dataPoint" + i++];
-					if (i !== 1)
-						loyaltyCounting.push(thisDataPoint);
-					else
-						$("#loyalty").text(thisDataPoint);
-				}
-				drawLoyaltyCountingGraph(loyaltyCounting);
-			},
-			statusCode: {
-				501: function() {
-					window.location.href = "pages-501.html";
-				},
-				500: function() {
-					window.location.href = "pages-500.html";
-				}
-			}
-		});
-		$.ajax({
-			type : "get",
+			type : "post",
 			url : "databaseConnection",
 			data : {
 				start : startTime,
@@ -236,7 +323,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 			}
 		});
 		$.ajax({
-			type : "get",
+			type : "post",
 			url : "databaseConnection",
 			data : {
 				start : startTime,
@@ -275,7 +362,7 @@ function changeScopeWithMac(sc, macAddress, stid) {
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({
-		type : "get",
+		type : "post",
 		url : "prepareStores",
 		data : { mallName: mallName },
 		traditional: true,
