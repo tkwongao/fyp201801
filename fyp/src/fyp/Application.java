@@ -47,6 +47,9 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			case 24:
 				internalInterval = ChronoUnit.DAYS;
 				break;
+			case 168:
+				internalInterval = ChronoUnit.WEEKS;
+				break;
 			case 720:
 				internalInterval = ChronoUnit.MONTHS;
 				break;
@@ -154,9 +157,11 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					value = msa.averageEnterToLeaveTimeDistribution(period, numberOfIntervals, lengthOfMovingAverage, dwellTimeThresholds);
 					break;
 				case "freq":
-					return msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
+					value = msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "bounce":
-					return msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
+					value = msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
+					break;
 				case "oui":
 					return msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
 				default:
@@ -177,6 +182,8 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
 		for (short i = 0; i < movingAverage.length; i++)
 			movingAverage[i] /= lengthOfMovingAverage;
+		for (short i = 0; i < movingAverage.length; i++)
+			movingAverage[i] = (movingAverage[i] < 0 && movingAverage[i] > -1.0 / 4096) ? 0 : movingAverage[i];
 		return movingAverage;
 	}
 

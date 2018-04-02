@@ -395,7 +395,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="page-title-box">
-								<h4 class="page-title pull-left">Welcome, Hugo Mar</h4>
+								<h4 class="page-title pull-left">Welcome, GCH2</h4>
 								<div class="btn-group pull-right">
 									<button type="button"
 										class="btn btn-inverse dropdown-toggle waves-effect waves-light site-btn"
@@ -434,10 +434,10 @@
 										<div class="col-lg-6 m-b-20">
 											<div class="input-group">
 												<span class="input-group-addon">Threshold for Bounce
-													Rate (in Standard Derivation)</span>
-												<input type="number" class="form-control"
+													Rate (in Standard Derivation)</span> <input type="number"
+													class="form-control"
 													placeholder="Threshold for Bounce Rate (in Standard Derivation)"
-													value="0.6" id="bounceSD" min="0" max="3" step="0.01" />
+													value="0.75" id="bounceSD" min="0" max="3" step="0.01" />
 											</div>
 										</div>
 										<div class="col-lg-6 m-b-20">
@@ -455,17 +455,19 @@
 													id="scope" class="form-control">
 													<option value="0" id="hourly" selected>Hourly</option>
 													<option value="1" id="daily">Daily</option>
-													<option value="2" id="monthly">Monthly</option>
+													<option value="2" id="weekly">Weekly</option>
+													<option value="3" id="monthly">Monthly</option>
 												</select>
 											</div>
 										</div>
 										<div class="col-lg-6 m-b-20">
 											<div class="input-group">
-												<span class="input-group-addon">Length of Moving Average</span>
+												<span class="input-group-addon">Length of Moving
+													Average</span>
 												<!-- The MAC address is simply just picking a frequent user. It is not to be appeared in the final version. -->
 												<input type="number" class="form-control"
-													placeholder="Length of Moving Average"
-													value="5" id="lengthOfMovingAverage" min="2" max="127" />
+													placeholder="Length of Moving Average" value="5"
+													id="lengthOfMovingAverage" min="2" max="127" />
 											</div>
 										</div>
 										<div class="col-lg-6">
@@ -480,24 +482,14 @@
 					<div class="row">
 						<div class="col-lg-6">
 							<div class="card-box">
-								<div class="widget-chart text-center">
-									<ul class="list-inline">
-										<li>
-											<h4 class="text-muted m-t-20">Number of Visitors</h4>
-											<h3 class="m-b-0 totalVisitorCount">0</h3>
-										</li>
-										<li>
-											<h4 class="text-muted m-t-20">Ratio of Frequent Users</h4>
+								<div class="clearfix">
+									<h4 class="m-t-0 header-title">
+										<b>Number of Visitors</b>
+									</h4>
+									<span class="m-t-10 dropcap text-primary totalVisitorCount">0</span>
+								</div>
 
-											<h3 class="m-b-0 freq">0</h3>
-										</li>
-
-										<li>
-											<h4 class="text-muted m-t-20">Bounce Rate</h4>
-											<h3 class="m-b-0 bounce">0</h3>
-										</li>
-									</ul>
-
+								<div class="clearfix">
 									<div class="numberOfVisitChart">
 										<svg style="height: 400px;"></svg>
 									</div>
@@ -507,12 +499,11 @@
 
 						<div class="col-lg-6">
 							<div class="card-box">
-
 								<div class="clearfix">
 									<h4 class="m-t-0 header-title">
 										<b>Average Dwell Time (seconds)</b>
 									</h4>
-									<span class="m-t-10 dropcap text-primary totalAverageDwellTime">0</span>
+									<span class="m-t-10 dropcap text-primary totalAverageDwellTime">0.00</span>
 								</div>
 
 								<div class="clearfix">
@@ -541,7 +532,24 @@
 						</div>
 
 						<div class="col-sm-6 col-lg-6">
-							<div class="card-box"></div>
+							<div class="card-box">
+								<div class="widget-chart text-center">
+									<ul class="list-inline">
+										<li>
+											<h4 class="text-muted m-t-20">Ratio of Frequent Users</h4>
+											<h3 class="m-b-0 freq">0.00%</h3>
+										</li>
+										<li>
+											<h4 class="text-muted m-t-20">Bounce Rate</h4>
+											<h3 class="m-b-0 bounce">0.00%</h3>
+										</li>
+									</ul>
+
+									<div class="freqBounceChart">
+										<svg style="height: 400px;"></svg>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<!-- end row -->

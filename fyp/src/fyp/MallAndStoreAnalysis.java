@@ -43,9 +43,9 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
-		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
 				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
-		String sql = "SELECT width_bucket(startts, ?, ?, ?), count(DISTINCT(did)) FROM " + dbName
+		final String sql = "SELECT width_bucket(startts, ?, ?, ?), count(DISTINCT(did)) FROM " + dbName
 				+ " WHERE startts BETWEEN ? AND ? " + storeIdFilter + " GROUP BY width_bucket;";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
@@ -68,7 +68,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			throw new IllegalStateException("An error occurred during database access.", e);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param period
@@ -84,9 +84,9 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
-		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
 				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
-		String sql = "SELECT " + 
+		final String sql = "SELECT " + 
 				"  width_bucket, " + 
 				"  coalesce, " + 
 				"  count(*) " + 
@@ -146,9 +146,9 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
-		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
 				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
-		String sql = "SELECT width_bucket(startts, ?, ?, ?), avg(endts - startts) FROM " + dbName
+		final String sql = "SELECT width_bucket(startts, ?, ?, ?), avg(endts - startts) FROM " + dbName
 				+ " WHERE startts BETWEEN ? AND ? " + storeIdFilter + " GROUP BY width_bucket;";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
@@ -199,7 +199,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		else if (minimumThreshold.getAsInt() < 0)
 			throw new IllegalArgumentException("Illegal Threshold: " + minimumThreshold.getAsInt());
 		final long[] thresholdsMsArr = Arrays.stream(thresholds).distinct().sorted().asLongStream().map(x -> x * 1000).toArray();
-		String sql = "WITH arr AS (SELECT ARRAY" + Arrays.toString(thresholdsMsArr) + "::BIGINT[]),\n" + 
+		final String sql = "WITH arr AS (SELECT ARRAY" + Arrays.toString(thresholdsMsArr) + "::BIGINT[]),\n" + 
 				"histogram AS (SELECT\n" + 
 				"                     width_bucket(startts, ?, ?, ?),\n" + 
 				"                     width_bucket((endts - startts), arr.array) AS dwell_time_distribution,\n" + 
@@ -243,59 +243,47 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	private Double[] totalFreqRatio(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage) {
-		if (numberOfIntervals != 1)
-			throw new IllegalArgumentException("Trend for the ratio of frequent user is not yet supported.");
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the ratio of frequent user is not yet supported.");
-		String sql = "SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM site_results "
-				+ "WHERE startts BETWEEN ? AND ? AND buildingid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers";
+	Double[] freqRatio(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
+		final String sql = "SELECT width_bucket, count(*)" + 
+				"FROM (SELECT DISTINCT width_bucket, did" + 
+				"      FROM (SELECT\r\n" + 
+				"              width_bucket(startts, ?, ?, ?)," + 
+				"              did,\r\n" + 
+				"              startts / 604800000 AS weekId," + 
+				"              startts / 86400000  AS day" + 
+				"            FROM " + dbName + 
+				"            WHERE startts BETWEEN ? AND ? " + storeIdFilter + ") AS dataWithWeek" + 
+				"      GROUP BY width_bucket, did, weekId" + 
+				"      HAVING count(DISTINCT (day)) >= 3) AS freqUsers " + 
+				"GROUP BY width_bucket;";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
-			ps.setString(3, mallId);
+			ps.setShort(3, numberOfIntervals);
+			ps.setLong(4, period[0]);
+			ps.setLong(5, period[1]);
+			if (storeId != WHOLE_MALL)
+				ps.setInt(6, storeId);
+			else
+				ps.setString(6, mallId);
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, 0.0);
 			ResultSet rs = ps.executeQuery();
+			final Integer[] denominators = visitorCount(period, numberOfIntervals, lengthOfMovingAverage);
 			while (rs.next()) {
-				Double ratio = rs.getDouble("count") * 100.0 / visitorCount(period, numberOfIntervals, lengthOfMovingAverage)[0];
+				final short index = (short) (rs.getShort("width_bucket") - 1);
+				Double ratio = rs.getInt("count") * 100 / denominators[index].doubleValue();
 				if (!ratio.isNaN() && !ratio.isInfinite())
-					value[0] = ratio;
-			}
-			return value;
-		} catch (SQLException e) {
-			throw new IllegalStateException("An error occurred during database access.", e);
-		}
-	}
-
-	/**
-	 * 
-	 * @param period The earliest and latest time the counted data could come from,
-	 * as {@code long} array of length 2 containing UTC milliseconds.
-	 * @param numberOfIntervals
-	 * @param lengthOfMovingAverage
-	 * @return
-	 */
-	Double[] freqRatio(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage) {
-		if (numberOfIntervals != 1)
-			throw new IllegalArgumentException("Trend for the ratio of frequent user is not yet supported.");
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the ratio of frequent user is not yet supported.");
-		if (storeId == WHOLE_MALL)
-			return totalFreqRatio(period, numberOfIntervals, lengthOfMovingAverage);
-		String sql = "SELECT count(*) FROM (SELECT DISTINCT (did) FROM (SELECT did, startts / 604800000 AS weekId, startts / 86400000 AS day FROM store_results "
-				+ "WHERE startts BETWEEN ? AND ? AND storeid = ?) AS dataWithWeek GROUP BY did, weekId HAVING count(DISTINCT (day)) >= 3) AS freqUsers";
-		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-			ps.setLong(1, period[0]);
-			ps.setLong(2, period[1]);
-			ps.setInt(3, storeId);
-			Double[] value = new Double[numberOfIntervals];
-			Arrays.fill(value, 0.0);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				Double ratio = rs.getInt("count") * 100.0 / visitorCount(period, numberOfIntervals, lengthOfMovingAverage)[0];
-				if (!ratio.isNaN() && !ratio.isInfinite())
-					value[0] = ratio;
+					value[index] = ratio;
 			}
 			return value;
 		} catch (SQLException e) {
@@ -312,14 +300,25 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 	 * @param thresholdSD
 	 * @return
 	 */
-	Double[] bounceRate(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage, final double thresholdSD) {
-		if (numberOfIntervals != 1)
-			throw new IllegalArgumentException("Checking bounce rate for multiple intervals is not yet supported.");
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the bounce rate is not yet supported.");
-		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
+	Double[] bounceRate(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage, final double thresholdSD) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		if (numberOfIntervals > 1) {
+			long intervalDutation = (period[1] - period[0]) / numberOfIntervals;
+			Long[] periods = new Long[numberOfIntervals + 1];
+			Double[] value = new Double[numberOfIntervals];
+			Arrays.parallelSetAll(periods, i -> period[0] + i * intervalDutation);
+			Arrays.setAll(value, i -> bounceRate(new long[] {periods[i], periods[i + 1]}, (short) 1, (short) 1, thresholdSD)[0]);
+			return value;
+		}
+		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
 				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
-		String sql = "WITH cache AS (SELECT (endts - startts) / ? AS cache, did FROM " + dbName + " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "),"
+		final String sql = "WITH cache AS (SELECT (endts - startts) / ? AS cache, did FROM " + dbName + " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "),"
 				+ "stat AS (SELECT avg(cache.cache) AS avg, count(*) FROM cache),"
 				+ "sd AS (SELECT POWER(SUM(POWER(cache.cache - (SELECT avg FROM stat), 2)) / (SELECT count FROM stat), 0.5) FROM cache)"
 				+ "SELECT count(DISTINCT(did)) FROM cache WHERE cache.cache < greatest(0, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";
@@ -338,7 +337,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			int bounceCount = 0;
 			while (rs.next())
 				bounceCount = rs.getInt("count");
-			int count = visitorCount(period, numberOfIntervals, (short) 1)[0];
+			int count = visitorCount(period, (short) 1, (short) 1)[0];
 			if (count != 0)
 				value[0] = bounceCount * 100.0 / count;
 			return value;

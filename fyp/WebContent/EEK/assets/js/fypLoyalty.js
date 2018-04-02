@@ -13,6 +13,7 @@ function getTimeFormat(interval) {
 	case 1:
 		return 'DD MMM, HH:00';
 	case 24:
+	case 168:
 		return 'DD MMM YYYY';
 	case 720:
 		return 'MMM YYYY';
@@ -34,6 +35,9 @@ function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 			break;
 		case 24:
 			a = "day";
+			break;
+		case 168:
+			a = "week";
 			break;
 		case 720:
 			a = "month";
@@ -177,6 +181,9 @@ function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 		interval = 24;
 		break;
 	case 2:
+		interval = 168;
+		break;
+	case 3:
 		interval = 720;
 		break;
 	default:
@@ -408,29 +415,61 @@ $(document).ready(function() {
 			self.attr('end', end);
 			startTime = Number($(calendar_pickers[index]).attr('start'));
 			endTime = Number($(calendar_pickers[index]).attr('end'));
-			var hours = Math.floor(moment.duration(end.diff(start)).asHours());
+			var hours = Math.floor(moment.duration(end.diff(start)).asHours()), newValue, requireValueChange = false;
 			if (hours > 168) {
+				if ($("#scope").val() === "0") {
+					newValue = "1";
+					requireValueChange = true;
+				}
 				$("#hourly").attr("disabled", "disabled");
-				$("#scope").val("1").change();
 			}
 			else
 				$("#hourly").removeAttr("disabled");
-			if (hours < 960) {
-				$("#monthly").attr("disabled", "disabled");
-				$("#scope").val("1").change();
-			}
-			else
-				$("#monthly").removeAttr("disabled");
 			if (hours < 48) {
+				newValue = "0";
+				requireValueChange = true;
 				$("#daily").attr("disabled", "disabled");
-				$("#scope").val("0").change();
 			}
 			else if (hours > 2016) {
+				if ($("#scope").val() <= 1) {
+					newValue = "2";
+					requireValueChange = true;
+				}
 				$("#daily").attr("disabled", "disabled");
-				$("#scope").val("2").change();
 			}
 			else
 				$("#daily").removeAttr("disabled");
+			if (hours < 336) {
+				if ($("#scope").val() >= 2) {
+					newValue = "1";
+					requireValueChange = true;
+					if (hours < 48)
+						newValue = "0";
+				}
+				$("#weekly").attr("disabled", "disabled");
+			}
+			else if (hours > 8736) {
+				newValue = "3";
+				requireValueChange = true;
+				$("#weekly").attr("disabled", "disabled");
+			}
+			else
+				$("#weekly").removeAttr("disabled");
+			if (hours < 960) {
+				if ($("#scope").val() === "3") {
+					newValue = "2";
+					requireValueChange = true;
+					if (hours < 336)
+						newValue = "1";
+					if (hours < 48)
+						newValue = "0";
+				}
+				$("#monthly").attr("disabled", "disabled");
+			}
+			else
+				$("#monthly").removeAttr("disabled");
+			if (requireValueChange)
+				$("#scope").val(newValue).change();
 		};
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
