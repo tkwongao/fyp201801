@@ -21,7 +21,7 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param storeId
 	 * @param macAddress
 	 */
-	UserAnalysis(String mallId, int storeId, long macAddress, short maxLengthOfMovingAverage) throws SQLException {
+	public UserAnalysis(String mallId, int storeId, long macAddress, short maxLengthOfMovingAverage) throws SQLException {
 		this.mallId = mallId;
 		this.storeId = storeId;
 		this.macAddress = macAddress;
