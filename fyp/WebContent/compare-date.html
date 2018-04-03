@@ -1,7 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"
-	import="fyp.DatabaseConnection, java.io.*, java.util.*, javax.servlet.*, java.text.*"%>
-<%@ taglib prefix="s" uri="/struts-tags"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -13,7 +9,7 @@
 
 <link rel="shortcut icon" href="EEK/assets/images/favicon_1.ico">
 
-<title>Minton - Responsive Admin Dashboard</title>
+<title>GCH2 Project - Compare Date</title>
 
 <link href="plugins/nvd3/build/nv.d3.min.css" rel="stylesheet"
 	type="text/css" />
@@ -60,7 +56,7 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<div class="text-center">
-					<a href="./index.jsp" class="waves-effect waves-primary logo">GCH2
+					<a href="./index.html" class="waves-effect waves-primary logo">GCH2
 						Project<!--object
 							id="logo" data="EEK/assets/images/logo.svg" type="image/svg+xml"
 							height="80"></object-->
@@ -184,7 +180,7 @@
 					<ul>
 						<li class="menu-title">Main</li>
 
-						<li><a href="./index.jsp" class="waves-effect waves-primary">
+						<li><a href="./index.html" class="waves-effect waves-primary">
 								<i class="md md-home"></i><span>Home</span>
 						</a></li>
 
@@ -202,148 +198,156 @@
 									Analytics </span> <span class="menu-arrow"></span></a>
 							<ul class="list-unstyled">
 								<!--li><a href="compare-location.html">Compare Location</a></li-->
-								<li><a href="compare-date.jsp">Compare Date</a></li>
+								<li><a href="compare-date.html">Compare Date</a></li>
 								<!--li><a href="traffic.html">Traffic</a></li-->
-								<li><a href="storeLevelAnalysis.jsp">Per-store Data</a></li>
-								<li><a href="loyalty.jsp">Loyalty</a></li>
+								<li><a href="storeLevelAnalysis.html">Per-store Data</a></li>
+								<li><a href="loyalty.html">Loyalty</a></li>
 							</ul></li>
 
-						<!--  
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-palette"></i>
-								<span> UI Kit </span> <span class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="ui-buttons.html">Buttons</a></li>
-								<li><a href="ui-panels.html">Panels</a></li>
-								<li><a href="ui-portlets.html">Portlets</a></li>
-								<li><a href="ui-checkbox-radio.html">Checkboxs-Radios</a></li>
-								<li><a href="ui-tabs.html">Tabs & Accordions</a></li>
-								<li><a href="ui-modals.html">Modals</a></li>
-								<li><a href="ui-progressbars.html">Progress Bars</a></li>
-								<li><a href="ui-notification.html">Notification</a></li>
-								<li><a href="ui-bootstrap.html">BS Elements</a></li>
-								<li><a href="ui-typography.html">Typography</a></li>
-							</ul></li>
+						<!--
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="md md-palette"></i> <span> UI Kit </span>
+                                 <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="ui-buttons.html">Buttons</a></li>
+                                    <li><a href="ui-panels.html">Panels</a></li>
+                                    <li><a href="ui-portlets.html">Portlets</a></li>
+                                    <li><a href="ui-checkbox-radio.html">Checkboxs-Radios</a></li>
+                                    <li><a href="ui-tabs.html">Tabs & Accordions</a></li>
+                                    <li><a href="ui-modals.html">Modals</a></li>
+                                    <li><a href="ui-progressbars.html">Progress Bars</a></li>
+                                    <li><a href="ui-notification.html">Notification</a></li>
+                                    <li><a href="ui-bootstrap.html">BS Elements</a></li>
+                                    <li><a href="ui-typography.html">Typography</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i
-								class="md md-invert-colors-on"></i><span> Components </span> <span
-								class="label label-success pull-right">6</span> </a>
-							<ul class="list-unstyled">
-								<li><a href="components-grid.html">Grid</a></li>
-								<li><a href="components-carousel.html">Carousel</a></li>
-								<li><a href="components-widgets.html">Widgets</a></li>
-								<li><a href="components-nestable-list.html">Nesteble</a></li>
-								<li><a href="components-range-sliders.html">Range
-										Sliders </a></li>
-								<li><a href="components-sweet-alert.html">Sweet Alerts
-								</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-invert-colors-on"></i><span> Components </span> <span
+                                        class="label label-success pull-right">6</span> </a>
+                                <ul class="list-unstyled">
+                                    <li><a href="components-grid.html">Grid</a></li>
+                                    <li><a href="components-carousel.html">Carousel</a></li>
+                                    <li><a href="components-widgets.html">Widgets</a></li>
+                                    <li><a href="components-nestable-list.html">Nesteble</a></li>
+                                    <li><a href="components-range-sliders.html">Range Sliders </a></li>
+                                    <li><a href="components-sweet-alert.html">Sweet Alerts </a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-redeem"></i>
-								<span> Icons </span> <span class="menu-arrow"></span> </a>
-							<ul class="list-unstyled">
-								<li><a href="icons-glyphicons.html">Glyphicons</a></li>
-								<li><a href="icons-materialdesign.html">Material Design</a></li>
-								<li><a href="icons-themifyicon.html">Themify Icons</a></li>
-								<li><a href="icons-ionicons.html">Ion Icons</a></li>
-								<li><a href="icons-fontawesome.html">Font awesome</a></li>
-								<li><a href="icons-weather.html">Weather Icons</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="md md-redeem"></i>
+                                    <span> Icons </span> <span class="menu-arrow"></span> </a>
+                                <ul class="list-unstyled">
+                                    <li><a href="icons-glyphicons.html">Glyphicons</a></li>
+                                    <li><a href="icons-materialdesign.html">Material Design</a></li>
+                                    <li><a href="icons-themifyicon.html">Themify Icons</a></li>
+                                    <li><a href="icons-ionicons.html">Ion Icons</a></li>
+                                    <li><a href="icons-fontawesome.html">Font awesome</a></li>
+                                    <li><a href="icons-weather.html">Weather Icons</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i
-								class="md md-now-widgets"></i><span> Forms </span> <span
-								class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="form-elements.html">General Elements</a></li>
-								<li><a href="form-advanced.html">Advanced Form</a></li>
-								<li><a href="form-validation.html">Form Validation</a></li>
-								<li><a href="form-wizard.html">Form Wizard</a></li>
-								<li><a href="form-wysiwig.html">WYSIWYG Editor</a></li>
-								<li><a href="form-summernote.html">Summernote</a></li>
-								<li><a href="form-uploads.html">Multiple File Upload</a></li>
-								<li><a href="form-xeditable.html">X-editable</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="md md-now-widgets"></i><span> Forms </span> <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="form-elements.html">General Elements</a></li>
+                                    <li><a href="form-advanced.html">Advanced Form</a></li>
+                                    <li><a href="form-validation.html">Form Validation</a></li>
+                                    <li><a href="form-wizard.html">Form Wizard</a></li>
+                                    <li><a href="form-wysiwig.html">WYSIWYG Editor</a></li>
+                                    <li><a href="form-summernote.html">Summernote</a></li>
+                                    <li><a href="form-uploads.html">Multiple File Upload</a></li>
+                                    <li><a href="form-xeditable.html">X-editable</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-view-list"></i><span>
-									Tables </span> <span class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="tables-basic.html">Basic Tables</a></li>
-								<li><a href="tables-datatable.html">Data Table</a></li>
-								<li><a href="tables-editable.html">Editable Table</a></li>
-								<li><a href="tables-responsive.html">Responsive Table</a></li>
-								<li><a href="tables-tablesaw.html">Tablesaw Table</a></li>
-								<li><a href="tables-foo-tables.html">Foo Table</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="md md-view-list"></i><span> Tables </span> <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="tables-basic.html">Basic Tables</a></li>
+                                    <li><a href="tables-datatable.html">Data Table</a></li>
+                                    <li><a href="tables-editable.html">Editable Table</a></li>
+                                    <li><a href="tables-responsive.html">Responsive Table</a></li>
+                                    <li><a href="tables-tablesaw.html">Tablesaw Table</a></li>
+                                    <li><a href="tables-foo-tables.html">Foo Table</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-poll"></i><span>
-									Charts </span> <span class="menu-arrow"></span> </a>
-							<ul class="list-unstyled">
-								<li><a href="chart-flot.html">Flot Chart</a></li>
-								<li><a href="chart-morris.html">Morris Chart</a></li>
-								<li><a href="chart-chartist.html">Chartist chart</a></li>
-								<li><a href="chart-nvd3.html">Nvd3 charts</a></li>
-								<li><a href="chart-chartjs.html">Chartjs charts</a></li>
-								<li><a href="chart-peity.html">Peity Charts</a></li>
-								<li><a href="chart-sparkline.html">Sparkline Charts</a></li>
-								<li><a href="chart-other.html">Other Chart</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-poll"></i><span> Charts </span> <span class="menu-arrow"></span> </a>
+                                <ul class="list-unstyled">
+                                    <li><a href="chart-flot.html">Flot Chart</a></li>
+                                    <li><a href="chart-morris.html">Morris Chart</a></li>
+                                    <li><a href="chart-chartist.html">Chartist chart</a></li>
+                                    <li><a href="chart-nvd3.html">Nvd3 charts</a></li>
+                                    <li><a href="chart-chartjs.html">Chartjs charts</a></li>
+                                    <li><a href="chart-peity.html">Peity Charts</a></li>
+                                    <li><a href="chart-sparkline.html">Sparkline Charts</a></li>
+                                    <li><a href="chart-other.html">Other Chart</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-place"></i><span>
-									Maps </span><span class="label label-primary pull-right">2</span></a>
-							<ul class="list-unstyled">
-								<li><a href="map-google.html"> Google Map</a></li>
-								<li><a href="map-vector.html"> Vector Map</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-place"></i><span> Maps </span><span
+                                        class="label label-primary pull-right">2</span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="map-google.html"> Google Map</a></li>
+                                    <li><a href="map-vector.html"> Vector Map</a></li>
+                                </ul>
+                            </li>
 
-						<li class="menu-title">More</li>
+                            <li class="menu-title">More</li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-mail"></i><span>
-									Mail </span> <span class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="mail-inbox.html">Inbox</a></li>
-								<li><a href="mail-compose.html">Compose Mail</a></li>
-								<li><a href="mail-read.html">View Mail</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-mail"></i><span> Mail </span> <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="mail-inbox.html">Inbox</a></li>
+                                    <li><a href="mail-compose.html">Compose Mail</a></li>
+                                    <li><a href="mail-read.html">View Mail</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-pages"></i><span>
-									Pages </span> <span class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="pages-blank.html">Blank Page</a></li>
-								<li><a href="pages-login.html">Login</a></li>
-								<li><a href="pages-register.html">Register</a></li>
-								<li><a href="pages-recoverpw.html">Recover Password</a></li>
-								<li><a href="pages-lock-screen.html">Lock Screen</a></li>
-								<li><a href="pages-confirmmail.html">Confirm Mail</a></li>
-								<li><a href="pages-404.html">404 Error</a></li>
-								<li><a href="pages-500.html">500 Error</a></li>
-							</ul></li>
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-pages"></i><span> Pages </span> <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="pages-blank.html">Blank Page</a></li>
+                                    <li><a href="pages-login.html">Login</a></li>
+                                    <li><a href="pages-register.html">Register</a></li>
+                                    <li><a href="pages-recoverpw.html">Recover Password</a></li>
+                                    <li><a href="pages-lock-screen.html">Lock Screen</a></li>
+                                    <li><a href="pages-confirmmail.html">Confirm Mail</a></li>
+                                    <li><a href="pages-404.html">404 Error</a></li>
+                                    <li><a href="pages-500.html">500 Error</a></li>
+                                </ul>
+                            </li>
 
-						<li class="has_sub"><a href="javascript:void(0);"
-							class="waves-effect waves-primary"><i class="md md-layers"></i><span>
-									Extras </span> <span class="menu-arrow"></span></a>
-							<ul class="list-unstyled">
-								<li><a href="extras-profile.html">Profile</a></li>
-								<li><a href="extras-team.html">Team Members</a></li>
-								<li><a href="extras-timeline.html">Timeline</a></li>
-								<li><a href="extras-invoice.html">Invoice</a></li>
-								<li><a href="extras-calendar.html">Calendar</a></li>
-								<li><a href="extras-email-template.html">Email template</a></li>
-								<li><a href="extras-maintenance.html">Maintenance</a></li>
-								<li><a href="extras-coming-soon.html">Coming-soon</a></li>
-								<li><a href="extras-gallery.html">Gallery</a></li>
-								<li><a href="extras-pricing.html">Pricing</a></li>
-								<li><a href="extras-faq.html">FAQ</a></li>
-								<li><a href="extras-treeview.html">Treeview</a></li>
-							</ul></li>
--->
+                            <li class="has_sub">
+                                <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="md md-layers"></i><span> Extras </span> <span class="menu-arrow"></span></a>
+                                <ul class="list-unstyled">
+                                    <li><a href="extras-profile.html">Profile</a></li>
+                                    <li><a href="extras-team.html">Team Members</a></li>
+                                    <li><a href="extras-timeline.html">Timeline</a></li>
+                                    <li><a href="extras-invoice.html">Invoice</a></li>
+                                    <li><a href="extras-calendar.html">Calendar</a></li>
+                                    <li><a href="extras-email-template.html">Email template</a></li>
+                                    <li><a href="extras-maintenance.html">Maintenance</a></li>
+                                    <li><a href="extras-coming-soon.html">Coming-soon</a></li>
+                                    <li><a href="extras-gallery.html">Gallery</a></li>
+                                    <li><a href="extras-pricing.html">Pricing</a></li>
+                                    <li><a href="extras-faq.html">FAQ</a></li>
+                                    <li><a href="extras-treeview.html">Treeview</a></li>
+                                </ul>
+                            </li>
+
+							!-->
+
 					</ul>
 
 					<ul class="in_bottom">
@@ -413,177 +417,192 @@
 												Base</a></li>
 									</ul>
 								</div>
+
 								<h4 class="text-center no-margin" id="date"></h4>
 							</div>
 						</div>
 					</div>
 
-					<div>
-						Store: <select id="storeId"
-							onchange="changeScopeWithStoreId(scope, document.getElementById(&quot;storeId&quot;).value)">
-						</select>
-						<div class="calendar-picker form-control" start="0" end="0">
-							<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
-						</div>
-					</div>
-
 					<div class="row">
-
-						<div class="col-lg-6">
+						<div class="col-lg-12">
 							<div class="card-box">
-								<div class="widget-chart text-center">
-									<ul class="list-inline">
-										<li>
-											<h4 class="text-muted m-t-20">Number of Visitors</h4>
-											<h3 class="m-b-0 totalVisitorCount"></h3>
-										</li>
-										<!-- 	<li>
-												<h4 class="text-muted m-t-20">People Count</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li> -->
-										<li>
-												<h4 class="text-muted m-t-20">Ratio of Frequent Users</h4>
-												
-												<h3 class="m-b-0 freq"></h3>
-										</li>
-
-										<li>
-												<h4 class="text-muted m-t-20">Bounce Rate</h4>
-												<h3 class="m-b-0 bounce"></h3>
-										</li>
-									</ul>
-
-									<div class="numberOfVisitChart">
-										<svg style="height: 400px;"></svg>
+								<div id="searchPanel" class="row in m-b-20">
+									<div class="col-lg-6">
+										<div class="calendar-picker form-control" start="0" end="0">
+											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
+										</div>
 									</div>
-
-									<div class="text-left m-t-20"
-										style="border-top: 1px solid grey;">
-										<div class="btn-group">
-											<button type="button"
-												class="btn btn-outline no-padding m-t-10"
-												data-toggle="dropdown" aria-expanded="false">
-												<span id="scope">Hourly Data</span> <span class="caret"></span>
-											</button>
-											<ul class="dropdown-menu" role="menu">
-												<li><a
-													href="javascript:changeScopeWithStoreId(0, document.getElementById(&quot;storeId&quot;).value);">Hourly
-														Data</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(1, document.getElementById(&quot;storeId&quot;).value);">Daily
-														Data</a></li>
-												<li><a
-													href="javascript:changeScopeWithStoreId(2, document.getElementById(&quot;storeId&quot;).value);">Monthly
-														Data</a></li>
-											</ul>
+									<div class="col-lg-6">
+										<div class="calendar-picker form-control" start="0" end="0">
+											<i class="glyphicon glyphicon-calendar fa fa-calendar"></i> <span></span>
 										</div>
 									</div>
 								</div>
+
+								<div class="row">
+									<div class="col-lg-12">
+										<button type="button" class="btn btn-primary btn-block"
+											data-toggle="collapse" data-target="#searchPanel"
+											aria-expanded="true">Compare</button>
+									</div>
+								</div>
+
+								<div id="resultPanel" class="row collapse m-t-20">
+									<div class="col-sm-6 col-lg-6">
+										<div class="card-box">
+											<h4 class="m-t-0 m-b-20 header-title">
+												<div class="text-center">
+													<b>People Count</b>
+												</div>
+											</h4>
+
+											<div class="widget-chart text-center">
+												<div class="numberOfVisitChart">
+													<svg style="height: 400px;"></svg>
+												</div>
+
+												<!--ul class="list-inline m-t-15">
+													<li>
+														<h4 class="text-muted m-t-20">Today</h4>
+														<h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Yesterday</h4>
+														<h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average</h4>
+														<h3 class="m-b-0 totalAverageDwellTime">0</h3>
+													</li>
+												</ul-->
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-sm-6 col-lg-6">
+										<div class="card-box">
+											<h4 class="m-t-0 m-b-20 header-title">
+												<div class="text-center">
+													<b>Daily Average User Dwell Time</b>
+												</div>
+											</h4>
+
+											<div class="widget-chart text-center">
+												<div class="averageDwellTimeChart">
+													<svg style="height: 400px;"></svg>
+												</div>
+
+												<!--ul class="list-inline m-t-15">
+													<li>
+														<h4 class="text-muted m-t-20">Today</h4>
+														<h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Yesterday</h4>
+														<h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average</h4>
+														<h3 class="m-b-0 totalAverageDwellTime">0</h3>
+													</li>
+												</ul-->
+											</div>
+
+										</div>
+									</div>
+									<!--
+									<div class="col-lg-8">
+										<div class="card-box">
+											<div class="widget-chart text-center">
+												<ul class="list-inline">
+													<li>
+														<h4 class="text-muted m-t-20">People Count</h4>
+														<h3 class="m-b-0">1000</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Average Dwell Time</h4>
+														<h3 class="m-b-0">523</h3>
+													</li>
+													<li>
+														<h4 class="text-muted m-t-20">Number of Visit</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+
+													<li>
+														<h4 class="text-muted m-t-20">Retention Rate</h4>
+														<h3 class="m-b-0">965</h3>
+													</li>
+												</ul>
+
+												<div class="numberOfVisitChart">
+													<svg style="height: 400px;"></svg>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-lg-4">
+										<div class="card-box">
+
+											<div class="clearfix">
+												<h4 class="m-t-0 header-title">
+													<b>People Count</b>
+												</h4>
+												<span class="m-t-10 dropcap text-primary">100</span>
+											</div>
+
+											<div class="clearfix">
+												<h4 class="m-t-40 header-title">
+													<b>Average Dwell Time</b>
+												</h4>
+												<div class="averageDwellTimeChart">
+													<svg style="height: 220px;"></svg>
+												</div>
+											</div>
+
+											<div class="clearfix">
+												<h4 class="m-t-10 header-title">
+													<b>Top Shop List</b>
+												</h4>
+												<table class="table">
+													<thead>
+														<tr>
+															<td>Top Shop
+															</th>
+															<td align="right">Visitors
+															</th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr>
+															<td>Shop #1</td>
+															<td align="right" id="s1scount">0</td>
+														</tr>
+														<tr>
+															<td>Shop #2</td>
+															<td align="right" id="s2scount">0</td>
+														</tr>
+														<tr>
+															<td>Shop #3</td>
+															<td align="right" id="s3scount">0</td>
+														</tr>
+														<tr>
+															<td>Shop #4</td>
+															<td align="right" id="s4scount">0</td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+									-->
+								</div>
+
+								<div class="clearfix"></div>
 							</div>
 						</div>
-
-						<div class="col-lg-6">
-							<div class="card-box">
-
-								<div class="clearfix">
-									<h4 class="m-t-0 header-title">
-										<b>Average Dwell Time (seconds)</b>
-									</h4>
-									<span class="m-t-10 dropcap text-primary totalAverageDwellTime">0</span>
-								</div>
-
-								<div class="clearfix">
-									<div class="averageDwellTimeChart">
-										<svg style="height: 400px;"></svg>
-									</div>
-								</div>
-								<!-- 
-									<div class="clearfix">
-										<h4 class="m-t-10 header-title"><b>Top Shop List</b></h4>
-										<table class="table">
-											<thead>
-												<tr>
-													<td>Top Shop</th>
-													<td align="right">Visitors</th>
-												</tr>
-											</thead>
-											<tbody>
-												<tr>
-													<td>Nike</td>
-													<td align="right">300</td>
-												</tr>
-												<tr>
-													<td>Apple</td>
-													<td align="right">200</td>
-												</tr>
-												<tr>
-													<td>Samsung</td>
-													<td align="right">100</td>
-												</tr>
-											</tbody>
-										</table>
-									</div> -->
-							</div>
-						</div>
-						
-						<!-- <div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>People Count</b></div></h4>
-
-									<div class="widget-chart text-center">
-										<div class="line-chart">
-											<svg style="height:150px;"></svg>
-										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
-												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
-									</div>
-								</div>
-							</div> -->
-
-
-						<!-- 	<div class="col-sm-6 col-lg-6">
-								<div class="card-box">
-									<h4 class="m-t-0 m-b-20 header-title"><div class="text-center"><b>Daily Average User Dwell Time</b></div></h4>
-									
-									<div class="widget-chart text-center">
-										<div class="bar-chart">
-											<svg style="height:400px;"></svg>
-										</div>
-										
-										<ul class="list-inline m-t-15">
-											<li>
-												<h4 class="text-muted m-t-20">Today</h4>
-												<h3 class="m-b-0">1000</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Yesterday</h4>
-												<h3 class="m-b-0">523</h3>
-											</li>
-											<li>
-												<h4 class="text-muted m-t-20">Average</h4>
-												<h3 class="m-b-0">965</h3>
-											</li>
-										</ul>
-									</div>
-									
-								</div>
-							</div> -->
 					</div>
-
-
 
 				</div>
 				<!-- end container -->
@@ -862,8 +881,8 @@
 
 	<script src="EEK/assets/js/jquery.core.js"></script>
 	<script src="EEK/assets/js/jquery.app.js"></script>
-
+	
 	<script src="EEK/assets/js/fypChangeAreaLS.js"></script>
-	<script src="EEK/assets/js/fypStoreLevelAnalysis.js"></script>
+	<script src="EEK/assets/js/fypCompareDate.js"></script>
 </body>
 </html>
