@@ -30,7 +30,7 @@ public class OUIAction extends ActionSupport implements ServletRequestAware, Ser
 				throw new IllegalArgumentException("MAC Addresses to be analyzed is not provided.");
 			else {
 				dataMap = new HashMap<String, Integer>();
-				try (UserAnalysis ua = new UserAnalysis(null, 0, Long.parseLong(userMac.replaceAll(":", ""), 16))) {
+				try (UserAnalysis ua = new UserAnalysis(null, 0, Long.parseLong(userMac.replaceAll(":", ""), 16), (short) 1)) {
 					ua.analyzeOUI().forEach(anOUI -> dataMap.put(anOUI, dataMap.getOrDefault(anOUI, 0) + 1));
 				} catch (SQLException e) {
 					throw new IllegalStateException("An error occurred during database access.", e);

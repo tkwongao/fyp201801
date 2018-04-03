@@ -118,7 +118,7 @@ function changeScope(sc) {
 		(function() {
 			var k = i;
 			$.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTimes[i],
@@ -159,7 +159,7 @@ function changeScope(sc) {
 				},
 			});
 			$.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTimes[i],
@@ -240,7 +240,7 @@ $( document ).ready(function() {
 			endDate: endDate,
 			minDate: '1 January 2015',
 			maxDate: 'now',
-			timePickerIncrement: 30
+			timePickerIncrement: 60
 		}, date_cb);
 	});
 	var button = $('button[data-target="#searchPanel"]');

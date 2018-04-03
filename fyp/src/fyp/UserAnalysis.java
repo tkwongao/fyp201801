@@ -10,6 +10,7 @@ public class UserAnalysis extends DatabaseConnection {
 	private static final byte WHOLE_MALL = -1;
 	private static final float NOT_MEANINGFUL = 0.5f;
 	private static final double MILLISECONDS_TO_SECONDS = 1000;
+	private final short maxLengthOfMovingAverage;
 	private final int storeId;
 	private final long macAddress;
 	private final String mallId;
@@ -20,10 +21,11 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param storeId
 	 * @param macAddress
 	 */
-	UserAnalysis(String mallId, int storeId, long macAddress) throws SQLException {
+	UserAnalysis(String mallId, int storeId, long macAddress, short maxLengthOfMovingAverage) throws SQLException {
 		this.mallId = mallId;
 		this.storeId = storeId;
 		this.macAddress = macAddress;
+		this.maxLengthOfMovingAverage = maxLengthOfMovingAverage;
 	}
 
 	/**
@@ -34,9 +36,12 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Integer[] userStayTime(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage) {
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the user stay time is not yet supported.");
+	Integer[] userStayTime(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
 		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
@@ -73,9 +78,12 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Integer[] loyaltyCheck(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage) {
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the user loyalty is not yet supported.");
+	Integer[] loyaltyCheck(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
 		String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
@@ -112,9 +120,12 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Number[] numberOfStoresVisited(final long[] period, final short numberOfIntervals, final short lengthOfMovingAverage) {
-		if (lengthOfMovingAverage != 1)
-			throw new IllegalArgumentException("The moving average for the number of stores visited by a user is not yet supported.");
+	Number[] numberOfStoresVisited(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
+			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
+		if (numberOfIntervals <= 0)
+			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
+		numberOfIntervals += lengthOfMovingAverage - 1;
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
 		if (storeId != WHOLE_MALL) {

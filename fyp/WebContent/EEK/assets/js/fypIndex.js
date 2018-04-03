@@ -195,7 +195,7 @@ if (typeof Skycons !== 'undefined') {
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({
-		type : "get",
+		type : "post",
 		url : "prepareStores",
 		data : { mallName: mallName },
 		traditional: true,
@@ -241,7 +241,7 @@ $(document).ready(function() {
 		var numberOfVisitors = [], numberOfVisitorsMA7 = [], averageDailyVisitors = 0;
 		function ajax1() {
 			return $.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTime,
@@ -282,7 +282,7 @@ $(document).ready(function() {
 		}
 		function ajax2() {
 			return $.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTime,
@@ -314,7 +314,7 @@ $(document).ready(function() {
 		}
 		function ajax3() {
 			return $.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTime,
@@ -351,7 +351,7 @@ $(document).ready(function() {
 			});
 		}
 		$.ajax({
-			type : "get",
+			type : "post",
 			url : "databaseConnection",
 			data : {
 				start : startTime,
@@ -390,7 +390,7 @@ $(document).ready(function() {
 			(function() {
 				var k = i;
 				anAjax = $.ajax({
-					type : "get",
+					type : "post",
 					url : "databaseConnection",
 					data : {
 						start : startTime,
@@ -447,7 +447,7 @@ $(document).ready(function() {
 				(function() {
 					var k = i;
 					anAjax = $.ajax({
-						type : "get",
+						type : "post",
 						url : "databaseConnection",
 						data : {
 							start : startTime,
