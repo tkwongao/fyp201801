@@ -283,6 +283,7 @@ function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 						text += " OR ";
 					text += prop;
 				}
+				$("#oui").addClass("input-group-addon");
 				$("#oui").text(text);
 			},
 			statusCode: {

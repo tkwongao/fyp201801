@@ -436,10 +436,9 @@
 												<span class="input-group-addon">User MAC Address</span>
 												<!-- The MAC address is simply just picking a frequent user. It is not to be appeared in the final version. -->
 												<input type="text" class="form-control"
-													placeholder="User MAC Address" value="AC:FD:CE:97:A0:5E"
-													id="macAddress"
+													placeholder="User MAC Address" id="macAddress"
 													pattern="^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$"
-													maxlength="17" />
+													maxlength="17" /> <span id="oui"></span>
 											</div>
 										</div>
 										<div class="col-lg-6 m-b-20">
@@ -471,10 +470,10 @@
 										</div>
 										<div class="col-lg-6 m-b-20">
 											<div class="input-group">
-												<span class="input-group-addon">Length of Moving Average</span>
-												<input type="number" class="form-control"
-													placeholder="Length of Moving Average"
-													value="5" id="lengthOfMovingAverage" min="2" max="127" />
+												<span class="input-group-addon">Length of Moving
+													Average</span> <input type="number" class="form-control"
+													placeholder="Length of Moving Average" value="5"
+													id="lengthOfMovingAverage" min="2" max="127" />
 											</div>
 										</div>
 										<div class="col-lg-6">
@@ -485,8 +484,6 @@
 							</div>
 						</div>
 					</div>
-
-					OUI: <span id="oui"></span>
 
 					<div class="row">
 						<div class="col-sm-6 col-lg-6">
@@ -556,7 +553,7 @@
 						</div>
 					</div>
 					<div class="row">
-						<div class="col-lg-6">
+						<div class="col-lg-12">
 							<div class="card-box">
 								<div class="widget-chart text-center">
 									<ul class="list-inline">

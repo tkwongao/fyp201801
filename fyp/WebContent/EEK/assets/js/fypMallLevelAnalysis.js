@@ -748,7 +748,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 				(function() {
 					var k = i;
 					anAjax = $.ajax({
-						type : "get",
+						type : "post",
 						url : "databaseConnection",
 						data : {
 							start : startTime,
@@ -805,7 +805,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					(function() {
 						var k = i;
 						anAjax = $.ajax({
-							type : "get",
+							type : "post",
 							url : "databaseConnection",
 							data : {
 								start : startTime,
@@ -848,7 +848,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({
-		type : "get",
+		type : "post",
 		url : "prepareStores",
 		data : { mallName: mallName },
 		traditional: true,

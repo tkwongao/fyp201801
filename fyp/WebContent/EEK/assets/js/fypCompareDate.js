@@ -118,7 +118,7 @@ function changeScope(sc) {
 		(function() {
 			var k = i;
 			$.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTimes[i],
@@ -159,7 +159,7 @@ function changeScope(sc) {
 				},
 			});
 			$.ajax({
-				type : "get",
+				type : "post",
 				url : "databaseConnection",
 				data : {
 					start : startTimes[i],
