@@ -8,7 +8,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.TestCase; 
 
 public class UserAnalysisTest extends TestCase{
 
@@ -20,10 +22,16 @@ public class UserAnalysisTest extends TestCase{
 	private String testMallId;		//	private final String mallId;
 	private long[] testPeriod; //final long[] period, 
 	private short testNumberOfIntervals;	// final short numberOfIntervals, a non-negative number range from 0 to positive integer with a default value
-	private short testLengthOfMovingAverage; //final short lengthOfMovingAverage
+	private short testLengthOfMovingAverage; //final short lengthOfMovingAverage, a non-negative number range from 0 to Byte.MAX_VALUE, i.e. 127
+		
+	private fyp.UserAnalysis testUserAnalysis;
 	
 	public UserAnalysisTest(String testName) {
 		super(testName);
+//		try {
+//			testUserAnalysis = new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testLengthOfMovingAverage);
+//		}
+//		catch(Exception e) {}
 	}
 	
 //	@BeforeClass
@@ -45,8 +53,11 @@ public class UserAnalysisTest extends TestCase{
 		testMallId = "";		
 		testPeriod = null; 
 		testNumberOfIntervals = 1;
-		testLengthOfMovingAverage = 1;
-		
+		testLengthOfMovingAverage = Byte.MAX_VALUE;
+		try {
+			testUserAnalysis = new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testLengthOfMovingAverage);
+		}
+		catch(Exception e) {}
 	}
 
 	@After
@@ -63,7 +74,15 @@ public class UserAnalysisTest extends TestCase{
 	}
 
 	@Test
+	public void test() {
+	}
+	
+	@Test
 	public void testUserAnalysis() {
+		try {
+		assertEquals(testUserAnalysis, new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testLengthOfMovingAverage));
+		}
+		catch(Exception e) {}
 	}
 
 	@Test
@@ -73,5 +92,16 @@ public class UserAnalysisTest extends TestCase{
 	@Test
 	public void testLoyaltyCheck() {
 	}
+
+	@Test
+	public void testNumberOfStoresVisited() {
+	}
+	
+	@Test
+	public void TestAnalyzeOUI(){
+		
+	}
+	
+	
 
 }
