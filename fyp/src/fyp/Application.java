@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,12 +25,14 @@ import com.opensymphony.xwork2.ActionSupport;
 public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
 	private static final ZonedDateTime PAST = ZonedDateTime.of(2015, 1, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
+	private final byte MAX_LENGTH_OF_MOVING_AVERAGE = Byte.MAX_VALUE;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
 	private HashMap<String, Number> dataMap = null;
 	private short interval, lengthOfMovingAverage;
 	private int storeId;
 	private long start, end;
+	private double bounceSD;
 	private String mallId = null, type = null, userMac = null;
 	private int[] dwellTimeThresholds = null;
 
@@ -44,6 +47,9 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 				break;
 			case 24:
 				internalInterval = ChronoUnit.DAYS;
+				break;
+			case 168:
+				internalInterval = ChronoUnit.WEEKS;
 				break;
 			case 720:
 				internalInterval = ChronoUnit.MONTHS;
@@ -74,25 +80,28 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			if (!startTime.isBefore(endTime) || !startTime.isBefore(endTimeForCompleteIntervals) || endTimeForCompleteIntervals.isAfter(endTime))
 				throw new IllegalArgumentException("The start time must be earlier than the end time");
 			dataMap = new HashMap<String, Number>();
-			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (short) 1),
-					eachIntervalData = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals, lengthOfMovingAverage);
-			for (int i = 0; i < overallData.length; i++) {
-				if (overallData[i].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + i, overallData[i]);
-			}
-			int prefixLength = overallData.length;
-			for (int i = 0; i < eachIntervalData.length; i++) {
-				if (eachIntervalData[i].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + (i + prefixLength), eachIntervalData[i]);
-			}
-			if (isLastIntervalIncomplete) {
-				int nextI = eachIntervalData.length + prefixLength;
-				eachIntervalData = makeDatabaseRequest(endTimeForCompleteIntervals, endTime, (short) 1, lengthOfMovingAverage);
-				if (eachIntervalData[0].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + nextI, eachIntervalData[0]);
+			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (short) 1), eachIntervalData = null;
+			if (!type.equals("oui"))
+				eachIntervalData = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals, lengthOfMovingAverage);
+			if (Objects.nonNull(overallData) && Objects.nonNull(eachIntervalData)) {
+				for (int i = 0; i < overallData.length; i++) {
+					if (overallData[i].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + i, overallData[i]);
+				}
+				int prefixLength = overallData.length;
+				for (int i = 0; i < eachIntervalData.length; i++) {
+					if (eachIntervalData[i].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + (i + prefixLength), eachIntervalData[i]);
+				}
+				if (isLastIntervalIncomplete) {
+					int nextI = eachIntervalData.length + prefixLength;
+					eachIntervalData = makeDatabaseRequest(endTimeForCompleteIntervals, endTime, (short) 1, lengthOfMovingAverage);
+					if (eachIntervalData[0].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + nextI, eachIntervalData[0]);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -111,32 +120,35 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	 * @param endTime
 	 * @param numberOfIntervals
 	 * @return
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException
 	 */
-	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) {
+	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) throws IOException {
 		long[] period = {startTime.toInstant().toEpochMilli(), endTime.toInstant().toEpochMilli()};
+		Number[] value;
 		switch (type) {
 		case "user":
 		case "loyalty":
 		case "numofstore":
-			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16))) {
+			try (UserAnalysis ua = new UserAnalysis(mallId, storeId, Long.parseLong(userMac.replaceAll(":", "").replaceAll("-", ""), 16), MAX_LENGTH_OF_MOVING_AVERAGE)) {
 				switch (type) {
 				case "user":
-					return ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.userStayTime(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "loyalty":
-					return ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.loyaltyCheck(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "numofstore":
-					return ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
+					value = ua.numberOfStoresVisited(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				default:
 					throw new AssertionError("makeDatabaseRequest() type switch");
 				}
 			} catch (SQLException e) {
 				throw new IllegalStateException("An error occurred during database access.", e);
 			}
+			break;
 		default:
-			Number[] value;
-			try (MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, (short) 0x100)) {
+			try (MallAndStoreAnalysis msa = new MallAndStoreAnalysis(mallId, storeId, MAX_LENGTH_OF_MOVING_AVERAGE)) {
 				switch (type) {
 				case "count":
 					value = msa.visitorCount(period, numberOfIntervals, lengthOfMovingAverage);
@@ -148,28 +160,40 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					value = msa.averageEnterToLeaveTimeDistribution(period, numberOfIntervals, lengthOfMovingAverage, dwellTimeThresholds);
 					break;
 				case "freq":
-					return msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
+					value = msa.freqRatio(period, numberOfIntervals, lengthOfMovingAverage);
+					break;
 				case "bounce":
-					return msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, 0.6/*0.75*/); // For debugging purpose change to 0.6
+					value = msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
+					break;
+				case "oui":
+					HashMap<String, Integer>[] raw = msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
+					dataMap = new HashMap<String, Number>();
+					if (raw.length != 1)
+						response.sendError(501);
+					else
+						dataMap.putAll(raw[0]);
+					return null;
 				default:
 					throw new IllegalArgumentException("Request type is invalid: " + type);
 				}
 			} catch (SQLException e) {
 				throw new IllegalStateException("An error occurred during database access.", e);
 			}
-			if (lengthOfMovingAverage == 1)
-				return value;
-			double firstMovingSum = 0;
-			for (short i = 0; i < lengthOfMovingAverage; i++)
-				firstMovingSum += value[i].doubleValue();
-			Double[] movingAverage = new Double[numberOfIntervals];
-			movingAverage[0] = firstMovingSum;
-			for (short i = 0; i < movingAverage.length - 1; i++)
-				movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
-			for (short i = 0; i < movingAverage.length; i++)
-				movingAverage[i] /= lengthOfMovingAverage;
-			return movingAverage;
 		}
+		if (lengthOfMovingAverage == 1)
+			return value;
+		double firstMovingSum = 0;
+		for (short i = 0; i < lengthOfMovingAverage; i++)
+			firstMovingSum += value[i].doubleValue();
+		Double[] movingAverage = new Double[numberOfIntervals];
+		movingAverage[0] = firstMovingSum;
+		for (short i = 0; i < movingAverage.length - 1; i++)
+			movingAverage[i + 1] = movingAverage[i] + value[i + lengthOfMovingAverage].doubleValue() - value[i].doubleValue();
+		for (short i = 0; i < movingAverage.length; i++)
+			movingAverage[i] /= lengthOfMovingAverage;
+		for (short i = 0; i < movingAverage.length; i++)
+			movingAverage[i] = (movingAverage[i] < 0 && movingAverage[i] > -1.0 / 4096) ? 0 : movingAverage[i];
+		return movingAverage;
 	}
 
 	@JSON(serialize = false) 
@@ -231,6 +255,11 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		return dwellTimeThresholds;
 	}
 
+	@JSON(serialize = false)
+	public double getBounceSD() {
+		return bounceSD;
+	}
+
 	@Override
 	public void setServletRequest(HttpServletRequest request) {
 		this.request = request;
@@ -275,5 +304,9 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 
 	public void setDwellTimeThresholds(int[] dwellTimeThresholds) {
 		this.dwellTimeThresholds = dwellTimeThresholds;
+	}
+
+	public void setBounceSD(double bounceSD) {
+		this.bounceSD = bounceSD;
 	}
 }
