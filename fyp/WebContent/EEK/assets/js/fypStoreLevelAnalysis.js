@@ -336,7 +336,7 @@ function drawDeviceBrandDistributionGraph(data, brands) {
 		return [];
 	}
 	nv.addGraph(function() {
-		chart.showLabels(true).labelType("percent");
+		chart.showLabels(true).labelType("percent").donut(true).donutRatio(1.0 / 3);
 		d3.select('.deviceBrandDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(chart.update);
@@ -775,7 +775,7 @@ $(document).ready(function() {
 				requireValueChange = true;
 				$("#daily").attr("disabled", "disabled");
 			}
-			else if (hours > 2016) {
+			else if (hours > 2880) {
 				if ($("#scope").val() <= 1) {
 					newValue = "2";
 					requireValueChange = true;

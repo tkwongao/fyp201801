@@ -218,8 +218,10 @@ function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 					var i = 0, sum = 0;
 					for ( var prop in json) {
 						var thisDataPoint = json["dataPoint" + i++];
-						if (i !== 1)
+						if (i !== 1) {
 							loyaltyCounting.push(thisDataPoint);
+							sum += thisDataPoint;
+						}
 						else
 							$("#loyalty").text(thisDataPoint);
 					}
@@ -430,7 +432,7 @@ $(document).ready(function() {
 				requireValueChange = true;
 				$("#daily").attr("disabled", "disabled");
 			}
-			else if (hours > 2016) {
+			else if (hours > 2880) {
 				if ($("#scope").val() <= 1) {
 					newValue = "2";
 					requireValueChange = true;
