@@ -310,8 +310,34 @@ function drawFreqBounceGraph(freq, bounce, maFreq, maBounce, maInterval, avgFreq
 		chart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
 			return moment(d).utcOffset(serverTimeZone).format(getTimeFormat(interval));
 		});
-		chart.yAxis.axisLabel('Ratio (%)').scale(100).tickFormat(d3.format('.2f'));
+		chart.yAxis.axisLabel('Ratio').scale(100).tickFormat(function (d) {
+			return d.toFixed(2) + "%";
+		});
 		d3.select('.freqBounceChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData()).transition().duration(500).call(chart);
+		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
+		nv.utils.windowResize(chart.update);
+		return chart;
+	});
+}
+
+function drawDeviceBrandDistributionGraph(data, brands) {
+	var chart = nv.models.pieChart();
+	charts.push(chart);
+	function getData(key) {
+		if (Array.isArray(data)) {
+			var values = [];
+			for (var i = 0; i < data.length; i++)
+				values.push({
+					x: brands[i],
+					y: data[i]
+				});
+			return values;
+		}
+		return [];
+	}
+	nv.addGraph(function() {
+		chart.showLabels(true).labelType("percent");
+		d3.select('.deviceBrandDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(chart.update);
 		return chart;
@@ -635,6 +661,52 @@ function changeScopeWithStoreId(sc, stid, lengthOfMovingAverage, bounceSD) {
 				}
 			}
 		});
+		$.ajax({
+			type : "post",
+			url : "databaseConnection",
+			data : {
+				start : startTime,
+				end : endTime,
+				mallId: area,
+				storeId : storeId,
+				interval : 0,
+				type : "oui",
+				lengthOfMovingAverage: 1
+			},
+			traditional: true,
+			success : function(json) {
+				var sorted = [], ouiDistribution = [], brands = [];
+				for ( var prop in json)
+					if (prop === "ZZZZUnknown") {
+						brands.push("Unknown");
+						ouiDistribution.push(json[prop]);
+						break;
+					}
+				for ( var prop in json)
+					if (prop === "ZZZZMinor brands") {
+						brands.push("Minor brands");
+						ouiDistribution.push(json[prop]);
+					}
+					else if (prop !== "ZZZZUnknown")
+						sorted.push([prop, json[prop]]);
+				sorted.sort(function(a, b) {
+					return a[1] - b[1];
+				});
+				for ( var item in sorted) {
+					brands.push(sorted[item][0]);
+					ouiDistribution.push(sorted[item][1]);
+				}
+				drawDeviceBrandDistributionGraph(ouiDistribution.reverse(), brands.reverse());
+			},
+			statusCode: {
+				501: function() {
+					window.location.href = "pages-501.html";
+				},
+				500: function() {
+					window.location.href = "pages-500.html";
+				}
+			}
+		});
 	}
 }
 
@@ -673,6 +745,7 @@ $(document).ready(function() {
 	drawAverageDwellTimeGraph([]);
 	drawAverageDwellTimeDistributionGraph([]);
 	drawFreqBounceGraph([], []);
+	drawDeviceBrandDistributionGraph([], []);
 	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
 		changeArea("base_1");
 	else

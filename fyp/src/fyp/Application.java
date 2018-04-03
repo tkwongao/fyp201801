@@ -11,6 +11,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -79,25 +80,28 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			if (!startTime.isBefore(endTime) || !startTime.isBefore(endTimeForCompleteIntervals) || endTimeForCompleteIntervals.isAfter(endTime))
 				throw new IllegalArgumentException("The start time must be earlier than the end time");
 			dataMap = new HashMap<String, Number>();
-			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (short) 1),
-					eachIntervalData = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals, lengthOfMovingAverage);
-			for (int i = 0; i < overallData.length; i++) {
-				if (overallData[i].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + i, overallData[i]);
-			}
-			int prefixLength = overallData.length;
-			for (int i = 0; i < eachIntervalData.length; i++) {
-				if (eachIntervalData[i].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + (i + prefixLength), eachIntervalData[i]);
-			}
-			if (isLastIntervalIncomplete) {
-				int nextI = eachIntervalData.length + prefixLength;
-				eachIntervalData = makeDatabaseRequest(endTimeForCompleteIntervals, endTime, (short) 1, lengthOfMovingAverage);
-				if (eachIntervalData[0].doubleValue() < 0)
-					throw new IllegalStateException("An error occurred during database access.");
-				dataMap.put("dataPoint" + nextI, eachIntervalData[0]);
+			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (short) 1), eachIntervalData = null;
+			if (!type.equals("oui"))
+				eachIntervalData = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals, lengthOfMovingAverage);
+			if (Objects.nonNull(overallData) && Objects.nonNull(eachIntervalData)) {
+				for (int i = 0; i < overallData.length; i++) {
+					if (overallData[i].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + i, overallData[i]);
+				}
+				int prefixLength = overallData.length;
+				for (int i = 0; i < eachIntervalData.length; i++) {
+					if (eachIntervalData[i].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + (i + prefixLength), eachIntervalData[i]);
+				}
+				if (isLastIntervalIncomplete) {
+					int nextI = eachIntervalData.length + prefixLength;
+					eachIntervalData = makeDatabaseRequest(endTimeForCompleteIntervals, endTime, (short) 1, lengthOfMovingAverage);
+					if (eachIntervalData[0].doubleValue() < 0)
+						throw new IllegalStateException("An error occurred during database access.");
+					dataMap.put("dataPoint" + nextI, eachIntervalData[0]);
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -116,10 +120,9 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	 * @param endTime
 	 * @param numberOfIntervals
 	 * @return
-	 * @throws SQLException 
-	 * @throws ClassNotFoundException 
+	 * @throws IOException
 	 */
-	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) {
+	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) throws IOException {
 		long[] period = {startTime.toInstant().toEpochMilli(), endTime.toInstant().toEpochMilli()};
 		Number[] value;
 		switch (type) {
@@ -163,7 +166,13 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					value = msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
 					break;
 				case "oui":
-					return msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
+					HashMap<String, Integer>[] raw = msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
+					dataMap = new HashMap<String, Number>();
+					if (raw.length != 1)
+						response.sendError(501);
+					else
+						dataMap.putAll(raw[0]);
+					return null;
 				default:
 					throw new IllegalArgumentException("Request type is invalid: " + type);
 				}

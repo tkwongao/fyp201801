@@ -76,7 +76,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Number[] ouiDistribution(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+	HashMap<String, Integer>[] ouiDistribution(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
 		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
 			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
 		if (numberOfIntervals <= 0)
@@ -85,27 +85,44 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		if (numberOfIntervals <= 0)
 			throw new IllegalArgumentException("Invalid number of intervals: " + numberOfIntervals);
 		final String dbName = (storeId == WHOLE_MALL) ? "site_results" : "store_results",
-				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?";
-		final String sql = "SELECT " + 
-				"  width_bucket, " + 
-				"  coalesce, " + 
-				"  count(*) " + 
-				"FROM (SELECT " + 
-				"        width_bucket, " + 
-				"        coalesce(vendor, 'Unknown') " + 
-				"      FROM oui\r\n" + 
-				"        RIGHT OUTER JOIN (SELECT " + 
-				"                            width_bucket, " + 
-				"                            upper(substring(to_hex, 1, 6)) " + 
-				"                          FROM (SELECT DISTINCT " + 
-				"                                  width_bucket(startts, ?, ?, ?), " + 
-				"                                  to_hex(did) " + 
-				"                                FROM " + dbName + 
-				"                                WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
-				"                                ORDER BY width_bucket) AS temp1) AS temp2 " + 
-				"          ON upper = mac) AS temp3 " + 
-				"GROUP BY width_bucket, coalesce " + 
+				storeIdFilter = (storeId == WHOLE_MALL) ? "AND buildingid = ?" : "AND storeid = ?",
+						prefix = "ZZZZ";
+		final String sql = "WITH temp4 AS (SELECT" + 
+				"                 width_bucket," + 
+				"                 coalesce," + 
+				"                 count(*)" + 
+				"               FROM (SELECT" + 
+				"                       width_bucket," + 
+				"                       coalesce(vendor, '" + prefix + "Unknown')" + 
+				"                     FROM oui" + 
+				"                       RIGHT OUTER JOIN (SELECT" + 
+				"                                           width_bucket," + 
+				"                                           upper(substring(to_hex, 1, 6))" + 
+				"                                         FROM (SELECT DISTINCT" + 
+				"                                                 width_bucket(startts, ?, ?, ?)," + 
+				"                                                 to_hex(did)" + 
+				"                                               FROM " + dbName + 
+				"                                               WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
+				"                                               ORDER BY width_bucket) AS temp1) AS temp2" + 
+				"                         ON upper = mac) AS temp3" + 
+				"               GROUP BY width_bucket, coalesce" + 
+				"               ORDER BY width_bucket, coalesce)," + 
+				"    temp5 AS (" + 
+				"      SELECT" + 
+				"        width_bucket," + 
+				"        '" + prefix + "Minor brands' :: VARCHAR AS coalesce," + 
+				"        SUM(CASE WHEN count <= ?" + 
+				"          THEN count" + 
+				"            ELSE 0 END)      AS filtered" + 
+				"      FROM temp4" + 
+				"      GROUP BY width_bucket)" + 
+				"SELECT *" + 
+				"FROM temp4 " + 
+				"WHERE count > ? " + 
+				"UNION SELECT *" + 
+				"      FROM temp5 " + 
 				"ORDER BY width_bucket, coalesce;";
+		final byte minorBrandThreshold = 0xf;
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
@@ -116,6 +133,8 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 				ps.setInt(6, storeId);
 			else
 				ps.setString(6, mallId);
+			ps.setByte(7, minorBrandThreshold);
+			ps.setByte(8, minorBrandThreshold);
 			@SuppressWarnings("unchecked")
 			HashMap<String, Integer>[] value = new HashMap[numberOfIntervals];
 			Arrays.fill(value, new HashMap<String, Integer>());
@@ -123,8 +142,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			while (rs.next())
 				value[rs.getShort("width_bucket") - 1].put(rs.getString("coalesce").trim(), rs.getInt("count"));
 			rs.close();
-			// TODO Process the value array
-			return null;
+			return value;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);
 		}
