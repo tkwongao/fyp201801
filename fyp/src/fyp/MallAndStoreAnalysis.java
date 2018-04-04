@@ -296,7 +296,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			Double[] value = new Double[numberOfIntervals];
 			Arrays.fill(value, 0.0);
 			ResultSet rs = ps.executeQuery();
-			final Integer[] denominators = visitorCount(period, numberOfIntervals, lengthOfMovingAverage);
+			final Integer[] denominators = visitorCount(period, numberOfIntervals, (short) 1);
 			while (rs.next()) {
 				final short index = (short) (rs.getShort("width_bucket") - 1);
 				Double ratio = rs.getInt("count") * 100 / denominators[index].doubleValue();
