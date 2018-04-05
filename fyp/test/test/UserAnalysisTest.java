@@ -10,6 +10,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import junit.framework.TestCase; 
 
 public class UserAnalysisTest extends TestCase{
@@ -99,6 +104,23 @@ public class UserAnalysisTest extends TestCase{
 	
 	@Test
 	public void TestAnalyzeOUI(){
+		
+/*
+		String sql = "SELECT vendor FROM oui WHERE mac = ?;";
+		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+			ps.setString(1, String.format("%1$" + 12 + "s", Long.
+			toHexString(macAddress)).replace(' ', '0').toUpperCase().substring(0, 6));
+			ArrayList<String> value = new ArrayList<String>(1);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next())
+				value.add(rs.getString("vendor").trim());
+			if (value.isEmpty())
+				value.add("Unknown");
+			return value;
+		} catch (SQLException e) {
+			throw new IllegalStateException("An error occurred during database access.", e);
+		}
+*/
 		
 	}
 	
