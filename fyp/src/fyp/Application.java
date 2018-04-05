@@ -24,7 +24,7 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
-	private static final ZonedDateTime PAST = ZonedDateTime.of(2015, 1, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
+	private static final ZonedDateTime PAST = ZonedDateTime.of(2016, 7, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
 	private final byte MAX_LENGTH_OF_MOVING_AVERAGE = Byte.MAX_VALUE;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;

@@ -12,10 +12,10 @@ function UpdateAllCharts() {
 function getTimeFormat(interval) {
 	switch (interval) {
 	case 1:
-		return 'DD MMM, HH:00';
+		return 'D MMM, HH:00';
 	case 24:
 	case 168:
-		return 'DD MMM YYYY';
+		return 'D MMM YYYY';
 	case 720:
 		return 'MMM YYYY';
 	default:
@@ -832,10 +832,10 @@ $(document).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 January 2015',
+			minDate: '1 July 2016',
 			maxDate: 'now',
 			timePickerIncrement: 60
 		}, date_cb);
 	});
-	ajaxGettingStores("base_1");
+	ajaxGettingStores(area);
 });
