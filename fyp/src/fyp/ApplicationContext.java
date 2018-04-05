@@ -29,6 +29,9 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 	public String execute() throws IOException, SQLException {
 		switch (mallName) {
 		case "base_1":
+		case "k11_sh_1":
+		case "k11_sh_2":
+		case "k11_sh_3":
 			String sql = "SELECT id, name FROM stores WHERE areaid = ?";
 			try (PreparedStatement ps = new DatabaseConnection().getConnection().prepareStatement(sql)) {
 				ps.setString(1, mallName);
