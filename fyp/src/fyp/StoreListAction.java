@@ -18,7 +18,7 @@ import org.apache.struts2.json.annotations.JSON;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-public class ApplicationContext extends ActionSupport implements ServletRequestAware, ServletResponseAware {
+public class StoreListAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = 5958518038208358569L;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;

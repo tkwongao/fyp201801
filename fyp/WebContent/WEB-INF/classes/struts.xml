@@ -16,7 +16,12 @@
 				<param name="root">dataMap</param>
 			</result>
 		</action>
-		<action name="prepareStores" class="fyp.ApplicationContext" method="execute">
+		<action name="prepareStores" class="fyp.StoreListAction" method="execute">
+			<result name="success" type="json">
+				<param name="root">dataMap</param>
+			</result>
+		</action>
+		<action name="prepareMall" class="fyp.MallListAction" method="execute">
 			<result name="success" type="json">
 				<param name="root">dataMap</param>
 			</result>
