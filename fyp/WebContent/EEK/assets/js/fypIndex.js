@@ -61,7 +61,7 @@ function drawPeopleCountingGraph(data, ma, avg) {
 	nv.addGraph(function() {
 		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
 		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("DD MMM YYYY");
+			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
 		});
 		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(peopleCountingChart);
@@ -93,7 +93,7 @@ function drawAverageDwellTimeGraph(data) {
 	nv.addGraph(function() {
 		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
 		averageDwellTimeChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("DD MMM YYYY");
+			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
 		});
 		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeChart);
@@ -134,7 +134,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 	nv.addGraph(function() {
 		averageDwellTimeDistributionChart.forceY([0, 1]).margin({"bottom": 80}).style('expand').useInteractiveGuideline(true).xScale(d3.time.scale()).showControls(false);
 		averageDwellTimeDistributionChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("DD MMM YYYY");
+			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
 		});
 		averageDwellTimeDistributionChart.yAxis.axisLabel('Percentage').scale(100).tickFormat(d3.format('.2f'));
 		d3.select('.averageDwellTimeDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeDistributionChart);
@@ -168,7 +168,7 @@ function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsS
 	nv.addGraph(function() {
 		peopleCountForTop5ShopChart.forceY([0, 1]).margin({"bottom": 80}).style('stack').useInteractiveGuideline(true).xScale(d3.time.scale()).showControls(false);
 		peopleCountForTop5ShopChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("DD MMM YYYY");
+			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
 		});
 		peopleCountForTop5ShopChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.d'));
 		d3.select('.peopleCountForTop5ShopChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountForTop5ShopData()).transition().duration(500).call(peopleCountForTop5ShopChart);

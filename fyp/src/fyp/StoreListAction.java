@@ -18,7 +18,7 @@ import org.apache.struts2.json.annotations.JSON;
 
 import com.opensymphony.xwork2.ActionSupport;
 
-public class ApplicationContext extends ActionSupport implements ServletRequestAware, ServletResponseAware {
+public class StoreListAction extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = 5958518038208358569L;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
@@ -29,8 +29,12 @@ public class ApplicationContext extends ActionSupport implements ServletRequestA
 	public String execute() throws IOException, SQLException {
 		switch (mallName) {
 		case "base_1":
+		case "k11_sh_1":
+		case "k11_sh_2":
+		case "k11_sh_3":
 			String sql = "SELECT id, name FROM stores WHERE areaid = ?";
-			try (PreparedStatement ps = new DatabaseConnection().getConnection().prepareStatement(sql)) {
+			try (DatabaseConnection dbc = new DatabaseConnection();
+					PreparedStatement ps = dbc.getConnection().prepareStatement(sql)) {
 				ps.setString(1, mallName);
 				ResultSet rs = ps.executeQuery();
 				dataMap = new HashMap<String, Number>();
