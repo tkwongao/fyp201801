@@ -404,11 +404,7 @@ $(document).ready(function() {
 	drawLoyaltyCountingGraph([]);
 	drawUserStayTimeGraph([]);
 	drawNumberOfStoresGraph([]);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
-	const endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -495,5 +491,10 @@ $(document).ready(function() {
 			timePickerIncrement: 60
 		}, date_cb);
 	});
-	ajaxGettingStores(area);
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("base_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });

@@ -278,12 +278,8 @@ $( document ).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
 	// To be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ"), endDate = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
+	var endOfYesterday = moment().startOf('day'), startDate = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ"), endDate = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker'), hours = 0;
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -390,7 +386,6 @@ $( document ).ready(function() {
 			showDropdowns: true
 		}, date_cb);
 	});
-	ajaxGettingStores(area);
 	var button = $('button[data-target="#searchPanel"]');
 	$('div#searchPanel').on('shown.bs.collapse', function (event) {
 		button.text('Compare');
@@ -407,4 +402,10 @@ $( document ).ready(function() {
 		$(this).prop('disabled', true);
 		event.stopPropagation();
 	});
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("base_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });

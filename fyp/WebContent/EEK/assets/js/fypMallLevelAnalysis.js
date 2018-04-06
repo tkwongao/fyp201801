@@ -969,9 +969,5 @@ $(document).ready(function() {
 			changeMall("base_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
-		if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-			changeArea("base_1");
-		else
-			changeArea(localStorage.getItem("area_id"));
-	}, 500));
+	}, 1000));
 });
