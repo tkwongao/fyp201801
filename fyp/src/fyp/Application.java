@@ -24,12 +24,13 @@ import com.opensymphony.xwork2.ActionSupport;
 
 public class Application extends ActionSupport implements ServletRequestAware, ServletResponseAware {
 	private static final long serialVersionUID = -706028425927965519L;
-	private static final ZonedDateTime PAST = ZonedDateTime.of(2016, 7, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
+	private static final ZonedDateTime PAST = ZonedDateTime.of(2005, 1, 1, 0, 0, 0, 0, ZoneId.of("Asia/Hong_Kong"));
 	private final byte MAX_LENGTH_OF_MOVING_AVERAGE = Byte.MAX_VALUE;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
 	private HashMap<String, Number> dataMap = null;
-	private short interval, lengthOfMovingAverage;
+	private byte lengthOfMovingAverage;
+	private short interval;
 	private int storeId;
 	private long start, end;
 	private double bounceSD;
@@ -80,7 +81,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 			if (!startTime.isBefore(endTime) || !startTime.isBefore(endTimeForCompleteIntervals) || endTimeForCompleteIntervals.isAfter(endTime))
 				throw new IllegalArgumentException("The start time must be earlier than the end time");
 			dataMap = new HashMap<String, Number>();
-			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (short) 1), eachIntervalData = null;
+			Number[] overallData = makeDatabaseRequest(startTime, endTime, (short) 1, (byte) 1), eachIntervalData = null;
 			if (!type.equals("oui"))
 				eachIntervalData = makeDatabaseRequest(startTime, endTimeForCompleteIntervals, numberOfIntervals, lengthOfMovingAverage);
 			if (Objects.nonNull(overallData) && Objects.nonNull(eachIntervalData)) {
@@ -122,7 +123,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	 * @return
 	 * @throws IOException
 	 */
-	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, short lengthOfMovingAverage) throws IOException {
+	private Number[] makeDatabaseRequest(ZonedDateTime startTime, ZonedDateTime endTime, short numberOfIntervals, byte lengthOfMovingAverage) throws IOException {
 		long[] period = {startTime.toInstant().toEpochMilli(), endTime.toInstant().toEpochMilli()};
 		Number[] value;
 		switch (type) {
@@ -166,7 +167,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 					value = msa.bounceRate(period, numberOfIntervals, lengthOfMovingAverage, bounceSD);
 					break;
 				case "oui":
-					HashMap<String, Integer>[] raw = msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage);
+					HashMap<String, Integer>[] raw = msa.ouiDistribution(period, numberOfIntervals, lengthOfMovingAverage, Integer.MIN_VALUE);
 					dataMap = new HashMap<String, Number>();
 					if (raw.length != 1)
 						response.sendError(501);
@@ -231,7 +232,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 	}
 
 	@JSON(serialize = false)
-	public int getLengthOfMovingAverage() {
+	public byte getLengthOfMovingAverage() {
 		return lengthOfMovingAverage;
 	}
 
@@ -286,7 +287,7 @@ public class Application extends ActionSupport implements ServletRequestAware, S
 		this.end = end;
 	}
 
-	public void setLengthOfMovingAverage(short lengthOfMovingAverage) {
+	public void setLengthOfMovingAverage(byte lengthOfMovingAverage) {
 		this.lengthOfMovingAverage = lengthOfMovingAverage;
 	}
 

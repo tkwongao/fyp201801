@@ -278,12 +278,8 @@ $( document ).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
 	// To be replaced by getting the current date
-	const endOfYesterday = moment().startOf('day'), startDate = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ"), endDate = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
+	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(7, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker'), hours = 0;
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -368,7 +364,7 @@ $( document ).ready(function() {
 			if (requireValueChange)
 				$("#scope").val(newValue).change();
 		};
-		date_cb(startDate, endDate);
+		date_cb(startDate.clone().subtract(7 * (1 - index), 'days'), endDate.clone().subtract(7 * (1 - index), 'days'));
 		$(this).daterangepicker({
 			"locale": {
 				"format": "D MMMM YYYY, HH:mm",
@@ -384,13 +380,12 @@ $( document ).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 July 2016',
+			minDate: '1 October 2016',
 			maxDate: 'now',
 			timePickerIncrement: 60,
 			showDropdowns: true
 		}, date_cb);
 	});
-	ajaxGettingStores(area);
 	var button = $('button[data-target="#searchPanel"]');
 	$('div#searchPanel').on('shown.bs.collapse', function (event) {
 		button.text('Compare');
@@ -407,4 +402,10 @@ $( document ).ready(function() {
 		$(this).prop('disabled', true);
 		event.stopPropagation();
 	});
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("base_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });
