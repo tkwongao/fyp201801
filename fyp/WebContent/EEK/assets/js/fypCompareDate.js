@@ -279,7 +279,7 @@ $( document ).ready(function() {
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	// To be replaced by getting the current date
-	var endOfYesterday = moment().startOf('day'), startDate = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ"), endDate = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
+	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(7, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker'), hours = 0;
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -364,7 +364,7 @@ $( document ).ready(function() {
 			if (requireValueChange)
 				$("#scope").val(newValue).change();
 		};
-		date_cb(startDate, endDate);
+		date_cb(startDate.clone().subtract(7 * (1 - index), 'days'), endDate.clone().subtract(7 * (1 - index), 'days'));
 		$(this).daterangepicker({
 			"locale": {
 				"format": "D MMMM YYYY, HH:mm",
@@ -380,7 +380,7 @@ $( document ).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 July 2016',
+			minDate: '1 October 2016',
 			maxDate: 'now',
 			timePickerIncrement: 60,
 			showDropdowns: true

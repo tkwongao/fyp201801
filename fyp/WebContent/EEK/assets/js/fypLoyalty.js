@@ -486,9 +486,10 @@ $(document).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 July 2016',
+			minDate: '1 October 2016',
 			maxDate: 'now',
-			timePickerIncrement: 60
+			timePickerIncrement: 60,
+			showDropdowns: true
 		}, date_cb);
 	});
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
