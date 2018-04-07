@@ -8,30 +8,80 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class DatabaseConnectionTest {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.Objects;
+import java.util.TimeZone;
 
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+import org.postgresql.Driver;
+
+import junit.framework.TestCase; 
+
+
+public class DatabaseConnectionTest extends TestCase{
+	private Connection connection;
+	private Statement stmnt;
+	private ResultSet rs;
+	
+//	@BeforeClass
+//	public static void setUpBeforeClass() throws Exception {
+//	}
+
+//	@AfterClass
+//	public static void tearDownAfterClass() throws Exception {
+//	}
 
 	@Before
-	public void setUp() throws Exception {
+	protected void setUp() throws Exception {
+		super.setUp();
+		try {
+			Class.forName("org.postgresql.Driver");
+			connection = DriverManager.getConnection("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456"); 
+			stmnt = connection.createStatement();   // To create a Statement
+		}
+		catch(ClassNotFoundException ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		connection = null;
+		stmnt = null;
+		rs = null;
 	}
 
 	@Test
 	public void testGetConnection() {
 		fail("Not yet implemented");
 	}
+	
+	@Test
+	public void testConnect(
+			/*String url, String user, String password */
+			) throws SQLException {
+			 
+//		DriverManager.registerDriver(new Driver());
+//		Connection c = DriverManager.getConnection(url, user, password);
+//		c.setAutoCommit(false);
+//		return c;
+	}
+
+	@Test
+	public void testClose() throws SQLException {
+		connection.close();
+	}
 
 }
+
+//https://coderanch.com/t/422261/engineering/JUnit-Testing
 
 /*
 package fyp;
