@@ -42,8 +42,14 @@ function changeMall(a, name) {
 	localStorage.setItem("mall_id", a);
 	document.getElementById("currentMall").innerHTML = name + " <span class=\"caret\"></span>";
 	var list = "", i = 0, newArea = null, newAreaName = null;
-	for (var prop in malls[a].areas) {
-		var name2 = malls[a].areas[prop].en;
+	var sorted = [];
+	for (var prop in malls[a].areas)
+		sorted.push([prop, malls[a].areas[prop].en]);
+	sorted.sort(function(a, b) {
+		return a[1].localeCompare( b[1] );
+	});
+	for (var i = 0; i < sorted.length; ) {
+		var prop = sorted[i][0], name2 = sorted[i][1];
 		list += "<li><a href=\"javascript:changeArea('" + prop + "', '" + name2 + "');\">" + name2 + "</a></li>";
 		if (i++ === 0) {
 			newArea = prop;
