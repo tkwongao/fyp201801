@@ -1,4 +1,4 @@
-// To be replaced by getting the current date
+//To be replaced by getting the current date
 const startTime = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf(), endTime = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf();
 var charts = [];
 var shops = [];
@@ -218,18 +218,9 @@ function ajaxGettingStores(mallName) {
 	});
 }
 
-$(document).ready(function() {
-	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
-	drawPeopleCountingGraph([]);
-	drawAverageDwellTimeGraph([]);
-	drawAverageDwellTimeDistributionGraph([]);
-	drawPeopleCountForTop5ShopGraph([], []);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
+function mainProcedure() {
+	var interval = 24;
 	$.when(ajaxGettingStores(area)).done(function(a1) {
-		var interval = 24;
 		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
 			$('.counter').counterUp({
 				delay : 100,
@@ -246,7 +237,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : -1,
 					interval : interval,
 					type : "count",
@@ -287,7 +278,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : -1,
 					interval : interval,
 					type : "count",
@@ -319,7 +310,7 @@ $(document).ready(function() {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : -1,
 					interval : interval,
 					type : "average",
@@ -356,7 +347,7 @@ $(document).ready(function() {
 			data : {
 				start : startTime,
 				end : endTime,
-				mallId: area,
+				mallId: mall,
 				storeId : -1,
 				interval : interval,
 				type : "avgTimeDistribution",
@@ -486,4 +477,18 @@ $(document).ready(function() {
 			});
 		});
 	});
+}
+
+$(document).ready(function() {
+	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
+	drawPeopleCountingGraph([]);
+	drawAverageDwellTimeGraph([]);
+	drawAverageDwellTimeDistributionGraph([]);
+	drawPeopleCountForTop5ShopGraph([], []);
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("base_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });

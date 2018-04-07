@@ -336,7 +336,7 @@ function drawDeviceBrandDistributionGraph(data, brands) {
 		return [];
 	}
 	nv.addGraph(function() {
-		chart.showLabels(true).labelType("percent").donut(true).donutRatio(1.0 / 3);
+		chart.showLabels(true).labelType("percent").donut(true).donutRatio(1.0 / 3).labelThreshold(1.0 / 0x40);
 		d3.select('.deviceBrandDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(chart.update);
@@ -746,11 +746,7 @@ $(document).ready(function() {
 	drawAverageDwellTimeDistributionGraph([]);
 	drawFreqBounceGraph([], []);
 	drawDeviceBrandDistributionGraph([], []);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
-	const endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -832,10 +828,16 @@ $(document).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 July 2016',
+			minDate: '1 October 2016',
 			maxDate: 'now',
-			timePickerIncrement: 60
+			timePickerIncrement: 60,
+			showDropdowns: true
 		}, date_cb);
 	});
-	ajaxGettingStores(area);
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("base_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });
