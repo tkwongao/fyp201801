@@ -1,13 +1,13 @@
 package fyp;
 
 class Point {
-	private int did;
+	private long did;
 	private String areaID;
 	private double x;
 	private double y;
 	private long ts;
 
-	public Point(int did, String areaID, double x, double y, long ts) {
+	public Point(long did, String areaID, double x, double y, long ts) {
 		this.did = did;
 		this.areaID = areaID;
 		this.x = x;
@@ -15,7 +15,7 @@ class Point {
 		this.ts = ts;
 	}
 
-	public int getDid() {
+	public long getDid() {
 		return did;
 	}
 
@@ -35,7 +35,7 @@ class Point {
 		return ts;
 	}
 
-	public void setDid(int did) {
+	public void setDid(long did) {
 		this.did = did;
 	}
 

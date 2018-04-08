@@ -5,13 +5,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class KMeans extends DatabaseConnection {
-	private int storeId;
 	private long macAddress;
-	private String mallId;
-
-	private Point center; 
+	private String areaId;
 
 	//Data members - instance variables
 	private double[][] data; //array of all records in the dataset from the database
@@ -22,28 +20,19 @@ public class KMeans extends DatabaseConnection {
 	private int numberOfDimensions;
 	private int numberOfClusters;
 
-	/**
-	 * 
-	 * @param mallId
-	 * @param storeId
-	 * @param macAddress
-	 */
-	KMeans(String mallId, int storeId, long macAddress) throws SQLException {
-		this.mallId = mallId;
-		this.storeId = storeId;
+	public KMeans(final long[] period, String areaId, long macAddress) throws SQLException {
+		numberOfDimensions = 2;
+		this.areaId = areaId;
 		this.macAddress = macAddress;
-	}
-
-	public KMeans() throws SQLException{
 		ArrayList<Point> points = new ArrayList<Point>();
-		String stmnt = "select did, CAST(areaid AS VARCHAR) areaID, x, y, ts from location_results WHERE  areaid = 'base_1';";
-		//at this stage, just consider location data at the BASE "base_1".
-		try (PreparedStatement ps = getConnection().prepareStatement(stmnt)) {
-			Point pt[] = new Point[0];
-			//Arrays.fill(value, 0);
+		String sql = "SELECT did, CAST(areaid AS VARCHAR) areaID, x, y, ts FROM location_results WHERE ts BETWEEN ? AND ? AND areaid = ?;";
+		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
+			ps.setLong(1, period[0]);
+			ps.setLong(2, period[1]);
+			ps.setString(3, areaId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				int did = rs.getInt("did");
+				long did = rs.getLong("did");
 				String areaID = rs.getString("areaID");
 				double x = rs.getDouble("x");
 				double y = rs.getDouble("y");
@@ -54,7 +43,6 @@ public class KMeans extends DatabaseConnection {
 			numberOfRows = points.size();
 			data = new double[numberOfRows][];
 			Arrays.parallelSetAll(data, a -> new double[] {points.get(a).getX(), points.get(a).getY()});
-			//return values;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);
 		}
@@ -71,21 +59,19 @@ public class KMeans extends DatabaseConnection {
 		else {
 			// randomly selected centroids
 			this.centroids = new double[this.numberOfClusters][];
-			ArrayList index = new ArrayList();
+			ArrayList<Integer> index = new ArrayList<Integer>();
+			Random r = new Random(15775);
 			for (int i = 0; i < numberOfClusters; ++i) {
 				int c = 0;
 				do {
-					c = (int) (Math.random() * numberOfRows);
+					c = r.nextInt(numberOfRows);
 				} while (index.contains(c)); //avoid duplicates
 				index.add(c);
 
 				//copy the value from "this.data[c]"
-				this.centroids[i] = new double[numberOfDimensions];
-				for (int j = 0; j < numberOfDimensions; j++)
-					this.centroids[i][j] = data[c][j];
+				this.centroids[i] = data[c].clone();
 			}	
 		}
-
 		double[][] c1 = this.centroids;
 		double threshold = 0.001;	//this can be tuned.
 		int round = 0;
@@ -108,7 +94,7 @@ public class KMeans extends DatabaseConnection {
 		System.out.println("This K-means clustering converges at iteration " + round + ", starting from iteration 1");
 	}
 
-	//Find the closest centroid for the point p
+	// Find the closest centroid for the point p
 	private int closest(double[] p) {
 		double minDist = EuclideanDistance(p, this.centroids[0]);	//calculate the minimum distance between point p  and the centroid
 		int label = 0;
@@ -166,7 +152,7 @@ public class KMeans extends DatabaseConnection {
 			++counts[clusterID];
 		}
 
-		//Finally, we compute the average
+		// Finally, we compute the average
 		for (int i = 0; i < numberOfClusters; i++) {
 			for (int j = 0; j < numberOfDimensions; j++)
 				newCentroids[i][j] /= counts[i];
@@ -186,7 +172,7 @@ public class KMeans extends DatabaseConnection {
 		}	
 		return maxValue < threshold;
 	}
-	
+
 	public int[] getLabels() {
 		return labels;
 	}
@@ -200,17 +186,14 @@ public class KMeans extends DatabaseConnection {
 	}
 
 	public void printResults() {
-		//		for(int i = 0; i < numberOfClusters; ++i) {
-		//			for(int j = 0; j < numberOfDimensions; ++i) {
-		//				System.out.println("In the "+ i + "th cluster, we have the centroid " + centroids[i][j] + "at (x, y) = (" + x + ", " + y + ").");
-		//			}
-		//		}
+		for (int i = 0; i < numberOfClusters; i++)
+			System.out.println("In the "+ i + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ").");
 	}
 
 	public static void main(String[] args) {
 		try {
-			KMeans KM = new KMeans();
-			KM.clustering(100, 100, null);	//100 clusters for creating 100 nodes (the number can be parameterized), maximum 100 iterations
+			KMeans KM = new KMeans(new long[] {1520816400000l, 1520817000000l}, "base_1", 0x20160ff1ce55l);
+			KM.clustering(0x5c, 100, null);	//100 clusters for creating 100 nodes (the number can be parameterized), maximum 100 iterations
 			KM.printResults();
 			KM.close();
 		}
