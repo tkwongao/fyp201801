@@ -4,13 +4,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class KMeans extends DatabaseConnection {
 	private int storeId;
 	private long macAddress;
 	private String mallId;
-
-	private ArrayList<Point> points;
 
 	private Point center; 
 
@@ -36,10 +35,11 @@ public class KMeans extends DatabaseConnection {
 	}
 
 	public KMeans() throws SQLException{
-		this.points = new ArrayList<Point>();
+		ArrayList<Point> points = new ArrayList<Point>();
 		String stmnt = "select did, CAST(areaid AS VARCHAR) areaID, x, y, ts from location_results WHERE  areaid = 'base_1';";
 		//at this stage, just consider location data at the BASE "base_1".
 		try (PreparedStatement ps = getConnection().prepareStatement(stmnt)) {
+			Point pt[] = new Point[0];
 			//Arrays.fill(value, 0);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -51,6 +51,9 @@ public class KMeans extends DatabaseConnection {
 				Point p = new Point(did, areaID, x, y, ts);
 				points.add(p);	//to get the record from the table
 			}
+			numberOfRows = points.size();
+			data = new double[numberOfRows][];
+			Arrays.parallelSetAll(data, a -> new double[] {points.get(a).getX(), points.get(a).getY()});
 			//return values;
 		} catch (SQLException e) {
 			throw new IllegalStateException("An error occurred during database access.", e);
@@ -69,7 +72,7 @@ public class KMeans extends DatabaseConnection {
 			// randomly selected centroids
 			this.centroids = new double[this.numberOfClusters][];
 			ArrayList index = new ArrayList();
-			for(int i = 0; i < numberOfClusters; ++i) {
+			for (int i = 0; i < numberOfClusters; ++i) {
 				int c = 0;
 				do {
 					c = (int) (Math.random() * numberOfRows);
@@ -93,13 +96,13 @@ public class KMeans extends DatabaseConnection {
 
 			//assign a new point to its closest centroid and its cluster
 			labels = new int[numberOfRows];
-			for(int i = 0; i < numberOfRows; ++i)
+			for (int i = 0; i < numberOfRows; i++)
 				labels[i] = closest(data[i]);
 
 			//compute the centroids based on the new assignments of points again
 			c1 = updateCentroids();
-			++round;
-			if((numberOfInterations > 0 && round >= numberOfInterations) || converge(this.centroids, c1, threshold))
+			round++;
+			if ((numberOfInterations > 0 && round >= numberOfInterations) || converge(this.centroids, c1, threshold))
 				break;
 		}
 		System.out.println("This K-means clustering converges at iteration " + round + ", starting from iteration 1");
@@ -107,9 +110,9 @@ public class KMeans extends DatabaseConnection {
 
 	//Find the closest centroid for the point p
 	private int closest(double[] p) {
-		double minDist= EuclideanDistance(p, this.centroids[0]);	//calculate the minimum distance between point p  and the centroid
+		double minDist = EuclideanDistance(p, this.centroids[0]);	//calculate the minimum distance between point p  and the centroid
 		int label = 0;
-		for(int i = 1; i < this.numberOfClusters; ++i) {
+		for(int i = 1; i < this.numberOfClusters; i++) {
 			double distance = EuclideanDistance(p, this.centroids[i]);	//Compare each centroid with the input parameter point p
 			if(minDist > distance) {	//update the minimum distance and the label of the point if a shorter distance is found 
 				minDist = distance;
@@ -122,7 +125,7 @@ public class KMeans extends DatabaseConnection {
 	//Compute the Euclidean distance between points p1 and p2 (as vectors) 
 	private double EuclideanDistance(double[] p1, double[] p2) {	//Default choice of our algorithm
 		double sum = 0;
-		for(int i = 0; i < this.numberOfDimensions; ++i)
+		for(int i = 0; i < this.numberOfDimensions; i++)
 			sum += Math.pow(p1[i] - p2[i], 2);
 		return Math.sqrt(sum);
 	}
