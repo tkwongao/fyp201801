@@ -138,7 +138,7 @@ public class KMeans extends DatabaseConnection {
 		int[] counts = new int[numberOfClusters];	//define the size of clusters
 
 		// initialize the centroids with zero value
-		for(int i = 0; i < numberOfClusters; i++) {
+		for (int i = 0; i < numberOfClusters; i++) {
 			counts[i] = 0;
 			newCentroids[i] = new double[numberOfDimensions];
 			for (int j = 0; j < numberOfDimensions; j++)
@@ -189,7 +189,11 @@ public class KMeans extends DatabaseConnection {
 		for (int i = 0; i < numberOfClusters; i++)
 			System.out.println("In the "+ i + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ").");
 	}
-
+	
+	// TODO Get all the nodes, x, y and importance.
+	// TODO importance of each node; ? 2 ways: ts array or count the # of points in a node
+	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
+	
 	public static void main(String[] args) {
 		try {
 			KMeans KM = new KMeans(new long[] {1520816400000l, 1520817000000l}, "base_1", 0x20160ff1ce55l);
