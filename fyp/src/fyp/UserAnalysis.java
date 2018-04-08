@@ -21,7 +21,7 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param storeId
 	 * @param macAddress
 	 */
-	UserAnalysis(String mallId, int storeId, long macAddress, byte maxLengthOfMovingAverage) throws SQLException {
+	public UserAnalysis(String mallId, int storeId, long macAddress, byte maxLengthOfMovingAverage) throws SQLException {
 		if (maxLengthOfMovingAverage <= 1)
 			throw new IllegalArgumentException("Invalid Maximum Moving Average Length: " + maxLengthOfMovingAverage);
 		this.mallId = mallId;

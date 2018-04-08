@@ -6,14 +6,17 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({ 
-	ApplicationContextTest.class, 
 	ApplicationTest.class, 
-	DatabaseConnectionTest.class,
-	MallAndStoreAnalysisTest.class, 
+	DatabaseConnectionTest.class, 
+	KMeansTest.class, 
+	MallAndStoreAnalysisTest.class,
+	MallListActionTest.class, 
 	OUIActionTest.class, 
+	StoreListActionTest.class, 
 	UserAnalysisTest.class })
 public class AllTests {
 
 }
+
 
 //https://www.tutorialspoint.com/junit/junit_test_framework.htm

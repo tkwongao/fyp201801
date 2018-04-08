@@ -27,20 +27,32 @@ import junit.framework.TestCase;
 
 public class DatabaseConnectionTest extends TestCase{
 	private Connection connection;
+	private PreparedStatement stmt;
 	private Statement stmnt;
 	private ResultSet rs;
+	private String url;
+	private String user;
+	private String password;
 	
-//	@BeforeClass
-//	public static void setUpBeforeClass() throws Exception {
-//	}
-
-//	@AfterClass
-//	public static void tearDownAfterClass() throws Exception {
-//	}
+	@BeforeClass
+	public void setUpBeforeClass() throws Exception {
+		connection = null;
+        stmt = null;
+        stmnt = null;
+	}
+	
+	@Before
+	public void before() throws SQLException {
+        connection = DriverManager.getConnection(url, user, password);
+        stmt = connection.prepareStatement("");
+        stmnt = connection.createStatement();
+        
+	}
 
 	@Before
 	protected void setUp() throws Exception {
 		super.setUp();
+		
 		try {
 			Class.forName("org.postgresql.Driver");
 			connection = DriverManager.getConnection("jdbc:postgresql://143.89.50.151:7023/fypps", "fyp", "123456"); 
@@ -51,11 +63,30 @@ public class DatabaseConnectionTest extends TestCase{
 		}
 	}
 
+	//tearDown used to close the connection or clean up activities
 	@After
 	public void tearDown() throws Exception {
 		connection = null;
+   	 	stmt = null;
 		stmnt = null;
+   	 	url = null;
+   	 	user = null;
+   	 	password = null;
 		rs = null;
+	}
+	
+	//clean up method
+	@AfterClass
+	public void tearDownAfterClass() throws Exception {
+		if (stmt != null) {
+			stmt = null;
+        }
+		if (stmnt != null) {
+			stmnt = null;
+        }
+        if (connection != null) {
+        		connection = null;
+        }
 	}
 
 	@Test
