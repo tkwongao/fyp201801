@@ -9,17 +9,19 @@ import java.util.Objects;
 import java.util.Random;
 
 public class KMeans extends DatabaseConnection {
-	private final short MAX_FETCH_SIZE = 0x1CC;
+	private final short MAX_FETCH_SIZE = 0x190;
 
 	private long macAddress;
 	private String areaId;
 
-	//Data members - instance variables
+	// Data members - instance variables
 	private double[][] data; //array of all records in the dataset from the database
 	private int[] labels, labelCount; //labels of the generated clusters
-	private int[] existedLabels;	//if the original labels exist, load them to "existedLabels". We can compute accuracy by computing "labels" and "existedLabels", though the accuracy function/loss function is not yet defined.
+	// if the original labels exist, load them to "existedLabels".
+	// We can compute accuracy by computing "labels" and "existedLabels", though the accuracy function/loss function is not yet defined.
+	private int[] existedLabels;	
 	private ArrayList<Long>[] ts;
-	private double[][] centroids;		//the center of clusters
+	private double[][] centroids; //the center of clusters
 	private int numberOfRows, numberOfClusters;
 	private byte numberOfDimensions;
 	private ArrayList<Point> points;
@@ -38,7 +40,8 @@ public class KMeans extends DatabaseConnection {
 			ResultSet rs = ps.executeQuery();
 			int i = 0, j = 0;
 			while (rs.next()) {
-				points.add(new Point(rs.getLong("did"), rs.getString("areaid"), rs.getDouble("x"), rs.getDouble("y"), rs.getLong("ts"))); //to get the record from the table
+				// to get the record from the table
+				points.add(new Point(rs.getLong("did"), rs.getString("areaid"), rs.getDouble("x"), rs.getDouble("y"), rs.getLong("ts")));
 				if (++i % MAX_FETCH_SIZE == 0)
 					System.err.println(++j + " fetches are processed.");
 			}
@@ -55,17 +58,18 @@ public class KMeans extends DatabaseConnection {
 	 * Perform k-means clustering with the specified number of clusters and distance comparison metrics (Euclidean distance or Manhattan distance)
 	 * @param numberOfClusters
 	 * @param numberOfIterations The number of iterations. If it is set to -1, the k-means iteration is only terminated by the converging condition.
-	 * @param centroids Optional parameter for the initial centroids. If set to {@code null}, the initial centroids will be generated randomly.
+	 * @param cens Optional parameter for the initial centroids. If set to {@code null}, the initial centroids will be generated randomly.
 	 */
 	@SuppressWarnings("unchecked")
-	public void clustering(int numOfClusters, int numberOfIterations, double[][] centroids) {
-		//note: To optimize the algorithm, the initial centroids can be initialized to any values of the locations inside the stores or the locations of passby/corridors in the shopping malls (e.g. K11) or the BASE
+	public void clustering(int numOfClusters, int numberOfIterations, double[][] cens) {
+		// note: To optimize the algorithm, the initial centroids can be initialized to any values of the locations inside the stores
+		// or the locations of passby/corridors in the shopping malls (e.g. K11) or the BASE
 		numberOfClusters = Math.min(numOfClusters, numberOfRows);
-		if (centroids != null)
-			this.centroids = centroids;
+		if (cens != null)
+			centroids = cens;
 		else {
 			// randomly selected centroids
-			this.centroids = new double[numberOfClusters][];
+			centroids = new double[numberOfClusters][];
 			ArrayList<Integer> index = new ArrayList<Integer>();
 			Random r = new Random(15775);
 			for (int i = 0; i < numberOfClusters; ++i) {
@@ -92,19 +96,19 @@ public class KMeans extends DatabaseConnection {
 				if (c > 0) {
 					index.add(c);
 					// copy the value from "data[c]"
-					this.centroids[i] = data[c].clone();
+					centroids[i] = data[c].clone();
 				}
 				if (numberOfClusters == 0)
 					throw new RuntimeException("Cannot generate valid clusters!");
 			}
 		}
-		double[][] c1 = this.centroids;
+		double[][] c1 = centroids;
 		final double THRESHOLD = 0.001;	// this can be tuned.
 		int round = 0;
 
 		while (true) {
 			// update this.centroids based on the assignments
-			this.centroids = c1;
+			centroids = c1;
 
 			// assign a new point to its closest centroid and its cluster
 			labels = new int[numberOfRows];
@@ -117,17 +121,17 @@ public class KMeans extends DatabaseConnection {
 			// compute the centroids based on the new assignments of points again
 			c1 = updateCentroids();
 			round++;
-			if ((numberOfIterations > 0 && round >= numberOfIterations) || converge(this.centroids, c1, THRESHOLD))
+			if ((numberOfIterations > 0 && round >= numberOfIterations) || converge(centroids, c1, THRESHOLD))
 				break;
 		}
 		ts = (ArrayList<Long>[]) new ArrayList<?>[numberOfClusters];
 		Arrays.fill(ts, new ArrayList<Long>());
 		for (int i = 0; i < numberOfRows; i++)
 			ts[labels[i]].add(points.get(i).getTs());
-		
+
 		System.out.println("This K-means clustering converges at iteration " + round + ", starting from iteration 1");
 		for (int i = 0; i < numberOfClusters; i++)
-			System.out.println("In the " + i + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ") with " + labelCount[i] + " items.");
+			System.out.println("In the " + (i + 1) + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ") with " + labelCount[i] + " items.");
 	}
 
 	private final boolean checkDuplicate(final ArrayList<Integer> index, final int value) {
@@ -145,7 +149,7 @@ public class KMeans extends DatabaseConnection {
 			}
 		return false;
 	}
-	
+
 	/**
 	 * Find the closest centroid for the point p
 	 * @param p
@@ -163,7 +167,7 @@ public class KMeans extends DatabaseConnection {
 		}
 		return label;
 	}
-	
+
 	/**
 	 * Compute the Euclidean distance between points p1 and p2 (as vectors).
 	 * @param p1
