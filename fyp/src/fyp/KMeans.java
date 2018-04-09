@@ -126,6 +126,8 @@ public class KMeans extends DatabaseConnection {
 			ts[labels[i]].add(points.get(i).getTs());
 		
 		System.out.println("This K-means clustering converges at iteration " + round + ", starting from iteration 1");
+		for (int i = 0; i < numberOfClusters; i++)
+			System.out.println("In the " + i + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ") with " + labelCount[i] + " items.");
 	}
 
 	private final boolean checkDuplicate(final ArrayList<Integer> index, final int value) {
@@ -247,23 +249,14 @@ public class KMeans extends DatabaseConnection {
 		return numberOfRows;
 	}
 
-	public void printResults() {
-		for (int i = 0; i < numberOfClusters; i++)
-			System.out.println("In the " + i + "th cluster, we have the centroid at (x, y) = (" + centroids[i][0] + ", " + centroids[i][1] + ") with " + labelCount[i] + " items.");
-	}
-
 	// TODO Get all the nodes, x, y and importance.
 	// TODO importance of each node; ? 2 ways: need also implement ts array
 	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
 
 	public static void main(String[] args) {
-		try {
-			KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", 0x20160ff1ce55l);
+		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", 0x20160ff1ce55l)) {	
 			KM.clustering(0x5c, 0x5b, null);	//100 clusters for creating 100 nodes (the number can be parameterized), maximum 100 iterations
-			KM.printResults();
-			KM.close();
-		}
-		catch (SQLException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 	}
