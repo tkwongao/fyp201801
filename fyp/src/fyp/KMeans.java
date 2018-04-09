@@ -255,7 +255,7 @@ public class KMeans extends DatabaseConnection {
 
 	public static void main(String[] args) {
 		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", 0x20160ff1ce55l)) {	
-			KM.clustering(0x5c, 0x5b, null);	//100 clusters for creating 100 nodes (the number can be parameterized), maximum 100 iterations
+			KM.clustering(0x64, Byte.MAX_VALUE, null);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
