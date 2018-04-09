@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.Random;
 
 public class KMeans extends DatabaseConnection {
-	private final short MAX_FETCH_SIZE = 0x190;
+	private final short FETCH_SIZE = 0x190;
 
 	private long macAddress;
 	private String areaId;
@@ -36,13 +36,13 @@ public class KMeans extends DatabaseConnection {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
 			ps.setString(3, areaId);
-			ps.setFetchSize(MAX_FETCH_SIZE);
+			ps.setFetchSize(FETCH_SIZE); // Fetch FETCH_SIZE (400) rows a time.
 			ResultSet rs = ps.executeQuery();
 			int i = 0, j = 0;
 			while (rs.next()) {
 				// to get the record from the table
 				points.add(new Point(rs.getLong("did"), rs.getString("areaid"), rs.getDouble("x"), rs.getDouble("y"), rs.getLong("ts")));
-				if (++i % MAX_FETCH_SIZE == 0)
+				if (++i % FETCH_SIZE == 0)
 					System.err.println(++j + " fetches are processed.");
 			}
 			System.out.println("There are total " + i + " records.");
@@ -93,7 +93,7 @@ public class KMeans extends DatabaseConnection {
 						}
 					}
 				} while (checkDuplicate(index, c)); // avoid duplicates
-				if (c > 0) {
+				if (c >= 0) {
 					index.add(c);
 					// copy the value from "data[c]"
 					centroids[i] = data[c].clone();
@@ -252,9 +252,7 @@ public class KMeans extends DatabaseConnection {
 	public int getNumberOfRows() {
 		return numberOfRows;
 	}
-
-	// TODO Get all the nodes, x, y and importance.
-	// TODO importance of each node; ? 2 ways: need also implement ts array
+	
 	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
 
 	public static void main(String[] args) {
