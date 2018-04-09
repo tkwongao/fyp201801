@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import junit.framework.TestCase; 
 
 public class UserAnalysisTest extends TestCase{
-
 	private static byte testWholeMall;	//	private static final byte WHOLE_MALL = -1;
 	private static float testNotMeaningful;	//private static final float NOT_MEANINGFUL = 0.5f;
 	private static double testMillisecondsToSeconds;	//	private static final double MILLISECONDS_TO_SECONDS = 1000;
+	private byte testMaxLengthOfMovingAverage;	//	private final byte maxLengthOfMovingAverage, a non-positive number of byte type range from 2 to "Byte.MAX_VALUE", i.e. 127
 	private int testStoreId;	//	private final int storeId, possibles values are "WHOLE_MALL"
 	private long testMacAddress;		//	private final long macAddress;
 	private String testMallId;		//	private final String mallId;
@@ -53,14 +53,15 @@ public class UserAnalysisTest extends TestCase{
 		testWholeMall = -1;
 		testNotMeaningful = 0.5f;
 		testMillisecondsToSeconds = 1000;
+		testMaxLengthOfMovingAverage = Byte.MAX_VALUE;	//127
 		testStoreId = 1;
 		testMacAddress = 1;	
 		testMallId = "";		
 		testPeriod = null; 
 		testNumberOfIntervals = 1;
 		testLengthOfMovingAverage = Byte.MAX_VALUE;
-		try {
-			testUserAnalysis = new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testLengthOfMovingAverage);
+		try {	
+			testUserAnalysis = new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testMaxLengthOfMovingAverage);
 		}
 		catch(Exception e) {}
 	}
@@ -70,6 +71,7 @@ public class UserAnalysisTest extends TestCase{
 		testWholeMall = 0;
 		testNotMeaningful = 0.0f;
 		testMillisecondsToSeconds = 0;
+		testMaxLengthOfMovingAverage = 2;
 		testStoreId = 0;
 		testMacAddress = 0L;
 		testMallId = null;
@@ -85,7 +87,7 @@ public class UserAnalysisTest extends TestCase{
 	@Test
 	public void testUserAnalysis() {
 		try {
-		assertEquals(testUserAnalysis, new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testLengthOfMovingAverage));
+		assertEquals(testUserAnalysis, new fyp.UserAnalysis(testMallId, testStoreId, testMacAddress, testMaxLengthOfMovingAverage));
 		}
 		catch(Exception e) {}
 	}
