@@ -55,7 +55,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(7, storeId);
@@ -97,7 +97,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(7, storeId);
@@ -143,7 +143,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			ps.setString(7, mallId);
 			Integer[] value = new Integer[numberOfIntervals];

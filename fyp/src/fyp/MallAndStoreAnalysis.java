@@ -54,7 +54,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -100,10 +100,10 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 				"                     FROM oui" + 
 				"                       RIGHT OUTER JOIN (SELECT" + 
 				"                                           width_bucket," + 
-				"                                           upper(substring(to_hex, 1, 6))" + 
+				"                                           upper(substring(lpad, 1, 6))" + 
 				"                                         FROM (SELECT DISTINCT" + 
 				"                                                 width_bucket(startts, ?, ?, ?)," + 
-				"                                                 to_hex(did)" + 
+				"                                                 lpad(to_hex((did)), 12, '0')" + //  - (did >> 41 << 41)) + (((did >> 41) - (did >> 41) % 2) << 41
 				"                                               FROM " + dbName + 
 				"                                               WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
 				"                                               ORDER BY width_bucket) AS temp1) AS temp2" + 
@@ -131,7 +131,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -180,7 +180,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -244,7 +244,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -295,7 +295,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -350,7 +350,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setDouble(1, MILLISECONDS_TO_SECONDS);
 			ps.setLong(2, period[0]);
-			ps.setLong(3, period[1]);
+			ps.setLong(3, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(4, storeId);
 			else
