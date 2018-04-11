@@ -103,9 +103,11 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 				"                                           upper(substring(lpad, 1, 6))" + 
 				"                                         FROM (SELECT DISTINCT" + 
 				"                                                 width_bucket(startts, ?, ?, ?)," + 
-				"                                                 lpad(to_hex((did)), 12, '0')" + //  - (did >> 41 << 41)) + (((did >> 41) - (did >> 41) % 2) << 41
+				"                                                 lpad(to_hex((did)), 12, '0')" + 
 				"                                               FROM " + dbName + 
 				"                                               WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
+				// Condition in the next line is for not selecting locally administered MAC address (the 7th out of 48th digit, counting from the left hand side, is 1).
+				"												AND did - ((did - (did >> 41 << 41)) + (((did >> 41) - (did >> 41) % 2) << 41)) = 0" + 
 				"                                               ORDER BY width_bucket) AS temp1) AS temp2" + 
 				"                         ON upper = mac) AS temp3" + 
 				"               GROUP BY width_bucket, coalesce" + 
