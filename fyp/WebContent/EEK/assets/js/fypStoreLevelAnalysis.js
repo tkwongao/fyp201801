@@ -684,7 +684,7 @@ function changeScopeWithStoreId(sc, stid, lengthOfMovingAverage, bounceSD) {
 					}
 				for ( var prop in json)
 					if (prop === "ZZZZMinor brands") {
-						brands.push("Minor brands");
+						brands.push("Others");
 						ouiDistribution.push(json[prop]);
 					}
 					else if (prop !== "ZZZZUnknown")
