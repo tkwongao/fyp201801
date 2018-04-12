@@ -44,7 +44,7 @@ function drawPeopleCountingGraph(data) {
 	function getPeopleCountingData() {
 		var datum = [];
 		if (Array.isArray(data)) {
-			var colors = ["#00b19d", "#ef5350"];
+			var colors = ["#F44336", "#4caf50"];
 			for (var i = 0; i < data.length; i++) {
 				var values = [];
 				for (var j = 0; j < data[i].length; j++)
@@ -57,7 +57,7 @@ function drawPeopleCountingGraph(data) {
 					key: 'Number of Visit for the period between ' + moment(startTimes[i]).utcOffset(serverTimeZone).format(getTimeFormat(interval)) + ' and ' +
 					moment(endTimes[i]).utcOffset(serverTimeZone).format(getTimeFormat(interval)),
 					color: colors[i],
-					area: true
+					area: false
 				});
 			}
 		}
@@ -126,7 +126,7 @@ function drawAverageDwellTimeGraph(data) {
 	});
 }
 
-function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
+function changeScope(sc, stid) {
 	switch (Number(sc)) {
 	case 0:
 		interval = 1;
@@ -146,10 +146,6 @@ function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
 	}
 	if (invalidDateBit)
 		alert("Please enter valid date ranges for comparison.");
-	else if (bounceSD < 0 || bounceSD > 3)
-		alert("Please enter a valid threshold for Bounce Rate in standard derivation, between 0 and 3.");
-	else if (lengthOfMovingAverage < 2 || lengthOfMovingAverage > 127)
-		alert("Please enter a valid length of Moving Average, between 2 and 127.");
 	else
 	{
 		var valFromDB1 = new Array(2);
@@ -394,7 +390,7 @@ $( document ).ready(function() {
 	$('div#searchPanel').on('hidden.bs.collapse', function (event) {
 		button.text('Revise Search');
 		button.prop('disabled', false);
-		changeScope(document.getElementById("scope").value, document.getElementById("storeId").value, document.getElementById("lengthOfMovingAverage").value, document.getElementById("bounceSD").value);
+		changeScope(document.getElementById("scope").value, document.getElementById("storeId").value);
 	})
 	$('button[data-target="#searchPanel"]').click(function(event) {	
 		$('div#searchPanel').collapse('toggle');
