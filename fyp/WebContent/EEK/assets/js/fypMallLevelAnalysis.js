@@ -1,5 +1,5 @@
 var interval = 1, startTime = 0, endTime = 0;
-var charts = [], shops = [], dwellTimeThresholds = [120, 300, 600, 1200, 1800];
+var charts = [], shops = [];
 
 function UpdateAllCharts() {
 	for (var i in charts)

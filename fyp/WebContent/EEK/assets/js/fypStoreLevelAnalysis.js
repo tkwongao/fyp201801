@@ -1,7 +1,6 @@
 var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
-var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
 
 function UpdateAllCharts() {
 	for (var i in charts)
