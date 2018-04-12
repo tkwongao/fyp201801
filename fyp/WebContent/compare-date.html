@@ -185,18 +185,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 m-b-20">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Length of Moving Average</span>
-                                            <input type="number" class="form-control" placeholder="Length of Moving Average" value="5" id="lengthOfMovingAverage" min="2" max="127" />
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 m-b-20">
-                                        <div class="input-group">
-                                            <span class="input-group-addon">Bounce Rate</span>
-                                            <input type="number" class="form-control" placeholder="Bounce Rate" value="0.75" id="bounceSD" min="0" max="3" step="0.01" />
-                                        </div>
-                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -219,20 +207,6 @@
                                                 <div class="numberOfVisitChart">
                                                     <svg style="height: 400px;"></svg>
                                                 </div>
-                                                <!--ul class="list-inline m-t-15">
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Today</h4>
-                                                        <h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Yesterday</h4>
-                                                        <h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Average</h4>
-                                                        <h3 class="m-b-0 totalAverageDwellTime">0</h3>
-                                                    </li>
-                                                </ul-->
                                             </div>
                                         </div>
                                     </div>
@@ -248,109 +222,9 @@
                                                 <div class="averageDwellTimeChart">
                                                     <svg style="height: 400px;"></svg>
                                                 </div>
-                                                <!--ul class="list-inline m-t-15">
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Today</h4>
-                                                        <h3 class="m-b-0" id="todayAverageDwellTime">0</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Yesterday</h4>
-                                                        <h3 class="m-b-0" id="yesterdayAverageDwellTime">0</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Average</h4>
-                                                        <h3 class="m-b-0 totalAverageDwellTime">0</h3>
-                                                    </li>
-                                                </ul-->
                                             </div>
                                         </div>
                                     </div>
-                                    <!--
-                                    <div class="col-lg-8">
-                                        <div class="card-box">
-                                            <div class="widget-chart text-center">
-                                                <ul class="list-inline">
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">People Count</h4>
-                                                        <h3 class="m-b-0">1000</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Average Dwell Time</h4>
-                                                        <h3 class="m-b-0">523</h3>
-                                                    </li>
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Number of Visit</h4>
-                                                        <h3 class="m-b-0">965</h3>
-                                                    </li>
-
-                                                    <li>
-                                                        <h4 class="text-muted m-t-20">Retention Rate</h4>
-                                                        <h3 class="m-b-0">965</h3>
-                                                    </li>
-                                                </ul>
-
-                                                <div class="numberOfVisitChart">
-                                                    <svg style="height: 400px;"></svg>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4">
-                                        <div class="card-box">
-
-                                            <div class="clearfix">
-                                                <h4 class="m-t-0 header-title">
-                                                    <b>People Count</b>
-                                                </h4>
-                                                <span class="m-t-10 dropcap text-primary">100</span>
-                                            </div>
-
-                                            <div class="clearfix">
-                                                <h4 class="m-t-40 header-title">
-                                                    <b>Average Dwell Time</b>
-                                                </h4>
-                                                <div class="averageDwellTimeChart">
-                                                    <svg style="height: 220px;"></svg>
-                                                </div>
-                                            </div>
-
-                                            <div class="clearfix">
-                                                <h4 class="m-t-10 header-title">
-                                                    <b>Top Shop List</b>
-                                                </h4>
-                                                <table class="table">
-                                                    <thead>
-                                                        <tr>
-                                                            <td>Top Shop
-                                                            </th>
-                                                            <td align="right">Visitors
-                                                            </th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr>
-                                                            <td>Shop #1</td>
-                                                            <td align="right" id="s1scount">0</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Shop #2</td>
-                                                            <td align="right" id="s2scount">0</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Shop #3</td>
-                                                            <td align="right" id="s3scount">0</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Shop #4</td>
-                                                            <td align="right" id="s4scount">0</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    -->
                                 </div>
                                 <div class="clearfix"></div>
                             </div>
