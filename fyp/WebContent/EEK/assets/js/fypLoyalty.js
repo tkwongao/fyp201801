@@ -2,6 +2,10 @@ var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
 
+function frotEndChooseMACAddress(address) {
+	document.getElementById("macAddress").value = address;
+}
+
 function UpdateAllCharts() {
 	for (var i in charts)
 		if (charts[i].update)
