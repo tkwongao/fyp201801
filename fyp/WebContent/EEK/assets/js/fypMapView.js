@@ -233,7 +233,6 @@ function ajaxGettingStores(mallName) {
 			$("#floorPlan").attr("src", "https://eek123.ust.hk/" + ((mall === "base_1")? "Base" : "K11_sh") + "/assets/img/" + json[0]);
 			var img = document.getElementById("floorPlan");
 			img.onLoad = setTimeout(function() {
-				console.log(img.naturalWidth + " x " + img.naturalHeight);
 				$('.floorPlan').css("width", $("#floorPlan").css("width"));
 				$('.floorPlan').css("height", $("#floorPlan").css("height"));
 				if (heatmapInstance !== undefined)
@@ -242,24 +241,23 @@ function ajaxGettingStores(mallName) {
 					// only container is required, the rest will be defaults
 					container: document.querySelector('.floorPlan')
 				});
-				var points = [];
+				var rawPoints = [[100, 200, 300, 400], [100, 200, 300, 400]], points = [];
 				var max = 0;
-				var width = img.width;
-				var height = img.height;
-				var len = 0x200;
-				while (len--) {
-					max = Math.max(max, 0x20a);
+				var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
+				var len = rawPoints[0].length;
+				while (len-- !== 0) {
+					max = Math.max(max, 0.01);
 					var point = {
-							x: 40,
-							y: 40,
-							value: 1
+							x: Math.floor(rawPoints[0][len] * widthRatio),
+							y: Math.floor(rawPoints[1][len] * heightRatio),
+							value: 100
 					};
 					points.push(point);
 				}
 				heatmapInstance.setData({
 					max: max, 
 					data: points 
-			});
+				});
 			}, 2000);
 		},
 		statusCode: {
