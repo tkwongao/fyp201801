@@ -1,5 +1,4 @@
-//To be replaced by getting the current date
-var startTime = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf(), endTime = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf();
+var startTime = 0, endTime = 0;
 var charts = [];
 var shops = [];
 var MILLISECONDS_IN_A_DAY = 86400000;
@@ -223,6 +222,10 @@ function mainProcedure() {
 	});
 }
 
+function ajax3() {
+	return 
+}
+
 function ajaxGettingStores(mallName) {
 	return $.ajax({
 		type : "post",
@@ -241,22 +244,42 @@ function ajaxGettingStores(mallName) {
 					// only container is required, the rest will be defaults
 					container: document.querySelector('.floorPlan')
 				});
-				var rawPoints = [[100, 200, 300, 400], [100, 200, 300, 400]], points = [];
-				var max = 0;
-				var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
-				var len = rawPoints[0].length;
-				while (len-- !== 0) {
-					max = Math.max(max, 0.01);
-					var point = {
-							x: Math.floor(rawPoints[0][len] * widthRatio),
-							y: Math.floor(rawPoints[1][len] * heightRatio),
-							value: 100
-					};
-					points.push(point);
-				}
-				heatmapInstance.setData({
-					max: max, 
-					data: points 
+				var rawPoints = [[], []]
+				$.ajax({
+					type : "post",
+					url : "heatmap",
+					data : {
+						start : startTime,
+						end : endTime,
+						mallName: mallName
+					},
+					traditional: true,
+					success : function(json) {
+						var i = 0;
+						var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
+						var points = [];
+						for ( var prop in json) {
+							var thisDataPoint = json[i++];
+							var point = {
+									x: Math.floor(thisDataPoint[0] * widthRatio),
+									y: Math.floor(thisDataPoint[1] * heightRatio),
+									value: 1
+							};
+							points.push(point);
+						}
+						heatmapInstance.setData({
+							max: i / 0x10,
+							data: points
+						});
+					},
+					statusCode: {
+						403: function() {
+							window.location.href = "pages-403.html";
+						},
+						500: function() {
+							window.location.href = "pages-500.html";
+						}
+					}
 				});
 			}, 2000);
 		},
