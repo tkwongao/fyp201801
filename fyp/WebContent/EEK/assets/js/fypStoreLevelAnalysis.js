@@ -814,7 +814,7 @@ $(document).ready(function() {
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
 			"locale": {
-				"format": "D MMMM YYYY, HH:mm",
+				"format": "D MMMM YYYY, HH:mm"
 			},
 			"ranges": {
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],

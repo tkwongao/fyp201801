@@ -363,7 +363,7 @@ $( document ).ready(function() {
 		date_cb(startDate.clone().subtract(7 * (1 - index), 'days'), endDate.clone().subtract(7 * (1 - index), 'days'));
 		$(this).daterangepicker({
 			"locale": {
-				"format": "D MMMM YYYY, HH:mm",
+				"format": "D MMMM YYYY, HH:mm"
 			},
 			"ranges": {
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
