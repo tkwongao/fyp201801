@@ -238,6 +238,7 @@ function ajaxGettingStores(mallName) {
 			img.onLoad = setTimeout(function() {
 				$('.floorPlan').css("width", $("#floorPlan").css("width"));
 				$('.floorPlan').css("height", $("#floorPlan").css("height"));
+				var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
 				if (heatmapInstance !== undefined)
 					heatmapInstance.setData({data: []});
 				heatmapInstance = h337.create({
@@ -251,24 +252,26 @@ function ajaxGettingStores(mallName) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallName: mallName
+						mallName: mallName,
+						widthRatio: widthRatio,
+						heightRatio: heightRatio
 					},
 					traditional: true,
 					success : function(json) {
-						var i = 0;
-						var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
+						var max = 0;
 						var points = [];
 						for ( var prop in json) {
-							var thisDataPoint = json[i++];
+							var thisDataPoint = prop.split(" ");
 							var point = {
-									x: Math.floor(thisDataPoint[0] * widthRatio),
-									y: Math.floor(thisDataPoint[1] * heightRatio),
-									value: 1
+									x: Number(thisDataPoint[0]),
+									y: Number(thisDataPoint[1]),
+									value: json[prop]
 							};
+							max = Math.max(max, json[prop]);
 							points.push(point);
 						}
 						heatmapInstance.setData({
-							max: i / 0x10,
+							max: max,
 							data: points
 						});
 					},

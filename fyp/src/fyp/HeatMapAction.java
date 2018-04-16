@@ -20,8 +20,9 @@ public class HeatMapAction extends ActionSupport implements ServletRequestAware,
 	private static final long serialVersionUID = -891989885724959429L;
 	private HttpServletRequest request = null;
 	private HttpServletResponse response = null;
-	private HashMap<Integer, double[]> dataMap = null;
+	private HashMap<String, Integer> dataMap = null;
 	private long start, end;
+	private double widthRatio, heightRatio;
 	private String mallName = null;
 
 	@Override
@@ -32,11 +33,12 @@ public class HeatMapAction extends ActionSupport implements ServletRequestAware,
 		case "k11_sh_2":
 		case "k11_sh_3":
 			try (KMeans KM = new KMeans(new long[] {start, end}, mallName)) {
-				int counter = 0;
 				double[][] data = KM.getData();
-				dataMap = new HashMap<Integer, double[]>();
-				for (double[] aRecord : data)
-					dataMap.put(counter++, aRecord);
+				dataMap = new HashMap<String, Integer>();
+				for (double[] aRecord : data) {
+					String key = ((int) Math.floor(aRecord[0] * widthRatio)) + " " + ((int) Math.floor(aRecord[1] * heightRatio));
+					dataMap.put(key, dataMap.getOrDefault(key, 0) + 1);
+				}
 			} catch (SQLException e) {
 				response.sendError(500);
 				throw new IllegalStateException("An error occurred during database access.", e);
@@ -63,7 +65,7 @@ public class HeatMapAction extends ActionSupport implements ServletRequestAware,
 		return response;
 	}
 
-	public HashMap<Integer, double[]> getDataMap() {  
+	public HashMap<String, Integer> getDataMap() {  
 		return dataMap;
 	}
 	
@@ -80,6 +82,16 @@ public class HeatMapAction extends ActionSupport implements ServletRequestAware,
 	@JSON(serialize = false) 
 	public String getMallName() {
 		return mallName;
+	}
+	
+	@JSON(serialize = false) 
+	public double getWidthRatio() {
+		return widthRatio;
+	}
+
+	@JSON(serialize = false) 
+	public double getHeightRatio() {
+		return heightRatio;
 	}
 
 	@Override
@@ -102,5 +114,13 @@ public class HeatMapAction extends ActionSupport implements ServletRequestAware,
 
 	public void setMallName(String mallName) {
 		this.mallName = mallName.toLowerCase();
+	}
+	
+	public void setWidthRatio(double widthRatio) {
+		this.widthRatio = widthRatio;
+	}
+
+	public void setHeightRatio(double heightRatio) {
+		this.heightRatio = heightRatio;
 	}
 }
