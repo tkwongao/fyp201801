@@ -287,6 +287,10 @@ public class KMeans extends DatabaseConnection {
 		return pointsInCluster;
 	}
 
+	public double[][] getData() {
+		return data;
+	}
+
 	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
 	public static void main(String[] args) {
 		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1")) {	
