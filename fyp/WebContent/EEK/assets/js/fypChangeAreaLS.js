@@ -1,4 +1,4 @@
-var area, malls = new Object();
+var mall, area, malls = new Object();
 var serverTimeZone = "+0800";
 var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
 

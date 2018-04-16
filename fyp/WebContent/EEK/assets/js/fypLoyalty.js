@@ -408,7 +408,9 @@ $(document).ready(function() {
 	drawLoyaltyCountingGraph([]);
 	drawUserStayTimeGraph([]);
 	drawNumberOfStoresGraph([]);
-	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'),
+	startDate = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -498,7 +500,7 @@ $(document).ready(function() {
 	});
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
 		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
-			changeMall("base_1");
+			changeMall("k11_sh_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
 	}, 1000));

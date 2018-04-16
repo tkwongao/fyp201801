@@ -163,7 +163,7 @@ function changeScope(sc, stid) {
 					data : {
 						start : startTimes[i],
 						end : endTimes[i],
-						mallId: area,
+						mallId: (Number(stid) === -1) ? mall : area,
 						storeId : stid,
 						interval : interval,
 						type : "count",
@@ -204,7 +204,7 @@ function changeScope(sc, stid) {
 					data : {
 						start : startTimes[i],
 						end : endTimes[i],
-						mallId: area,
+						mallId: (Number(stid) === -1) ? mall : area,
 						storeId : stid,
 						interval : interval,
 						type : "average",
@@ -275,7 +275,9 @@ $( document ).ready(function() {
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	// To be replaced by getting the current date
-	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(7, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'),
+	startDate = moment("26 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker'), hours = 0;
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -374,8 +376,8 @@ $( document ).ready(function() {
 			},
 			timePicker: true,
 			timePicker24Hour: true,
-			startDate: startDate,
-			endDate: endDate,
+			startDate: startDate.clone().subtract(7 * (1 - index), 'days'),
+			endDate: endDate.clone().subtract(7 * (1 - index), 'days'),
 			minDate: '1 October 2016',
 			maxDate: 'now',
 			timePickerIncrement: 60,
@@ -400,7 +402,7 @@ $( document ).ready(function() {
 	});
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
 		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
-			changeMall("base_1");
+			changeMall("k11_sh_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
 	}, 1000));

@@ -481,7 +481,9 @@ $(document).ready(function() {
 	drawAverageDwellTimeGraph([]);
 	drawAverageDwellTimeDistributionGraph([]);
 	drawPeopleCountForTop5ShopGraph([], []);
-	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'),
+	startDate = moment("1 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
