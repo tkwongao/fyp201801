@@ -274,7 +274,6 @@ $( document ).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
-	// To be replaced by getting the current date
 	var endOfYesterday = moment().startOf('day'),
 	startDate = moment("26 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
 	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
