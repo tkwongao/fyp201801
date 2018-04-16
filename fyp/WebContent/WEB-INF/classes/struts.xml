@@ -26,5 +26,10 @@
 				<param name="root">dataMap</param>
 			</result>
 		</action>
+		<action name="prepareFloorPlanImage" class="fyp.FloorPlanImageAction" method="execute">
+			<result name="success" type="json">
+				<param name="root">dataMap</param>
+			</result>
+		</action>
 	</package>
 </struts>

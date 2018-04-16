@@ -51,7 +51,7 @@ function drawPeopleCountingGraph(data, ma, avg) {
 							});
 						return arr;
 					}(),
-					key: 'Monthly Average Number of Visit',
+					key: 'Average Number of Visit per day',
 					color: "#000000"
 				});
 		}
