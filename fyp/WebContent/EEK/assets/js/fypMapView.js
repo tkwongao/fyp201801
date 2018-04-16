@@ -3,6 +3,7 @@ var startTime = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ").va
 var charts = [];
 var shops = [];
 var MILLISECONDS_IN_A_DAY = 86400000;
+var heatmapInstance = undefined;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -229,9 +230,37 @@ function ajaxGettingStores(mallName) {
 		data : { mallName: mallName },
 		traditional: true,
 		success : function(json) {
-			$(".floorPlan").attr("src", "https://eek123.ust.hk/" + ((mall === "base_1")? "Base" : "K11_sh") + "/assets/img/" + json[0]);
+			$("#floorPlan").attr("src", "https://eek123.ust.hk/" + ((mall === "base_1")? "Base" : "K11_sh") + "/assets/img/" + json[0]);
 			var img = document.getElementById("floorPlan");
-			img.onload = console.log(img.naturalWidth + " x " + img.naturalHeight);
+			img.onLoad = setTimeout(function() {
+				console.log(img.naturalWidth + " x " + img.naturalHeight);
+				$('.floorPlan').css("width", $("#floorPlan").css("width"));
+				$('.floorPlan').css("height", $("#floorPlan").css("height"));
+				if (heatmapInstance !== undefined)
+					heatmapInstance.setData({data: []});
+				heatmapInstance = h337.create({
+					// only container is required, the rest will be defaults
+					container: document.querySelector('.floorPlan')
+				});
+				var points = [];
+				var max = 0;
+				var width = img.width;
+				var height = img.height;
+				var len = 0x200;
+				while (len--) {
+					max = Math.max(max, 0x20a);
+					var point = {
+							x: 40,
+							y: 40,
+							value: 1
+					};
+					points.push(point);
+				}
+				heatmapInstance.setData({
+					max: max, 
+					data: points 
+			});
+			}, 2000);
 		},
 		statusCode: {
 			403: function() {
@@ -298,13 +327,4 @@ $(document).ready(function() {
 	$('.colorpicker-default').colorpicker().on('changeColor', function (e) {
 		$(this)[0].style.backgroundColor = e.color.toHex();
 	});
-	/*
-	var svgObject = $('object.floorPlan').dragZoomTool({
-		isPlotTrajectory: true,
-		onSelectedPath: function(path) {
-		}
-	});
-	GetWorld().objectList['svgFloorPlan'] = svgObject;
-	GetWorld().Start();
-	*/
 });
