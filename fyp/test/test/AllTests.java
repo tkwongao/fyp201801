@@ -8,10 +8,13 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({ 
 	ApplicationTest.class, 
 	DatabaseConnectionTest.class, 
+	FloorPlanImageActionTest.class,
+	HeatMapActionTest.class, 
 	KMeansTest.class, 
-	MallAndStoreAnalysisTest.class,
-	MallListActionTest.class, 
+	MallAndStoreAnalysisTest.class, 
+	MallListActionTest.class,
 	OUIActionTest.class, 
+	PointTest.class, 
 	StoreListActionTest.class, 
 	UserAnalysisTest.class })
 public class AllTests {
