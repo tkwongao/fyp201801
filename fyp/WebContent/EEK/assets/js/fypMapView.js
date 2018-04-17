@@ -1,229 +1,89 @@
 var startTime = 0, endTime = 0;
-var charts = [];
-var shops = [];
-var MILLISECONDS_IN_A_DAY = 86400000;
 var heatmapInstance = undefined;
 
-function UpdateAllCharts() {
-	for (var i in charts)
-		if (charts[i].update)
-			charts[i].update();
-}
-
-function drawPeopleCountingGraph(data, ma, avg) {
-	var peopleCountingChart = nv.models.lineChart();
-	charts.push(peopleCountingChart);
-	function getPeopleCountingData() {
-		var datum = [];
-		if (Array.isArray(data)) {
-			var values = [];
-			for (var i = 0; i < data.length; i++)
-				values.push({
-					x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
-					y: data[i]
-				});
-			datum.push({
-				values: values,
-				key: 'Number of Visit',
-				area: true
-			});
-			if (Array.isArray(ma)) {
-				values = [];
-				for (var i = 0; i < ma.length; i++)
-					values.push({
-						x: endTime + MILLISECONDS_IN_A_DAY * (i - ma.length),
-						y: ma[i]
-					});
-				datum.push({
-					values: values,
-					key: 'Weekly Moving Average of Number of Visit',
-					color: "#999999"
-				});
+function drawHeatMap() {
+	var img = document.getElementById("floorPlan");
+	var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
+	if (heatmapInstance !== undefined)
+		heatmapInstance.setData({data: []});
+	heatmapInstance = h337.create({
+		container: document.querySelector('.floorPlan'),
+		maxOpacity: 0.5
+	});
+	var rawPoints = [[], []]
+	$.ajax({
+		type : "post",
+		url : "heatmap",
+		data : {
+			start : startTime,
+			end : endTime,
+			mallName: area,
+			widthRatio: widthRatio,
+			heightRatio: heightRatio
+		},
+		traditional: true,
+		success : function(json) {
+			var max = 0, i = 0;
+			var points = [];
+			var macAddressesHTML = "";
+			for ( var prop in json) {
+				if (prop === "count") {
+					$("#totalVisitorCount").text(json[prop]);
+					continue;
+				}
+				var thisDataPoint = prop.split(" ");
+				if (thisDataPoint[0] === "mac") {
+					macAddressesHTML += '<div class="row">' +
+					'<div class="col-md-6">' +
+					'<div class="form-group">' +
+					'<h3>' +
+					'<div class="label label-default ellipis mac-address">' + thisDataPoint[1] + '</div>' +
+					'<div class="font-13 text-muted">' + new moment(json[prop]).utcOffset(serverTimeZone).format("D MMMM YYYY, HH:mm") + '</div>' +
+					'</h3>' +
+					'</div>' +
+					'</div>' +
+					'<div class="col-md-1"></div>' +
+					'<div class="col-md-2">' +
+					'<div class="form-group">' +
+					'<h3><button class="btn colorpicker-default input-group" style="background: #7266ba; border-radius: 5px; width:100%">&nbsp;</button></h3>' +
+					'</div>' +
+					'</div>' +
+					'<div class="col-md-1"></div>' +
+					'<div class="col-md-2">' +
+					'<div class="form-group">' +
+					'<h3><input type="checkbox" checked id="switchery' + i++ + 'fyp"/></h3>' +
+					'</div>' +
+					'</div>' +
+					'</div>';
+					continue;
+				}
+				var point = {
+						x: Number(thisDataPoint[0]),
+						y: Number(thisDataPoint[1]),
+						value: json[prop]
+				};
+				max = Math.max(max, json[prop]);
+				points.push(point);
 			}
-			if (!isNaN(avg * 1))
-				datum.push({
-					values: function() {
-						var arr = [];
-						for (var i = 0; i < data.length; i++)
-							arr.push({
-								x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
-								y: avg
-							});
-						return arr;
-					}(),
-					key: 'Average Number of Visit per day',
-					color: "#000000"
-				});
-		}
-		return datum;
-	}
-	nv.addGraph(function() {
-		peopleCountingChart.forceY([0, 1]).margin({"bottom": 80}).useInteractiveGuideline(true).xScale(d3.time.scale());
-		peopleCountingChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
-		});
-		peopleCountingChart.yAxis.axisLabel('Number of Visit').scale(100).tickFormat(d3.format('.2f'));
-		d3.select('.numberOfVisitChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getPeopleCountingData()).transition().duration(500).call(peopleCountingChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(peopleCountingChart.update);
-		return peopleCountingChart;
-	});
-}
-
-function drawAverageDwellTimeGraph(data) {
-	var averageDwellTimeChart = nv.models.multiBarChart();
-	charts.push(averageDwellTimeChart);
-	function getAverageDwellTimeData() {
-		if (Array.isArray(data)) {
-			var values = [];
-			for (var i = 0; i < data.length; i++)
-				values.push({
-					x: endTime + MILLISECONDS_IN_A_DAY * (i - data.length),
-					y: data[i]
-				});
-			return [{
-				values: values,
-				key: 'Average Dwell Time (seconds)'
-			}];
-		}
-		return [];
-	}
-	nv.addGraph(function() {
-		averageDwellTimeChart.forceY([0, 1]).margin({"bottom": 80})/*.color(['#00b19d'])*/.stacked(false).showControls(false);
-		averageDwellTimeChart.xAxis.axisLabel('Time').rotateLabels(-45).scale(1).tickFormat(function (d) {
-			return moment(d).utcOffset(serverTimeZone).format("D MMM YYYY");
-		});
-		averageDwellTimeChart.yAxis.axisLabel('Average Dwell Time (seconds)').scale(100).tickFormat(d3.format('.2f'));
-		d3.select('.averageDwellTimeChart svg').attr('perserveAspectRatio', 'xMinYMid').datum(getAverageDwellTimeData()).transition().duration(500).call(averageDwellTimeChart);
-		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
-		nv.utils.windowResize(averageDwellTimeChart.update);
-		return averageDwellTimeChart;
-	});
-}
-
-function mainProcedure() {
-	var interval = 24;
-	$.when(ajaxGettingStores(area)).done(function(a1) {
-		var numberOfVisitors = [], numberOfVisitorsMA7 = [], averageDailyVisitors = 0;
-		$.when(ajax1(), ajax2(), ajax3()).done(function(a1, a2, a3) {
-			drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA7, averageDailyVisitors);
-		});
-		function ajax1() {
-			return $.ajax({
-				type : "post",
-				url : "databaseConnection",
-				data : {
-					start : startTime,
-					end : endTime,
-					mallId: mall,
-					storeId : -1,
-					interval : interval,
-					type : "count",
-					lengthOfMovingAverage: 1
-				},
-				traditional: true,
-				success : function(json) {
-					var i = 0;
-					var sum = 0;
-					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + i++];
-						if (i !== 1) {
-							numberOfVisitors.push(thisDataPoint);
-							sum += thisDataPoint;
-						}
-						else
-							$(".totalVisitorCount").text(thisDataPoint);
-					}
-					averageDailyVisitors = sum / numberOfVisitors.length;
-					$(".dailyVisitors").text(averageDailyVisitors.toFixed(2));
-					$("#todayVisitors").text(numberOfVisitors[numberOfVisitors.length - 1]);
-					$("#yesterdayVisitors").text(numberOfVisitors[numberOfVisitors.length - 2]);
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "pages-501.html";
-					},
-					500: function() {
-						window.location.href = "pages-500.html";
-					}
-				}
+			heatmapInstance.setData({
+				max: max,
+				data: points
 			});
-		}
-		function ajax2() {
-			return $.ajax({
-				type : "post",
-				url : "databaseConnection",
-				data : {
-					start : startTime,
-					end : endTime,
-					mallId: mall,
-					storeId : -1,
-					interval : interval,
-					type : "count",
-					lengthOfMovingAverage: 7
-				},
-				traditional: true,
-				success : function(json) {
-					var i = 0;
-					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + i++];
-						if (i !== 1)
-							numberOfVisitorsMA7.push(thisDataPoint);
-					}
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "pages-501.html";
-					},
-					500: function() {
-						window.location.href = "pages-500.html";
-					}
-				}
-			});
-		}
-		function ajax3() {
-			return $.ajax({
-				type : "post",
-				url : "databaseConnection",
-				data : {
-					start : startTime,
-					end : endTime,
-					mallId: mall,
-					storeId : -1,
-					interval : interval,
-					type : "average",
-					lengthOfMovingAverage: 1
-				},
-				traditional: true,
-				success : function(json) {
-					var i = 0;
-					var averageDwellTime = [];
-					for ( var prop in json) {
-						var thisDataPoint = json["dataPoint" + i++];
-						if (i !== 1)
-							averageDwellTime.push(thisDataPoint);
-						else
-							$(".totalAverageDwellTime").text(thisDataPoint.toFixed(2));
-					}
-					//$("#todayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 1].toFixed(2));
-					//$("#yesterdayAverageDwellTime").text(averageDwellTime[averageDwellTime.length - 2].toFixed(2));
-					drawAverageDwellTimeGraph(averageDwellTime);
-				},
-				statusCode: {
-					501: function() {
-						window.location.href = "pages-501.html";
-					},
-					500: function() {
-						window.location.href = "pages-500.html";
-					}
-				}
-			});
+			$("#macAddressList").html(macAddressesHTML);
+			for (var id = 0; id < i; id++)
+				new Switchery($("#switchery" + id + "fyp")[0], {
+					color: '#7266ba'
+				})
+		},
+		statusCode: {
+			403: function() {
+				window.location.href = "pages-403.html";
+			},
+			500: function() {
+				window.location.href = "pages-500.html";
+			}
 		}
 	});
-}
-
-function ajax3() {
-	return 
 }
 
 function ajaxGettingStores(mallName) {
@@ -238,52 +98,6 @@ function ajaxGettingStores(mallName) {
 			img.onLoad = setTimeout(function() {
 				$('.floorPlan').css("width", $("#floorPlan").css("width"));
 				$('.floorPlan').css("height", $("#floorPlan").css("height"));
-				var widthRatio = img.width / img.naturalWidth, heightRatio = img.height / img.naturalHeight;
-				if (heatmapInstance !== undefined)
-					heatmapInstance.setData({data: []});
-				heatmapInstance = h337.create({
-					// only container is required, the rest will be defaults
-					container: document.querySelector('.floorPlan')
-				});
-				var rawPoints = [[], []]
-				$.ajax({
-					type : "post",
-					url : "heatmap",
-					data : {
-						start : startTime,
-						end : endTime,
-						mallName: mallName,
-						widthRatio: widthRatio,
-						heightRatio: heightRatio
-					},
-					traditional: true,
-					success : function(json) {
-						var max = 0;
-						var points = [];
-						for ( var prop in json) {
-							var thisDataPoint = prop.split(" ");
-							var point = {
-									x: Number(thisDataPoint[0]),
-									y: Number(thisDataPoint[1]),
-									value: json[prop]
-							};
-							max = Math.max(max, json[prop]);
-							points.push(point);
-						}
-						heatmapInstance.setData({
-							max: max,
-							data: points
-						});
-					},
-					statusCode: {
-						403: function() {
-							window.location.href = "pages-403.html";
-						},
-						500: function() {
-							window.location.href = "pages-500.html";
-						}
-					}
-				});
 			}, 2000);
 		},
 		statusCode: {
@@ -299,11 +113,9 @@ function ajaxGettingStores(mallName) {
 
 $(document).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
-	drawPeopleCountingGraph([]);
-	drawAverageDwellTimeGraph([]);
 	var endOfYesterday = moment().startOf('day'),
-	startDate = moment("1 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
-	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
+	startDate = moment("29 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("30 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -320,7 +132,6 @@ $(document).ready(function() {
 				"format": "D MMMM YYYY, HH:mm"
 			},
 			ranges: {
-				'Today': [endOfYesterday, moment()],
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
 				'Last Week': [endOfYesterday.clone().subtract(7, 'days'), endOfYesterday],
 				'Last 30 Days': [endOfYesterday.clone().subtract(30, 'days'), endOfYesterday],
@@ -333,7 +144,7 @@ $(document).ready(function() {
 			endDate: endDate,
 			minDate: '1 October 2016',
 			maxDate: 'now',
-			timePickerIncrement: 60,
+			timePickerIncrement: 15,
 			showDropdowns: true,
 			dateLimit: {
 				days: 60

@@ -348,7 +348,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		final String sql = "WITH cache AS (SELECT (endts - startts) / ? AS cache, did FROM " + dbName + " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "),"
 				+ "stat AS (SELECT avg(cache.cache) AS avg, count(*) FROM cache),"
 				+ "sd AS (SELECT POWER(SUM(POWER(cache.cache - (SELECT avg FROM stat), 2)) / (SELECT count FROM stat), 0.5) FROM cache)"
-				+ "SELECT count(DISTINCT(did)) FROM cache WHERE cache.cache < greatest(0, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";
+				+ "SELECT count(DISTINCT(did)) FROM cache WHERE cache.cache < greatest(120, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setDouble(1, MILLISECONDS_TO_SECONDS);
 			ps.setLong(2, period[0]);

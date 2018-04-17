@@ -27,15 +27,20 @@ public class KMeans extends DatabaseConnection {
 	private byte numberOfDimensions;
 	private ArrayList<Point> points;
 
-	public KMeans(final long[] period, String areaId) throws SQLException {
+	public KMeans(final long[] period, String areaId, long macAddress) throws SQLException {
 		numberOfDimensions = 2;
+		this.macAddress = (macAddress >= 0 && macAddress < 0xffffffffffffl) ? macAddress : -1;
 		this.areaId = areaId;
 		points = new ArrayList<Point>();
 		String sql = "SELECT did, areaid, x, y, ts FROM location_results WHERE ts BETWEEN ? AND ? AND areaid = ?;";
+		if (this.macAddress >= 0)
+			sql += " AND did = ?";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
 			ps.setString(3, areaId);
+			if (this.macAddress >= 0)
+				ps.setLong(4, this.macAddress);
 			ps.setFetchSize(FETCH_SIZE); // Fetch FETCH_SIZE (400) rows a time.
 			ResultSet rs = ps.executeQuery();
 			int i = 0, j = 0;
@@ -290,10 +295,14 @@ public class KMeans extends DatabaseConnection {
 	public double[][] getData() {
 		return data;
 	}
-
+	
+	public ArrayList<Point> getPoints() {
+		return points;
+	}
+	
 	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
 	public static void main(String[] args) {
-		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1")) {	
+		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", -1)) {	
 			KM.clustering((short) 0x64, Byte.MAX_VALUE, null);
 			KM.getPointsInCluster().forEach((macAddress, aa) -> KM.getPath(macAddress));
 		} catch (SQLException e) {
