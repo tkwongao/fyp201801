@@ -2,6 +2,10 @@ var interval = 1;
 var startTime = 0, endTime = 0;
 var charts = [];
 
+function frontEndChooseMACAddress(address) {
+	document.getElementById("macAddress").value = address;
+}
+
 function UpdateAllCharts() {
 	for (var i in charts)
 		if (charts[i].update)
@@ -24,6 +28,7 @@ function getTimeFormat(interval) {
 
 function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Please sumbit the form first.");
 	charts.push(peopleCountingChart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -109,6 +114,7 @@ function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 
 function drawUserStayTimeGraph(data) {
 	var userStayTimeChart = nv.models.multiBarChart();
+	userStayTimeChart.noData("Please sumbit the form first.");
 	charts.push(userStayTimeChart);
 	function getData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -141,6 +147,7 @@ function drawUserStayTimeGraph(data) {
 
 function drawNumberOfStoresGraph(data) {
 	var numberOfStoresChart = nv.models.multiBarChart();
+	numberOfStoresChart.noData("Please select \"All Stores\" in the form and sumbit it.");
 	charts.push(numberOfStoresChart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -404,7 +411,9 @@ $(document).ready(function() {
 	drawLoyaltyCountingGraph([]);
 	drawUserStayTimeGraph([]);
 	drawNumberOfStoresGraph([]);
-	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'),
+	startDate = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -473,7 +482,7 @@ $(document).ready(function() {
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
 			"locale": {
-				"format": "D MMMM YYYY, HH:mm",
+				"format": "D MMMM YYYY, HH:mm"
 			},
 			"ranges": {
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
@@ -494,7 +503,7 @@ $(document).ready(function() {
 	});
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
 		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
-			changeMall("base_1");
+			changeMall("k11_sh_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
 	}, 1000));

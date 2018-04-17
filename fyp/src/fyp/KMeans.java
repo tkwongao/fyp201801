@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Random;
 
@@ -19,8 +20,8 @@ public class KMeans extends DatabaseConnection {
 	private int[] labels, labelCount; //labels of the generated clusters
 	// if the original labels exist, load them to "existedLabels".
 	// We can compute accuracy by computing "labels" and "existedLabels", though the accuracy function/loss function is not yet defined.
-	private int[] existedLabels;	
-	private ArrayList<Long>[] ts;
+	private int[] existedLabels;
+	private HashMap<Long, ArrayList<Long>[]> pointsInCluster;
 	private double[][] centroids; //the center of clusters
 	private int numberOfRows, numberOfClusters;
 	private byte numberOfDimensions;
@@ -28,14 +29,18 @@ public class KMeans extends DatabaseConnection {
 
 	public KMeans(final long[] period, String areaId, long macAddress) throws SQLException {
 		numberOfDimensions = 2;
+		this.macAddress = (macAddress >= 0 && macAddress < 0xffffffffffffl) ? macAddress : -1;
 		this.areaId = areaId;
-		this.macAddress = macAddress;
 		points = new ArrayList<Point>();
 		String sql = "SELECT did, areaid, x, y, ts FROM location_results WHERE ts BETWEEN ? AND ? AND areaid = ?;";
+		if (this.macAddress >= 0)
+			sql += " AND did = ?";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setLong(1, period[0]);
 			ps.setLong(2, period[1]);
 			ps.setString(3, areaId);
+			if (this.macAddress >= 0)
+				ps.setLong(4, this.macAddress);
 			ps.setFetchSize(FETCH_SIZE); // Fetch FETCH_SIZE (400) rows a time.
 			ResultSet rs = ps.executeQuery();
 			int i = 0, j = 0;
@@ -61,7 +66,7 @@ public class KMeans extends DatabaseConnection {
 	 * @param cens Optional parameter for the initial centroids. If set to {@code null}, the initial centroids will be generated randomly.
 	 */
 	@SuppressWarnings("unchecked")
-	public void clustering(int numOfClusters, int numberOfIterations, double[][] cens) {
+	public void clustering(short numOfClusters, short numberOfIterations, double[][] cens) {
 		// note: To optimize the algorithm, the initial centroids can be initialized to any values of the locations inside the stores
 		// or the locations of passby/corridors in the shopping malls (e.g. K11) or the BASE
 		numberOfClusters = Math.min(numOfClusters, numberOfRows);
@@ -72,7 +77,7 @@ public class KMeans extends DatabaseConnection {
 			centroids = new double[numberOfClusters][];
 			ArrayList<Integer> index = new ArrayList<Integer>();
 			Random r = new Random(15775);
-			for (int i = 0; i < numberOfClusters; ++i) {
+			for (short i = 0; i < numberOfClusters; ++i) {
 				int c = 0, randomNumberGeneratorcounter = 0;
 				do {
 					c = r.nextInt(numberOfRows);
@@ -98,12 +103,12 @@ public class KMeans extends DatabaseConnection {
 					// copy the value from "data[c]"
 					centroids[i] = data[c].clone();
 				}
-				if (numberOfClusters == 0)
+				if (numberOfClusters <= 0)
 					throw new RuntimeException("Cannot generate valid clusters!");
 			}
 		}
 		double[][] c1 = centroids;
-		final double THRESHOLD = 0.001;	// this can be tuned.
+		final double THRESHOLD = Double.MIN_VALUE; // this can be tuned.
 		int round = 0;
 
 		while (true) {
@@ -124,10 +129,16 @@ public class KMeans extends DatabaseConnection {
 			if ((numberOfIterations > 0 && round >= numberOfIterations) || converge(centroids, c1, THRESHOLD))
 				break;
 		}
-		ts = (ArrayList<Long>[]) new ArrayList<?>[numberOfClusters];
-		Arrays.fill(ts, new ArrayList<Long>());
-		for (int i = 0; i < numberOfRows; i++)
-			ts[labels[i]].add(points.get(i).getTs());
+
+		pointsInCluster = new HashMap<Long, ArrayList<Long>[]>();
+		for (int i = 0; i < numberOfRows; i++) {
+			ArrayList<Long>[] pointOfThisUser = pointsInCluster.getOrDefault(points.get(i).getDid(), (ArrayList<Long>[]) new ArrayList<?>[numberOfClusters]);
+			for (int j = 0; j < numberOfClusters; j++)
+				if (Objects.isNull(pointOfThisUser[j]))
+					pointOfThisUser[j] = new ArrayList<Long>(0);
+			pointOfThisUser[labels[i]].add(points.get(i).getTs());
+			pointsInCluster.put(points.get(i).getDid(), pointOfThisUser);
+		}
 
 		System.out.println("This K-means clustering converges at iteration " + round + ", starting from iteration 1");
 		for (int i = 0; i < numberOfClusters; i++)
@@ -241,6 +252,30 @@ public class KMeans extends DatabaseConnection {
 		return maxValue < threshold;
 	}
 
+	private final class Node {
+		public short clusterId;
+		public long ts;
+		public Node(short clusterId, long ts) {
+			this.clusterId = clusterId;
+			this.ts = ts;
+		}
+	}
+	
+	ArrayList<Node> getPath(final long macAddress) {
+		Objects.requireNonNull(centroids, "centroids must not be null");
+		Objects.requireNonNull(pointsInCluster, "pointsInCluster must not be null");
+		ArrayList<Long>[] hisVisits = pointsInCluster.get(macAddress);
+		if (Objects.isNull(hisVisits))
+			return null;
+		ArrayList<Node> hisVisitsForPathFinding = new ArrayList<Node>();	
+		for (short i = 0; i < numberOfClusters; i++) {
+			final short clusterId = i;
+			hisVisits[i].forEach(l -> hisVisitsForPathFinding.add(new Node(clusterId, l)));
+		}
+		hisVisitsForPathFinding.sort((a, b) -> Long.compare(a.ts, b.ts));
+		return hisVisitsForPathFinding;
+	}
+
 	public int[] getLabels() {
 		return labels;
 	}
@@ -252,12 +287,24 @@ public class KMeans extends DatabaseConnection {
 	public int getNumberOfRows() {
 		return numberOfRows;
 	}
+
+	public HashMap<Long, ArrayList<Long>[]> getPointsInCluster() {
+		return pointsInCluster;
+	}
+
+	public double[][] getData() {
+		return data;
+	}
+	
+	public ArrayList<Point> getPoints() {
+		return points;
+	}
 	
 	// TODO Reduce the popular path to shortest (Dijsktra, cost being distance) OR A*
-
 	public static void main(String[] args) {
-		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", 0x20160ff1ce55l)) {	
-			KM.clustering(0x64, Byte.MAX_VALUE, null);
+		try (KMeans KM = new KMeans(new long[] {1520000000000l, 1521000000000l}, "base_1", -1)) {	
+			KM.clustering((short) 0x64, Byte.MAX_VALUE, null);
+			KM.getPointsInCluster().forEach((macAddress, aa) -> KM.getPath(macAddress));
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

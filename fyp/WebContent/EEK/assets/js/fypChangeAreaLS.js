@@ -1,5 +1,6 @@
-var area, malls = new Object();
-const serverTimeZone = "+0800";
+var mall, area, malls = new Object();
+var serverTimeZone = "+0800";
+var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
 
 function ajaxGettingMalls() {
 	$.ajax({
@@ -51,7 +52,8 @@ function changeMall(a, name) {
 	for (var i = 0; i < sorted.length; ) {
 		var prop = sorted[i][0], name2 = sorted[i][1];
 		list += "<li><a href=\"javascript:changeArea('" + prop + "', '" + name2 + "');\">" + name2 + "</a></li>";
-		if (i++ === 0) {
+		var defaultMall = (a === "k11_sh_1") ? 1 : 0;
+		if (i++ === defaultMall) {
 			newArea = prop;
 			newName = name2;
 		}

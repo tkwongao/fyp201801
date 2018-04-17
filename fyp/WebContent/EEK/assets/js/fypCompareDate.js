@@ -25,6 +25,7 @@ function getTimeFormat(interval) {
 
 function drawPeopleCountingGraph(data) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Loading...");
 	charts.push(peopleCountingChart);
 	var a;
 	switch (interval) {
@@ -44,7 +45,7 @@ function drawPeopleCountingGraph(data) {
 	function getPeopleCountingData() {
 		var datum = [];
 		if (Array.isArray(data)) {
-			var colors = ["#00b19d", "#ef5350"];
+			var colors = ["#F44336", "#4caf50"];
 			for (var i = 0; i < data.length; i++) {
 				var values = [];
 				for (var j = 0; j < data[i].length; j++)
@@ -57,7 +58,7 @@ function drawPeopleCountingGraph(data) {
 					key: 'Number of Visit for the period between ' + moment(startTimes[i]).utcOffset(serverTimeZone).format(getTimeFormat(interval)) + ' and ' +
 					moment(endTimes[i]).utcOffset(serverTimeZone).format(getTimeFormat(interval)),
 					color: colors[i],
-					area: true
+					area: false
 				});
 			}
 		}
@@ -78,6 +79,7 @@ function drawPeopleCountingGraph(data) {
 
 function drawAverageDwellTimeGraph(data) {
 	var averageDwellTimeChart = nv.models.multiBarChart();
+	averageDwellTimeChart.noData("Loading...");
 	charts.push(averageDwellTimeChart);
 	var a;
 	switch (interval) {
@@ -126,7 +128,7 @@ function drawAverageDwellTimeGraph(data) {
 	});
 }
 
-function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
+function changeScope(sc, stid) {
 	switch (Number(sc)) {
 	case 0:
 		interval = 1;
@@ -146,10 +148,6 @@ function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
 	}
 	if (invalidDateBit)
 		alert("Please enter valid date ranges for comparison.");
-	else if (bounceSD < 0 || bounceSD > 3)
-		alert("Please enter a valid threshold for Bounce Rate in standard derivation, between 0 and 3.");
-	else if (lengthOfMovingAverage < 2 || lengthOfMovingAverage > 127)
-		alert("Please enter a valid length of Moving Average, between 2 and 127.");
 	else
 	{
 		var valFromDB1 = new Array(2);
@@ -167,7 +165,7 @@ function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTimes[i],
 						end : endTimes[i],
-						mallId: area,
+						mallId: (Number(stid) === -1) ? mall : area,
 						storeId : stid,
 						interval : interval,
 						type : "count",
@@ -208,7 +206,7 @@ function changeScope(sc, stid, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTimes[i],
 						end : endTimes[i],
-						mallId: area,
+						mallId: (Number(stid) === -1) ? mall : area,
 						storeId : stid,
 						interval : interval,
 						type : "average",
@@ -278,8 +276,9 @@ $( document ).ready(function() {
 	$("#date").html(moment().utcOffset(serverTimeZone).format("dddd, D MMMM YYYY"));
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
-	// To be replaced by getting the current date
-	var endOfYesterday = moment().startOf('day'), startDate = endOfYesterday.clone().subtract(7, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().startOf('day'),
+	startDate = moment("26 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker'), hours = 0;
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -367,7 +366,7 @@ $( document ).ready(function() {
 		date_cb(startDate.clone().subtract(7 * (1 - index), 'days'), endDate.clone().subtract(7 * (1 - index), 'days'));
 		$(this).daterangepicker({
 			"locale": {
-				"format": "D MMMM YYYY, HH:mm",
+				"format": "D MMMM YYYY, HH:mm"
 			},
 			"ranges": {
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
@@ -378,8 +377,8 @@ $( document ).ready(function() {
 			},
 			timePicker: true,
 			timePicker24Hour: true,
-			startDate: startDate,
-			endDate: endDate,
+			startDate: startDate.clone().subtract(7 * (1 - index), 'days'),
+			endDate: endDate.clone().subtract(7 * (1 - index), 'days'),
 			minDate: '1 October 2016',
 			maxDate: 'now',
 			timePickerIncrement: 60,
@@ -394,7 +393,7 @@ $( document ).ready(function() {
 	$('div#searchPanel').on('hidden.bs.collapse', function (event) {
 		button.text('Revise Search');
 		button.prop('disabled', false);
-		changeScope(document.getElementById("scope").value, document.getElementById("storeId").value, document.getElementById("lengthOfMovingAverage").value, document.getElementById("bounceSD").value);
+		changeScope(document.getElementById("scope").value, document.getElementById("storeId").value);
 	})
 	$('button[data-target="#searchPanel"]').click(function(event) {	
 		$('div#searchPanel').collapse('toggle');
@@ -404,7 +403,7 @@ $( document ).ready(function() {
 	});
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
 		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
-			changeMall("base_1");
+			changeMall("k11_sh_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
 	}, 1000));
