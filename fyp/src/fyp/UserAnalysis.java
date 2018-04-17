@@ -10,7 +10,7 @@ public class UserAnalysis extends DatabaseConnection {
 	private static final byte WHOLE_MALL = -1;
 	private static final float NOT_MEANINGFUL = 0.5f;
 	private static final double MILLISECONDS_TO_SECONDS = 1000;
-	private final short maxLengthOfMovingAverage;
+	private final byte maxLengthOfMovingAverage;
 	private final int storeId;
 	private final long macAddress;
 	private final String mallId;
@@ -21,7 +21,9 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param storeId
 	 * @param macAddress
 	 */
-	UserAnalysis(String mallId, int storeId, long macAddress, short maxLengthOfMovingAverage) throws SQLException {
+	public UserAnalysis(String mallId, int storeId, long macAddress, byte maxLengthOfMovingAverage) throws SQLException {
+		if (maxLengthOfMovingAverage <= 1)
+			throw new IllegalArgumentException("Invalid Maximum Moving Average Length: " + maxLengthOfMovingAverage);
 		this.mallId = mallId;
 		this.storeId = storeId;
 		this.macAddress = macAddress;
@@ -36,7 +38,7 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Integer[] userStayTime(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+	Integer[] userStayTime(final long[] period, short numberOfIntervals, final byte lengthOfMovingAverage) {
 		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
 			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
 		if (numberOfIntervals <= 0)
@@ -53,7 +55,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(7, storeId);
@@ -78,7 +80,7 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Integer[] loyaltyCheck(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+	Integer[] loyaltyCheck(final long[] period, short numberOfIntervals, final byte lengthOfMovingAverage) {
 		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
 			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
 		if (numberOfIntervals <= 0)
@@ -95,7 +97,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(7, storeId);
@@ -120,7 +122,7 @@ public class UserAnalysis extends DatabaseConnection {
 	 * @param lengthOfMovingAverage
 	 * @return
 	 */
-	Number[] numberOfStoresVisited(final long[] period, short numberOfIntervals, final short lengthOfMovingAverage) {
+	Number[] numberOfStoresVisited(final long[] period, short numberOfIntervals, final byte lengthOfMovingAverage) {
 		if (lengthOfMovingAverage >= maxLengthOfMovingAverage || lengthOfMovingAverage < 1)
 			throw new IllegalArgumentException("Invalid Moving Average Length: " + lengthOfMovingAverage);
 		if (numberOfIntervals <= 0)
@@ -141,7 +143,7 @@ public class UserAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setInt(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			ps.setLong(6, macAddress);
 			ps.setString(7, mallId);
 			Integer[] value = new Integer[numberOfIntervals];

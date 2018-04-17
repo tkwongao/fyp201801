@@ -1,5 +1,5 @@
 var interval = 1, startTime = 0, endTime = 0;
-var charts = [], shops = [], dwellTimeThresholds = [120, 300, 600, 1200, 1800];
+var charts = [], shops = [];
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -23,6 +23,7 @@ function getTimeFormat(interval) {
 
 function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	var chart = nv.models.lineChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getPeopleCountingData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -108,6 +109,7 @@ function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 
 function drawAverageDwellTimeGraph(data) {
 	var chart = nv.models.multiBarChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -141,6 +143,7 @@ function drawAverageDwellTimeGraph(data) {
 
 function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
+	averageDwellTimeDistributionChart.noData("Please sumbit the form first.");
 	charts.push(averageDwellTimeDistributionChart);
 	function getAverageDwellTimeData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -182,6 +185,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 
 function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsSorted) {
 	var peopleCountForTop5ShopChart = nv.models.stackedAreaChart();
+	peopleCountForTop5ShopChart.noData("Please sumbit the form first.");
 	charts.push(peopleCountForTop5ShopChart);
 	function getPeopleCountForTop5ShopData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -216,6 +220,7 @@ function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsS
 
 function drawFreqBounceGraph(freq, bounce, maFreq, maBounce, maInterval, avgFreq, avgBounce) {
 	var chart = nv.models.lineChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -354,6 +359,7 @@ function drawFreqBounceGraph(freq, bounce, maFreq, maBounce, maInterval, avgFreq
 
 function drawDeviceBrandDistributionGraph(data, brands) {
 	var chart = nv.models.pieChart();
+	chart.noData("Please sumbit the form with reasonable searching criteria.");
 	charts.push(chart);
 	function getData(key) {
 		if (Array.isArray(data)) {
@@ -368,7 +374,7 @@ function drawDeviceBrandDistributionGraph(data, brands) {
 		return [];
 	}
 	nv.addGraph(function() {
-		chart.showLabels(true).labelType("percent").donut(true).donutRatio(1.0 / 3);
+		chart.showLabels(true).labelType("percent").donut(true).donutRatio(1.0 / 3).labelThreshold(1.0 / 0x40);
 		d3.select('.deviceBrandDistribution svg').attr('perserveAspectRatio', 'xMinYMid').datum(getData('Average Dwell Time (seconds)')).transition().duration(500).call(chart);
 		d3.select('.nv-legendWrap').attr('transform', 'translate(25, -30)');
 		nv.utils.windowResize(chart.update);
@@ -377,7 +383,6 @@ function drawDeviceBrandDistributionGraph(data, brands) {
 }
 
 function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
-	var stid = -1;
 	switch (Number(sc)) {
 	case 0:
 		interval = 1;
@@ -401,7 +406,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 		alert("Please enter a valid length of Moving Average, between 2 and 127.");
 	else
 		$.when(ajaxGettingStores(area)).done(function(a1) {
-			var storeId = stid, numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = lengthOfMovingAverage, averageVisitors = 0;
+			var storeId = -1, numberOfVisitors = [], numberOfVisitorsMA = [], maInterval = lengthOfMovingAverage, averageVisitors = 0;
 			$.when(ajax1(), ajax2()).done(function(a1, a2) {
 				drawPeopleCountingGraph(numberOfVisitors, numberOfVisitorsMA, maInterval, averageVisitors);
 			});
@@ -412,7 +417,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "count",
@@ -449,7 +454,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "count",
@@ -480,7 +485,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : storeId,
 					interval : interval,
 					type : "average",
@@ -519,7 +524,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "bounce",
@@ -558,7 +563,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "bounce",
@@ -592,7 +597,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "freq",
@@ -634,7 +639,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 					data : {
 						start : startTime,
 						end : endTime,
-						mallId: area,
+						mallId: mall,
 						storeId : storeId,
 						interval : interval,
 						type : "freq",
@@ -668,7 +673,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : storeId,
 					interval : interval,
 					type : "avgTimeDistribution",
@@ -701,7 +706,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : storeId,
 					interval : 0,
 					type : "oui",
@@ -718,7 +723,7 @@ function changeScopeWithStoreId(sc, lengthOfMovingAverage, bounceSD) {
 						}
 					for ( var prop in json)
 						if (prop === "ZZZZMinor brands") {
-							brands.push("Minor brands");
+							brands.push("Others");
 							ouiDistribution.push(json[prop]);
 						}
 						else if (prop !== "ZZZZUnknown")
@@ -876,13 +881,12 @@ $(document).ready(function() {
 	drawPeopleCountingGraph([]);
 	drawAverageDwellTimeGraph([]);
 	drawAverageDwellTimeDistributionGraph([]);
+	drawPeopleCountForTop5ShopGraph([]);
 	drawFreqBounceGraph([], []);
 	drawDeviceBrandDistributionGraph([], []);
-	if (localStorage.getItem("area_id") === null || localStorage.getItem("area_id") === undefined)
-		changeArea("base_1");
-	else
-		changeArea(localStorage.getItem("area_id"));
-	const endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'), startDate = endOfYesterday.clone().subtract(1, 'days'), endDate = endOfYesterday;
+	var endOfYesterday = moment().utcOffset(serverTimeZone).startOf('day'),
+	startDate = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ"),
+	endDate = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ");
 	var calendar_pickers = $('div.calendar-picker');
 	calendar_pickers.each(function(index) {
 		var self = $(this);
@@ -951,7 +955,7 @@ $(document).ready(function() {
 		date_cb(startDate, endDate);
 		$(this).daterangepicker({
 			"locale": {
-				"format": "D MMMM YYYY, HH:mm",
+				"format": "D MMMM YYYY, HH:mm"
 			},
 			"ranges": {
 				'Yesterday': [endOfYesterday.clone().subtract(1, 'days'), endOfYesterday],
@@ -964,9 +968,16 @@ $(document).ready(function() {
 			timePicker24Hour: true,
 			startDate: startDate,
 			endDate: endDate,
-			minDate: '1 July 2016',
+			minDate: '1 October 2016',
 			maxDate: 'now',
-			timePickerIncrement: 60
+			timePickerIncrement: 60,
+			showDropdowns: true
 		}, date_cb);
 	});
+	$.when(ajaxGettingMalls()).done(setTimeout(function() {
+		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
+			changeMall("k11_sh_1");
+		else
+			changeMall(localStorage.getItem("mall_id"));
+	}, 1000));
 });
