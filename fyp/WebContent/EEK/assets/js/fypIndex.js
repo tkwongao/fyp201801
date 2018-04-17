@@ -1,8 +1,8 @@
 //To be replaced by getting the current date
-const startTime = moment("28 September 2017 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf(), endTime = moment("28 October 2017 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf();
+var startTime = moment("19 October 2016 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf(), endTime = moment("2 November 2016 " + serverTimeZone, "D MMMM YYYY ZZ").valueOf();
 var charts = [];
 var shops = [];
-var dwellTimeThresholds = [120, 300, 600, 1200, 1800];
+var MILLISECONDS_IN_A_DAY = 86400000;
 
 function UpdateAllCharts() {
 	for (var i in charts)
@@ -12,8 +12,8 @@ function UpdateAllCharts() {
 
 function drawPeopleCountingGraph(data, ma, avg) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Loading...");
 	charts.push(peopleCountingChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
 	function getPeopleCountingData() {
 		var datum = [];
 		if (Array.isArray(data)) {
@@ -52,7 +52,7 @@ function drawPeopleCountingGraph(data, ma, avg) {
 							});
 						return arr;
 					}(),
-					key: 'Monthly Average Number of Visit',
+					key: 'Average Number of Visit per day',
 					color: "#000000"
 				});
 		}
@@ -73,8 +73,8 @@ function drawPeopleCountingGraph(data, ma, avg) {
 
 function drawAverageDwellTimeGraph(data) {
 	var averageDwellTimeChart = nv.models.multiBarChart();
+	averageDwellTimeChart.noData("Loading...");
 	charts.push(averageDwellTimeChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
 	function getAverageDwellTimeData() {
 		if (Array.isArray(data)) {
 			var values = [];
@@ -105,8 +105,8 @@ function drawAverageDwellTimeGraph(data) {
 
 function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
+	averageDwellTimeDistributionChart.noData("Loading...");
 	charts.push(averageDwellTimeDistributionChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
 	function getAverageDwellTimeData() {
 		var datum = [];
 		if (Array.isArray(data))
@@ -146,8 +146,8 @@ function drawAverageDwellTimeDistributionGraph(data) {
 
 function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsSorted) {
 	var peopleCountForTop5ShopChart = nv.models.stackedAreaChart();
+	peopleCountForTop5ShopChart.noData("Loading...");
 	charts.push(peopleCountForTop5ShopChart);
-	const MILLISECONDS_IN_A_DAY = 86400000;
 	function getPeopleCountForTop5ShopData() {
 		var datum = [];
 		if (Array.isArray(data))
@@ -177,21 +177,6 @@ function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsS
 		return peopleCountForTop5ShopChart;
 	});
 }
-
-/* BEGIN SVG WEATHER ICON
-if (typeof Skycons !== 'undefined') {
-	var icons = new Skycons({
-		"color" : "#3bafda"
-	}, {
-		"resizeClear" : true
-	}), list = [ "clear-day", "clear-night", "partly-cloudy-day",
-		"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
-		"wind", "fog" ], i;
-
-	for (i = list.length; i--;)
-		icons.set(list[i], list[i]);
-	icons.play();
-}; */
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({
@@ -487,7 +472,7 @@ $(document).ready(function() {
 	drawPeopleCountForTop5ShopGraph([], []);
 	$.when(ajaxGettingMalls()).done(setTimeout(function() {
 		if (localStorage.getItem("mall_id") === null || localStorage.getItem("mall_id") === undefined)
-			changeMall("base_1");
+			changeMall("k11_sh_1");
 		else
 			changeMall(localStorage.getItem("mall_id"));
 	}, 1000));

@@ -54,7 +54,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -100,12 +100,14 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 				"                     FROM oui" + 
 				"                       RIGHT OUTER JOIN (SELECT" + 
 				"                                           width_bucket," + 
-				"                                           upper(substring(to_hex, 1, 6))" + 
+				"                                           upper(substring(lpad, 1, 6))" + 
 				"                                         FROM (SELECT DISTINCT" + 
 				"                                                 width_bucket(startts, ?, ?, ?)," + 
-				"                                                 to_hex(did)" + 
+				"                                                 lpad(to_hex((did)), 12, '0')" + 
 				"                                               FROM " + dbName + 
 				"                                               WHERE startts BETWEEN ? AND ? " + storeIdFilter + 
+				// Condition in the next line is for not selecting locally administered MAC address (the 7th out of 48th digit, counting from the left hand side, is 1).
+				"												AND did - ((did - (did >> 41 << 41)) + (((did >> 41) - (did >> 41) % 2) << 41)) = 0" + 
 				"                                               ORDER BY width_bucket) AS temp1) AS temp2" + 
 				"                         ON upper = mac) AS temp3" + 
 				"               GROUP BY width_bucket, coalesce" + 
@@ -131,7 +133,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -180,7 +182,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -244,7 +246,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -295,7 +297,7 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 			ps.setLong(2, period[1]);
 			ps.setShort(3, numberOfIntervals);
 			ps.setLong(4, period[0]);
-			ps.setLong(5, period[1]);
+			ps.setLong(5, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(6, storeId);
 			else
@@ -346,11 +348,11 @@ public class MallAndStoreAnalysis extends DatabaseConnection {
 		final String sql = "WITH cache AS (SELECT (endts - startts) / ? AS cache, did FROM " + dbName + " WHERE startts BETWEEN ? AND ? " + storeIdFilter + "),"
 				+ "stat AS (SELECT avg(cache.cache) AS avg, count(*) FROM cache),"
 				+ "sd AS (SELECT POWER(SUM(POWER(cache.cache - (SELECT avg FROM stat), 2)) / (SELECT count FROM stat), 0.5) FROM cache)"
-				+ "SELECT count(DISTINCT(did)) FROM cache WHERE cache.cache < greatest(0, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";
+				+ "SELECT count(DISTINCT(did)) FROM cache WHERE cache.cache < greatest(120, (SELECT avg FROM stat) - ? * (SELECT power FROM sd))";
 		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
 			ps.setDouble(1, MILLISECONDS_TO_SECONDS);
 			ps.setLong(2, period[0]);
-			ps.setLong(3, period[1]);
+			ps.setLong(3, period[1] - 1);
 			if (storeId != WHOLE_MALL)
 				ps.setInt(4, storeId);
 			else
