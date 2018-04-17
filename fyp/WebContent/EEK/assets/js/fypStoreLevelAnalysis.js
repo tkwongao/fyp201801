@@ -24,6 +24,7 @@ function getTimeFormat(interval) {
 
 function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 	var chart = nv.models.lineChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getPeopleCountingData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -109,6 +110,7 @@ function drawPeopleCountingGraph(data, ma, maInterval, avg) {
 
 function drawAverageDwellTimeGraph(data) {
 	var chart = nv.models.multiBarChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -142,6 +144,7 @@ function drawAverageDwellTimeGraph(data) {
 
 function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
+	averageDwellTimeDistributionChart.noData("Please sumbit the form first.");
 	charts.push(averageDwellTimeDistributionChart);
 	function getAverageDwellTimeData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -183,6 +186,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 
 function drawFreqBounceGraph(freq, bounce, maFreq, maBounce, maInterval, avgFreq, avgBounce) {
 	var chart = nv.models.lineChart();
+	chart.noData("Please sumbit the form first.");
 	charts.push(chart);
 	function getData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -321,6 +325,7 @@ function drawFreqBounceGraph(freq, bounce, maFreq, maBounce, maInterval, avgFreq
 
 function drawDeviceBrandDistributionGraph(data, brands) {
 	var chart = nv.models.pieChart();
+	chart.noData("Please sumbit the form with reasonable searching criteria.");
 	charts.push(chart);
 	function getData(key) {
 		if (Array.isArray(data)) {

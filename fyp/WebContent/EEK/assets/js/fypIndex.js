@@ -12,6 +12,7 @@ function UpdateAllCharts() {
 
 function drawPeopleCountingGraph(data, ma, avg) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Loading...");
 	charts.push(peopleCountingChart);
 	function getPeopleCountingData() {
 		var datum = [];
@@ -72,6 +73,7 @@ function drawPeopleCountingGraph(data, ma, avg) {
 
 function drawAverageDwellTimeGraph(data) {
 	var averageDwellTimeChart = nv.models.multiBarChart();
+	averageDwellTimeChart.noData("Loading...");
 	charts.push(averageDwellTimeChart);
 	function getAverageDwellTimeData() {
 		if (Array.isArray(data)) {
@@ -103,6 +105,7 @@ function drawAverageDwellTimeGraph(data) {
 
 function drawAverageDwellTimeDistributionGraph(data) {
 	var averageDwellTimeDistributionChart = nv.models.stackedAreaChart();
+	averageDwellTimeDistributionChart.noData("Loading...");
 	charts.push(averageDwellTimeDistributionChart);
 	function getAverageDwellTimeData() {
 		var datum = [];
@@ -143,6 +146,7 @@ function drawAverageDwellTimeDistributionGraph(data) {
 
 function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsSorted) {
 	var peopleCountForTop5ShopChart = nv.models.stackedAreaChart();
+	peopleCountForTop5ShopChart.noData("Loading...");
 	charts.push(peopleCountForTop5ShopChart);
 	function getPeopleCountForTop5ShopData() {
 		var datum = [];
@@ -173,21 +177,6 @@ function drawPeopleCountForTop5ShopGraph(data, peopleCountingForEachShopResultsS
 		return peopleCountForTop5ShopChart;
 	});
 }
-
-/* BEGIN SVG WEATHER ICON
-if (typeof Skycons !== 'undefined') {
-	var icons = new Skycons({
-		"color" : "#3bafda"
-	}, {
-		"resizeClear" : true
-	}), list = [ "clear-day", "clear-night", "partly-cloudy-day",
-		"partly-cloudy-night", "cloudy", "rain", "sleet", "snow",
-		"wind", "fog" ], i;
-
-	for (i = list.length; i--;)
-		icons.set(list[i], list[i]);
-	icons.play();
-}; */
 
 function ajaxGettingStores(mallName) {
 	return $.ajax({

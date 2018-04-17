@@ -28,6 +28,7 @@ function getTimeFormat(interval) {
 
 function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Please sumbit the form first.");
 	charts.push(peopleCountingChart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -113,6 +114,7 @@ function drawLoyaltyCountingGraph(data, ma, maInterval, avg) {
 
 function drawUserStayTimeGraph(data) {
 	var userStayTimeChart = nv.models.multiBarChart();
+	userStayTimeChart.noData("Please sumbit the form first.");
 	charts.push(userStayTimeChart);
 	function getData() {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;
@@ -145,6 +147,7 @@ function drawUserStayTimeGraph(data) {
 
 function drawNumberOfStoresGraph(data) {
 	var numberOfStoresChart = nv.models.multiBarChart();
+	numberOfStoresChart.noData("Please select \"All Stores\" in the form and sumbit it.");
 	charts.push(numberOfStoresChart);
 	function getData(key) {
 		var MILLISECONDS_PER_INTERVAL = 3600000 * interval;

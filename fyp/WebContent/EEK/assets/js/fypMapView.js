@@ -34,24 +34,12 @@ function drawHeatMap() {
 				var thisDataPoint = prop.split(" ");
 				if (thisDataPoint[0] === "mac") {
 					macAddressesHTML += '<div class="row">' +
-					'<div class="col-md-6">' +
+					'<div class="col-md-12">' +
 					'<div class="form-group">' +
 					'<h3>' +
 					'<div class="label label-default ellipis mac-address">' + thisDataPoint[1] + '</div>' +
 					'<div class="font-13 text-muted">' + new moment(json[prop]).utcOffset(serverTimeZone).format("D MMMM YYYY, HH:mm") + '</div>' +
 					'</h3>' +
-					'</div>' +
-					'</div>' +
-					'<div class="col-md-1"></div>' +
-					'<div class="col-md-2">' +
-					'<div class="form-group">' +
-					'<h3><button class="btn colorpicker-default input-group" style="background: #7266ba; border-radius: 5px; width:100%">&nbsp;</button></h3>' +
-					'</div>' +
-					'</div>' +
-					'<div class="col-md-1"></div>' +
-					'<div class="col-md-2">' +
-					'<div class="form-group">' +
-					'<h3><input type="checkbox" checked id="switchery' + i++ + 'fyp"/></h3>' +
 					'</div>' +
 					'</div>' +
 					'</div>';

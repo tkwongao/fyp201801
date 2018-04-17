@@ -25,6 +25,7 @@ function getTimeFormat(interval) {
 
 function drawPeopleCountingGraph(data) {
 	var peopleCountingChart = nv.models.lineChart();
+	peopleCountingChart.noData("Loading...");
 	charts.push(peopleCountingChart);
 	var a;
 	switch (interval) {
@@ -78,6 +79,7 @@ function drawPeopleCountingGraph(data) {
 
 function drawAverageDwellTimeGraph(data) {
 	var averageDwellTimeChart = nv.models.multiBarChart();
+	averageDwellTimeChart.noData("Loading...");
 	charts.push(averageDwellTimeChart);
 	var a;
 	switch (interval) {
