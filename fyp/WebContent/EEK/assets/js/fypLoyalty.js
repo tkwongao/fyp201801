@@ -213,7 +213,7 @@ function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 				data : {
 					start : startTime,
 					end : endTime,
-					mallId: area,
+					mallId: mall,
 					storeId : storeId,
 					interval : interval,
 					userMac : userMac,
@@ -345,7 +345,7 @@ function changeScopeWithMac(sc, macAddress, stid, lengthOfMovingAverage) {
 			data : {
 				start : startTime,
 				end : endTime,
-				mallId: area,
+				mallId: mall,
 				storeId : storeId,
 				interval : interval,
 				userMac : userMac,
