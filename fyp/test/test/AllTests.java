@@ -11,15 +11,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	FloorPlanImageActionTest.class,
 	HeatMapActionTest.class, 
 	KMeansTest.class, 
-	MallAndStoreAnalysisTest.class, 
-	MallListActionTest.class,
-	OUIActionTest.class, 
-	PointTest.class, 
-	StoreListActionTest.class, 
 	UserAnalysisTest.class })
 public class AllTests {
 
 }
-
-
-//https://www.tutorialspoint.com/junit/junit_test_framework.htm

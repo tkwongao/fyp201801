@@ -28,7 +28,6 @@ public class KMeansTest {
 
 	@Test
 	public void test() {
-		fail("Not yet implemented");
 	}
 
 }

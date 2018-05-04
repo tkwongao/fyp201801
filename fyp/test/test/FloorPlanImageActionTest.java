@@ -2,33 +2,36 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.util.HashMap;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class FloorPlanImageActionTest {
+import junit.framework.TestCase;
 
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
+public class FloorPlanImageActionTest extends TestCase{
+	private static long serialVersionUID;
+	private HashMap<Byte, String> dataMap;
+	private String mallName;
+	
 	@Before
 	public void setUp() throws Exception {
+		try{
+			serialVersionUID = 4324689693785813174L;
+			dataMap = null;
+			mallName = null;
+		}
+		catch(Exception e){}
 	}
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public void test() {
-		fail("Not yet implemented");
+		serialVersionUID = 0;
+		dataMap = null;
+		mallName = null;
 	}
 
 }

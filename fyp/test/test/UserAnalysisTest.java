@@ -79,10 +79,6 @@ public class UserAnalysisTest extends TestCase{
 		testNumberOfIntervals = 0;
 		testLengthOfMovingAverage = 0;
 	}
-
-	@Test
-	public void test() {
-	}
 	
 	@Test
 	public void testUserAnalysis() {
@@ -92,40 +88,7 @@ public class UserAnalysisTest extends TestCase{
 		catch(Exception e) {}
 	}
 
-	@Test
-	public void testUserStayTime() {
-	}
 
-	@Test
-	public void testLoyaltyCheck() {
-	}
-
-	@Test
-	public void testNumberOfStoresVisited() {
-	}
-	
-	@Test
-	public void TestAnalyzeOUI(){
-		
-/*
-		String sql = "SELECT vendor FROM oui WHERE mac = ?;";
-		try (PreparedStatement ps = getConnection().prepareStatement(sql)) {
-			ps.setString(1, String.format("%1$" + 12 + "s", Long.
-			toHexString(macAddress)).replace(' ', '0').toUpperCase().substring(0, 6));
-			ArrayList<String> value = new ArrayList<String>(1);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next())
-				value.add(rs.getString("vendor").trim());
-			if (value.isEmpty())
-				value.add("Unknown");
-			return value;
-		} catch (SQLException e) {
-			throw new IllegalStateException("An error occurred during database access.", e);
-		}
-*/
-		
-	}
-	
 	
 
 }
